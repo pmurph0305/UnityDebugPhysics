@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class DebugPhysics
+public static partial class DebugPhysics
 {
   public static Color HitColor = Color.green;
   public static Color NoHitColor = Color.red;
@@ -19,35 +19,7 @@ public static class DebugPhysics
     set { drawLineTime = value; }
   }
 
-  public static bool Raycast(Vector3 origin, Vector3 direction, out RaycastHit hitInfo, float maxDistance, LayerMask layerMask)
-  {
-    if (Physics.Raycast(origin, direction, out hitInfo, maxDistance, layerMask))
-    {
-      DrawRaycast(origin, hitInfo.point, HitColor, DrawLineTime);
-      DebugDraw.DrawPointSmall(hitInfo.point, HitColor, DrawLineTime);
-      return true;
-    }
-    else
-    {
-      DrawRaycast(origin, origin + direction.normalized * maxDistance, NoHitColor, DrawLineTime);
-      return false;
-    }
-  }
 
-  public static bool Raycast(Vector3 origin, Vector3 direction, out RaycastHit hitInfo, float maxDistance)
-  {
-    if (Physics.Raycast(origin, direction, out hitInfo, maxDistance))
-    {
-      DrawRaycast(origin, hitInfo.point, HitColor, DrawLineTime);
-      DebugDraw.DrawPointSmall(hitInfo.point, HitColor, DrawLineTime);
-      return true;
-    }
-    else
-    {
-      DrawRaycast(origin, origin + direction.normalized * maxDistance, NoHitColor, DrawLineTime);
-      return false;
-    }
-  }
 
   public static bool SphereCast(Vector3 origin, float radius, Vector3 direction, out RaycastHit hitInfo, float maxDistance, LayerMask layerMask)
   {
@@ -75,10 +47,5 @@ public static class DebugPhysics
       DebugDraw.DrawSphereCast(origin, radius, direction, maxDistance, NoHitColor, DrawLineTime, hitInfo);
       return false;
     }
-  }
-
-  private static void DrawRaycast(Vector3 start, Vector3 end, Color color, float duration)
-  {
-    Debug.DrawLine(start, end, color, duration);
   }
 }

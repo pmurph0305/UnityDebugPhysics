@@ -93,6 +93,11 @@ public static class DebugDraw
     Debug.DrawLine(end, end - direction - right, color, duration);
   }
 
+  public static void DrawRaycast(Vector3 start, Vector3 end, Color color, float duration)
+  {
+    Debug.DrawLine(start, end, color, duration);
+  }
+
   public static void DrawSphereCast(Vector3 origin, float radius, Vector3 direction, float maxDistance, Color color, float duration, RaycastHit hitInfo)
   {
     Vector3 end = Vector3.zero;
@@ -119,7 +124,6 @@ public static class DebugDraw
       up = Vector3.Cross(direction, Vector3.right).normalized;
       right = Vector3.Cross(direction, up).normalized;
     }
-    Quaternion r = Quaternion.LookRotation(direction, up);
     Debug.DrawLine(origin + up * radius, end + up * radius, color, duration);
     Debug.DrawLine(origin + right * radius, end + right * radius, color, duration);
     Debug.DrawLine(origin - up * radius, end - up * radius, color, duration);
@@ -142,8 +146,6 @@ public static class DebugDraw
     }
     direction = direction.normalized;
     Quaternion r = Quaternion.LookRotation(direction, up);
-
-    Vector3 current = direction;
     float x1 = 0;
     float y1 = radius;
     for (int i = 1; i < SphereQuarterSegments; i++)
