@@ -21,11 +21,6 @@ public class DebugPhysicsExample : MonoBehaviour
     RaycastHit hit;
     if (doRaycast)
     {
-      if (DebugPhysics.Raycast(transform.position, this.transform.forward, out hit, RayCastLength))
-      {
-
-      }
-
       if (DebugPhysics.Raycast(transform.position, transform.forward))
       {
         Debug.Log("hit do raycast");
@@ -45,14 +40,14 @@ public class DebugPhysicsExample : MonoBehaviour
 
     if (DoTest)
     {
-      if (Physics.Raycast(transform.position, transform.forward))
-      {
-        Debug.Log("hit");
-      }
-      if (Physics.Raycast(transform.position, transform.forward, RayCastLength))
-      {
-        Debug.Log("hit no layermask");
-      }
+      // if (Physics.Raycast(transform.position, transform.forward))
+      // {
+      //   Debug.Log("hit");
+      // }
+      // if (Physics.Raycast(transform.position, transform.forward, RayCastLength))
+      // {
+      //   Debug.Log("hit no layermask");
+      // }
 
     }
   }
