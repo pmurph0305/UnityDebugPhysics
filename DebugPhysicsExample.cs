@@ -8,9 +8,11 @@ public class DebugPhysicsExample : MonoBehaviour
   public bool doSphereCast = false;
   public bool doRaycast = true;
 
+  public bool doVector = true;
 
   public float RayCastLength = 1.0f;
   public float SphereCastRadius = 0.5f;
+
 
   // Update is called once per frame
   void Update()
@@ -29,6 +31,10 @@ public class DebugPhysicsExample : MonoBehaviour
       {
 
       }
+    }
+    if (doVector)
+    {
+      DebugDraw.DrawVector(transform.position, transform.forward, RayCastLength, Color.yellow, Time.deltaTime);
     }
   }
 }

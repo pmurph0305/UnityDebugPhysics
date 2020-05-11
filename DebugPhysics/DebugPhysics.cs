@@ -53,14 +53,12 @@ public static class DebugPhysics
   {
     if (Physics.SphereCast(origin, radius, direction, out hitInfo, maxDistance, layerMask))
     {
-      Vector3 pos = hitInfo.point + hitInfo.normal * radius;
-      DebugDraw.DrawSphere(pos, radius, HitColor, DrawLineTime);
-      DebugDraw.DrawPoint(hitInfo.point, HitColor, DrawLineTime);
+      DebugDraw.DrawSphereCast(origin, radius, direction, maxDistance, HitColor, DrawLineTime, hitInfo);
       return true;
     }
     else
     {
-      DebugDraw.DrawSphere(origin + direction * maxDistance, radius, NoHitColor, DrawLineTime);
+      DebugDraw.DrawSphereCast(origin, radius, direction, maxDistance, NoHitColor, DrawLineTime, hitInfo);
       return false;
     }
   }
