@@ -14,6 +14,9 @@ public class DebugPhysicsExample : MonoBehaviour
   public bool DoSphereCastHit = false;
   public bool DoSphereCastAll = false;
   public bool DoSphereCastAllNonAlloc = false;
+
+  public bool DoLinecast = false;
+  public bool DoLinecastHit = false;
   // Update is called once per frame
   void Update()
   {
@@ -76,6 +79,22 @@ public class DebugPhysicsExample : MonoBehaviour
       RaycastHit[] hits = new RaycastHit[10];
       DebugPhysics.SphereCastNonAlloc(transform.position, SphereCastRadius, transform.forward, hits, RayCastLength);
       foreach (RaycastHit hit in hits)
+      {
+        // do something
+      }
+    }
+
+    if (DoLinecast)
+    {
+      if (DebugPhysics.Linecast(transform.position, transform.position + transform.forward * RayCastLength))
+      {
+        // do something
+      }
+    }
+    if (DoLinecastHit)
+    {
+      RaycastHit hit;
+      if (DebugPhysics.Linecast(transform.position, transform.position + transform.forward * RayCastLength, out hit))
       {
         // do something
       }
