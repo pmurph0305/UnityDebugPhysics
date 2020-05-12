@@ -5,21 +5,7 @@ using UnityEngine;
 public static class DebugDraw
 {
   public static float DefaultVectorArrowScale = 0.1f;
-
-  private static float defaultPointScale = 0.05f;
-  public static float DefaultPointScale
-  {
-    get { return defaultPointScale; }
-    set
-    {
-      SmallPointScale = value / 2;
-      LargePointScale = value * 2;
-      defaultPointScale = value;
-    }
-  }
-  private static float SmallPointScale = 0.025f;
-  private static float LargePointScale = 0.1f;
-
+  public static float DefaultPointScale = 0.05f;
 
   private static int sphereQuarterSegments = 4;
   public static int SphereQuarterSegments
@@ -28,34 +14,30 @@ public static class DebugDraw
     {
       return sphereQuarterSegments < 2 ? 2 : sphereQuarterSegments;
     }
-    set { sphereQuarterSegments = value; }
+    set
+    {
+      if (value < 2)
+      {
+        Debug.LogWarning("Cant draw a sphere with less than 2 quarter segments, defaulting to 2.");
+        sphereQuarterSegments = 2;
+      }
+      else
+      {
+        sphereQuarterSegments = value;
+      }
+    }
   }
 
-  public static void DrawPoint(Vector3 point, Color color, float time)
+  public static void DrawPoint(Vector3 point, Color color, float time, bool depthTest = false)
   {
-    Debug.DrawLine(point - Vector3.up * DefaultPointScale, point + Vector3.up * DefaultPointScale, color, time);
-    Debug.DrawLine(point - Vector3.left * DefaultPointScale, point + Vector3.left * DefaultPointScale, color, time);
-    Debug.DrawLine(point - Vector3.forward * DefaultPointScale, point + Vector3.forward * DefaultPointScale, color, time);
-  }
-  public static void DrawPoint(Vector3 point, Color color, float time, float scale)
-  {
-    Debug.DrawLine(point - Vector3.up * scale / 2, point + Vector3.up * scale, color, time);
-    Debug.DrawLine(point - Vector3.left * scale / 2, point + Vector3.left * scale, color, time);
-    Debug.DrawLine(point - Vector3.forward * scale / 2, point + Vector3.forward * scale, color, time);
+    Debug.DrawLine(point - Vector3.up * DefaultPointScale, point + Vector3.up * DefaultPointScale, color, time, depthTest);
+    Debug.DrawLine(point - Vector3.left * DefaultPointScale, point + Vector3.left * DefaultPointScale, color, time, depthTest);
+    Debug.DrawLine(point - Vector3.forward * DefaultPointScale, point + Vector3.forward * DefaultPointScale, color, time, depthTest);
   }
 
-  public static void DrawPointLarge(Vector3 point, Color color, float time)
+  public static void DrawLine(Vector3 start, Vector3 end, Color color, float time, bool depthTest = false)
   {
-    Debug.DrawLine(point - Vector3.up * LargePointScale, point + Vector3.up * LargePointScale, color, time);
-    Debug.DrawLine(point - Vector3.left * LargePointScale, point + Vector3.left * LargePointScale, color, time);
-    Debug.DrawLine(point - Vector3.forward * LargePointScale, point + Vector3.forward * LargePointScale, color, time);
-  }
-
-  public static void DrawPointSmall(Vector3 point, Color color, float time)
-  {
-    Debug.DrawLine(point - Vector3.up * SmallPointScale, point + Vector3.up * SmallPointScale, color, time);
-    Debug.DrawLine(point - Vector3.left * SmallPointScale, point + Vector3.left * SmallPointScale, color, time);
-    Debug.DrawLine(point - Vector3.forward * SmallPointScale, point + Vector3.forward * SmallPointScale, color, time);
+    Debug.DrawLine(start, end, color, time, depthTest);
   }
 
   public static void DrawVector(Vector3 start, Vector3 end, Color color, float time)
@@ -93,25 +75,32 @@ public static class DebugDraw
     Debug.DrawLine(end, end - direction - right, color, duration);
   }
 
-  public static void DrawRaycast(Vector3 start, Vector3 end, Color color, float duration)
+  public static void DrawRaycast(Vector3 start, Vector3 end, Color color, float duration, bool depthTest = false)
   {
-    Debug.DrawLine(start, end, color, duration);
+    Debug.DrawLine(start, end, color, duration, depthTest);
   }
 
-  public static void DrawSphereCast(Vector3 origin, float radius, Vector3 direction, float maxDistance, Color color, float duration, RaycastHit hitInfo)
+  public static void DrawSphereCast(Vector3 origin, float radius, Vector3 direction, float maxDistance, Color color, float duration, bool drawOriginSphere = true, bool depthTest = false, RaycastHit hitInfo = new RaycastHit())
   {
     Vector3 end = Vector3.zero;
     if (hitInfo.transform != null)
     {
       end = hitInfo.point + hitInfo.normal * radius;
-      DebugDraw.DrawPoint(hitInfo.point, color, duration);
     }
     else
     {
       end = origin + direction * maxDistance;
     }
-    DebugDraw.DrawSphere(end, radius, direction, color, duration);
-    DebugDraw.DrawSphere(origin, radius, direction, color, duration);
+    DebugDraw.DrawSphere(end, radius, direction, color, duration, depthTest);
+    if (drawOriginSphere)
+    {
+      DebugDraw.DrawSphere(origin, radius, direction, color, duration, depthTest);
+    }
+    DrawSphereLines(origin, direction, end, radius, color, duration, depthTest);
+  }
+
+  private static void DrawSphereLines(Vector3 origin, Vector3 direction, Vector3 end, float radius, Color color, float duration, bool depthTest)
+  {
     Vector3 right = Vector3.zero;
     Vector3 up = Vector3.zero;
     if (direction != Vector3.up)
@@ -124,14 +113,15 @@ public static class DebugDraw
       up = Vector3.Cross(direction, Vector3.right).normalized;
       right = Vector3.Cross(direction, up).normalized;
     }
-    Debug.DrawLine(origin + up * radius, end + up * radius, color, duration);
-    Debug.DrawLine(origin + right * radius, end + right * radius, color, duration);
-    Debug.DrawLine(origin - up * radius, end - up * radius, color, duration);
-    Debug.DrawLine(origin - right * radius, end - right * radius, color, duration);
+    Debug.DrawLine(origin + up * radius, end + up * radius, color, duration, depthTest);
+    Debug.DrawLine(origin + right * radius, end + right * radius, color, duration, depthTest);
+    Debug.DrawLine(origin - up * radius, end - up * radius, color, duration, depthTest);
+    Debug.DrawLine(origin - right * radius, end - right * radius, color, duration, depthTest);
   }
 
-  public static void DrawSphere(Vector3 position, float radius, Vector3 direction, Color color, float duration)
+  public static void DrawSphere(Vector3 position, float radius, Vector3 direction, Color color, float duration, bool depthTest)
   {
+    if (radius < 0) radius *= -1;
     Vector3 right = Vector3.zero;
     Vector3 up = Vector3.zero;
     if (direction != Vector3.up)
@@ -155,42 +145,42 @@ public static class DebugDraw
       // Draw XY
       Vector3 v1 = r * new Vector3(x1, y1, 0);
       Vector3 v2 = r * new Vector3(x2, y2, 0);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       v1 = r * new Vector3(-x1, y1, 0);
       v2 = r * new Vector3(-x2, y2, 0);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       v1 = r * new Vector3(-x1, -y1, 0);
       v2 = r * new Vector3(-x2, -y2, 0);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       v1 = r * new Vector3(x1, -y1, 0);
       v2 = r * new Vector3(x2, -y2, 0);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       // Draw XZ
       v1 = r * new Vector3(x1, 0, y1);
       v2 = r * new Vector3(x2, 0, y2);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       v1 = r * new Vector3(-x1, 0, y1);
       v2 = r * new Vector3(-x2, 0, y2);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       v1 = r * new Vector3(-x1, 0, -y1);
       v2 = r * new Vector3(-x2, 0, -y2);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       v1 = r * new Vector3(x1, 0, -y1);
       v2 = r * new Vector3(x2, 0, -y2);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       // Draw YZ
       v1 = r * new Vector3(0, x1, y1);
       v2 = r * new Vector3(0, x2, y2);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       v1 = r * new Vector3(0, -x1, y1);
       v2 = r * new Vector3(0, -x2, y2);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       v1 = r * new Vector3(0, -x1, -y1);
       v2 = r * new Vector3(0, -x2, -y2);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       v1 = r * new Vector3(0, x1, -y1);
       v2 = r * new Vector3(0, x2, -y2);
-      Debug.DrawLine(position + v1, position + v2, color, duration);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
       x1 = x2;
       y1 = y2;
     }

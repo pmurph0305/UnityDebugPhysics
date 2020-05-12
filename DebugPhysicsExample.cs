@@ -4,51 +4,81 @@ using UnityEngine;
 
 public class DebugPhysicsExample : MonoBehaviour
 {
-
-  public bool doSphereCast = false;
-  public bool doRaycast = true;
-
-  public bool doVector = true;
-
-  public float RayCastLength = 1.0f;
+  public float RayCastLength = 100.0f;
   public float SphereCastRadius = 0.5f;
-
-
-  public bool DoTest = true;
+  public bool DoRaycast = false;
+  public bool DoRaycastHit = false;
+  public bool DoRayCastAll = false;
+  public bool DoRayCastAllNonAlloc = false;
+  public bool DoSphereCast = false;
+  public bool DoSphereCastHit = false;
+  public bool DoSphereCastAll = false;
+  public bool DoSphereCastAllNonAlloc = false;
   // Update is called once per frame
   void Update()
   {
-    RaycastHit hit;
-    if (doRaycast)
+    if (DoRaycast)
     {
-      if (DebugPhysics.Raycast(transform.position, transform.forward))
+      if (DebugPhysics.Raycast(transform.position, transform.forward, RayCastLength))
       {
-        Debug.Log("hit do raycast");
       }
     }
-    if (doSphereCast)
+    if (DoRaycastHit)
     {
+      RaycastHit hit;
+      if (DebugPhysics.Raycast(transform.position, transform.forward, out hit, RayCastLength))
+      {
+      }
+    }
+    if (DoRayCastAll)
+    {
+      RaycastHit[] hits = DebugPhysics.RaycastAll(transform.position, transform.forward, RayCastLength);
+      foreach (RaycastHit hit in hits)
+      {
+        //do something
+      }
+    }
+    if (DoRayCastAllNonAlloc)
+    {
+      RaycastHit[] hits = new RaycastHit[10];
+      DebugPhysics.RaycastNonAlloc(transform.position, transform.forward, hits, RayCastLength);
+      foreach (RaycastHit hit in hits)
+      {
+        //do something
+      }
+    }
+
+
+    if (DoSphereCast)
+    {
+      if (DebugPhysics.SphereCast(new Ray(this.transform.position, this.transform.forward), SphereCastRadius, RayCastLength))
+      {
+
+      }
+    }
+    if (DoSphereCastHit)
+    {
+      RaycastHit hit;
       if (DebugPhysics.SphereCast(transform.position, SphereCastRadius, this.transform.forward, out hit, RayCastLength))
       {
-
       }
     }
-    if (doVector)
+    if (DoSphereCastAll)
     {
-      DebugDraw.DrawVector(transform.position, transform.forward, RayCastLength, Color.yellow, Time.deltaTime);
+      RaycastHit[] hits = DebugPhysics.SphereCastAll(transform.position, SphereCastRadius, this.transform.forward, RayCastLength);
+      foreach (RaycastHit hit in hits)
+      {
+        // do something
+      }
     }
-
-    if (DoTest)
+    if (DoSphereCastAllNonAlloc)
     {
-      // if (Physics.Raycast(transform.position, transform.forward))
-      // {
-      //   Debug.Log("hit");
-      // }
-      // if (Physics.Raycast(transform.position, transform.forward, RayCastLength))
-      // {
-      //   Debug.Log("hit no layermask");
-      // }
-
+      RaycastHit[] hits = new RaycastHit[10];
+      DebugPhysics.SphereCastNonAlloc(transform.position, SphereCastRadius, transform.forward, hits, RayCastLength);
+      foreach (RaycastHit hit in hits)
+      {
+        // do something
+      }
     }
   }
 }
