@@ -1367,7 +1367,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1831802319}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1384,7 +1384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aec406105e251944db243fda3bf593f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RayCastLength: 100
+  RayCastLength: 111
   SphereCastRadius: 0.5
   DoRaycast: 0
   DoRaycastHit: 0
@@ -1396,6 +1396,8 @@ MonoBehaviour:
   DoSphereCastAllNonAlloc: 0
   DoLinecast: 0
   DoLinecastHit: 0
+  DoBoxCast: 0
+  DoBoxCastHit: 1
 --- !u!1 &1877737866
 GameObject:
   m_ObjectHideFlags: 0

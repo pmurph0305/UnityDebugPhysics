@@ -17,6 +17,9 @@ public class DebugPhysicsExample : MonoBehaviour
 
   public bool DoLinecast = false;
   public bool DoLinecastHit = false;
+
+  public bool DoBoxCast = false;
+  public bool DoBoxCastHit = false;
   // Update is called once per frame
   void Update()
   {
@@ -95,6 +98,23 @@ public class DebugPhysicsExample : MonoBehaviour
     {
       RaycastHit hit;
       if (DebugPhysics.Linecast(transform.position, transform.position + transform.forward * RayCastLength, out hit))
+      {
+        // do something
+      }
+    }
+
+    if (DoBoxCast)
+    {
+      if (DebugPhysics.BoxCast(transform.position, new Vector3(0.5f, 0.5f, 0.5f), transform.forward, transform.rotation, RayCastLength))
+      {
+        // do something
+      }
+    }
+
+    if (DoBoxCastHit)
+    {
+      RaycastHit hit;
+      if (DebugPhysics.BoxCast(transform.position, new Vector3(0.5f, 0.5f, 0.5f), transform.forward, out hit, transform.rotation, RayCastLength))
       {
         // do something
       }

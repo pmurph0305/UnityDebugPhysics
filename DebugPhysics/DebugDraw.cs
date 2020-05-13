@@ -50,6 +50,56 @@ public static class DebugDraw
     DrawVector(start, start + direction * distance, color, time);
   }
 
+  public static void DrawBoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction,
+    Quaternion orientation, float distance, Color color, float duration, bool depthTest)
+  {
+    Vector3 end = center + (direction * distance);
+    DrawBox((end + center) / 2, new Vector3(halfExtents.x, halfExtents.y, distance / 2 - halfExtents.z), orientation, color, duration, depthTest);
+    DrawBox(center, halfExtents, orientation, color, duration, depthTest);
+    DrawBox(end, halfExtents, orientation, color, duration, depthTest);
+  }
+
+
+  public static void DrawBoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction,
+    Quaternion orientation, Color color, float duration, bool depthTest, RaycastHit hit)
+  {
+    // angle between direction and point.
+    float angle = Vector3.Angle(direction, (hit.point - center)) * Mathf.Deg2Rad;
+    // distance to end
+    float endDistance = (hit.point - center).magnitude * Mathf.Cos(angle);
+    // actual end point
+    Vector3 end = (center + direction * endDistance);
+    // subtract z as that's the direction.
+    DrawBoxCast(center, halfExtents, direction, orientation, Vector3.Distance(center, end) - halfExtents.z, color, duration, depthTest);
+  }
+
+
+  private static void DrawBox(Vector3 center, Vector3 halfExtents, Quaternion orientation, Color color, float duration, bool depthTest)
+  {
+    Vector3[] points = new Vector3[8] {
+      orientation * (- halfExtents) + center,
+      orientation * (new Vector3(- halfExtents.x, - halfExtents.y,  + halfExtents.z)) + center,
+      orientation * (new Vector3( - halfExtents.x,  + halfExtents.y,  - halfExtents.z)) + center,
+      orientation * (new Vector3( + halfExtents.x,  - halfExtents.y,  - halfExtents.z)) + center,
+      orientation * (new Vector3( + halfExtents.x,  + halfExtents.y,  - halfExtents.z)) + center,
+      orientation * (new Vector3( + halfExtents.x,  - halfExtents.y,  + halfExtents.z)) + center,
+      orientation * (new Vector3( - halfExtents.x,  + halfExtents.y,  + halfExtents.z)) + center,
+      orientation * (halfExtents) + center
+    };
+    Debug.DrawLine(points[0], points[1], color, duration, depthTest);
+    Debug.DrawLine(points[0], points[2], color, duration, depthTest);
+    Debug.DrawLine(points[0], points[3], color, duration, depthTest);
+    Debug.DrawLine(points[1], points[6], color, duration, depthTest);
+    Debug.DrawLine(points[1], points[5], color, duration, depthTest);
+    Debug.DrawLine(points[2], points[6], color, duration, depthTest);
+    Debug.DrawLine(points[2], points[4], color, duration, depthTest);
+    Debug.DrawLine(points[3], points[5], color, duration, depthTest);
+    Debug.DrawLine(points[3], points[4], color, duration, depthTest);
+    Debug.DrawLine(points[7], points[4], color, duration, depthTest);
+    Debug.DrawLine(points[7], points[6], color, duration, depthTest);
+    Debug.DrawLine(points[7], points[5], color, duration, depthTest);
+  }
+
   public static void DrawVector(Vector3 start, Vector3 end, Color color, float duration, float scale)
   {
     Vector3 direction = (end - start).normalized;

@@ -6,7 +6,8 @@ using UnityEngine;
 
 public static partial class DebugPhysics
 {
-  public static bool Linecast(Vector3 start, Vector3 end, int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
+  public static bool Linecast(Vector3 start, Vector3 end,
+    int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
     if (Physics.Linecast(start, end, layerMask, queryTriggerInteraction))
     {
@@ -19,7 +20,9 @@ public static partial class DebugPhysics
       return false;
     }
   }
-  public static bool Linecast(Vector3 start, Vector3 end, out RaycastHit hitInfo, int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
+
+  public static bool Linecast(Vector3 start, Vector3 end, out RaycastHit hitInfo,
+    int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
     if (Physics.Linecast(start, end, out hitInfo, layerMask, queryTriggerInteraction))
     {
