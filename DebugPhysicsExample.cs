@@ -131,5 +131,15 @@ public class DebugPhysicsExample : MonoBehaviour
         // do something
       }
     }
+
+    if (DoBoxCastAllNonAlloc)
+    {
+      RaycastHit[] hits = new RaycastHit[10];
+      int numHits = DebugPhysics.BoxCastNonAlloc(transform.position, new Vector3(0.5f, 0.5f, 0.5f), transform.forward, hits, transform.rotation, RayCastLength);
+      foreach (RaycastHit hit in hits)
+      {
+        // do something
+      }
+    }
   }
 }

@@ -9,6 +9,47 @@ public static partial class DebugPhysics
   // Quaternion needs to be a compile time constant to be a default parameter.
   // Although unity's dogs specify Quaternion orientation = Quaternion.identity, that's not possible, so we have to overload all the other methods..
 
+  public static int BoxCastNonAlloc(Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit[] results, Quaternion orientation,
+    float maxDistance = Mathf.Infinity, int layermask = Physics.DefaultRaycastLayers,
+    QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
+  {
+    int val = Physics.BoxCastNonAlloc(center, halfExtents, direction, results, orientation, maxDistance, layermask, queryTriggerInteraction);
+    if (val > 0)
+    {
+      float maxHitDistance = 0.0f;
+      for (int i = 0; i < val; i++)
+      {
+        DebugDraw.DrawBoxCast(center, halfExtents, direction, orientation, HitColor, DrawLineTime, DepthTest, results[i], true);
+        if (DrawHitPoints)
+        {
+          DebugDraw.DrawPoint(results[i].point, HitColor, DrawLineTime, DepthTest);
+        }
+        if (DrawHitNormals)
+        {
+          DebugDraw.DrawLine(results[i].point, results[i].point + results[i].normal, HitNormalColor, DrawLineTime, DepthTest);
+        }
+        // distance to end
+        float endDistance = Vector3.Dot(results[val - 1].point - center, direction);
+        if (endDistance > maxHitDistance)
+        {
+          maxHitDistance = endDistance;
+        }
+      }
+      maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
+      if (maxDistance > maxHitDistance)
+      {
+        DebugDraw.DrawPoint(center + direction * maxHitDistance - direction * halfExtents.z, Color.magenta, DrawLineTime, DepthTest);
+        DebugDraw.DrawBoxCast((center + direction * maxHitDistance) - direction * halfExtents.z, halfExtents, direction, orientation, maxDistance - maxHitDistance, NoHitColor, DrawLineTime, DepthTest, false);
+      }
+    }
+    else
+    {
+      maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
+      DebugDraw.DrawBoxCast(center, halfExtents, direction, orientation, maxDistance, NoHitColor, DrawLineTime, DepthTest);
+    }
+    return val;
+  }
+
   public static RaycastHit[] BoxCastAll(Vector3 center, Vector3 halfExtents, Vector3 direction, Quaternion orientation,
     float maxDistance = Mathf.Infinity, int layermask = Physics.DefaultRaycastLayers,
      QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
@@ -28,9 +69,7 @@ public static partial class DebugPhysics
           DebugDraw.DrawLine(hits[i].point, hits[i].point + hits[i].normal, HitNormalColor, DrawLineTime, DepthTest);
         }
       }
-      float angle = Vector3.Angle(direction, (hits[hits.Length - 1].point - center)) * Mathf.Deg2Rad;
-      // distance to end
-      float endDistance = (hits[hits.Length - 1].point - center).magnitude * Mathf.Cos(angle);
+      float endDistance = Vector3.Dot(hits[hits.Length - 1].point - center, direction);
       maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
       if (maxDistance > endDistance)
       {

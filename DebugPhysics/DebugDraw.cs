@@ -85,10 +85,7 @@ public static class DebugDraw
   public static void DrawBoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction,
     Quaternion orientation, Color color, float duration, bool depthTest, RaycastHit hit, bool drawOrigin = true)
   {
-    // angle between direction and point.
-    float angle = Vector3.Angle(direction, (hit.point - center)) * Mathf.Deg2Rad;
-    // distance to end
-    float endDistance = (hit.point - center).magnitude * Mathf.Cos(angle);
+    float endDistance = Vector3.Dot(hit.point - center, direction);
     // actual end point
     Vector3 end = (center + direction * endDistance) - direction * halfExtents.z;
     // subtract z as that's the direction.
