@@ -7,7 +7,7 @@ public static class DebugDraw
   public static float DefaultVectorArrowScale = 0.1f;
   public static float DefaultPointScale = 0.05f;
 
-  private static int sphereQuarterSegments = 4;
+  private static int sphereQuarterSegments = 8;
   public static int SphereQuarterSegments
   {
     get
@@ -40,14 +40,44 @@ public static class DebugDraw
     Debug.DrawLine(start, end, color, time, depthTest);
   }
 
-  public static void DrawVector(Vector3 start, Vector3 end, Color color, float time)
+  public static void DrawRaycast(Vector3 start, Vector3 end, Color color, float duration, bool depthTest = false)
   {
-    DrawVector(start, end, color, time, DefaultVectorArrowScale);
+    Debug.DrawLine(start, end, color, duration, depthTest);
   }
 
-  public static void DrawVector(Vector3 start, Vector3 direction, float distance, Color color, float time)
+  public static void DrawVector(Vector3 start, Vector3 end, Color color, float duration, float scale)
   {
-    DrawVector(start, start + direction * distance, color, time);
+    Vector3 direction = (end - start).normalized;
+    Vector3 right = Vector3.zero;
+    Vector3 up = Vector3.zero;
+    if (direction != Vector3.up)
+    {
+      right = Vector3.Cross(direction, Vector3.up).normalized;
+      up = Vector3.Cross(direction, right).normalized;
+    }
+    else
+    {
+      up = Vector3.Cross(direction, Vector3.right).normalized;
+      right = Vector3.Cross(direction, up).normalized;
+    }
+    right = right * scale;
+    up = up * scale;
+    direction = direction * scale;
+    Debug.DrawLine(start, end, color, duration);
+    Debug.DrawLine(end, end - direction + up, color, duration);
+    Debug.DrawLine(end, end - direction - up, color, duration);
+    Debug.DrawLine(end, end - direction + right, color, duration);
+    Debug.DrawLine(end, end - direction - right, color, duration);
+  }
+
+  public static void DrawBoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction,
+    Quaternion orientation, Color color, float duration, bool depthTest, RaycastHit hit, bool drawOrigin = true)
+  {
+    float endDistance = Vector3.Dot(hit.point - center, direction);
+    // actual end point
+    Vector3 end = (center + direction * endDistance) - direction * halfExtents.z;
+    // subtract z as that's the direction.
+    DrawBoxCast(center, halfExtents, direction, orientation, Vector3.Distance(center, end), color, duration, depthTest, drawOrigin);
   }
 
   public static void DrawBoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction,
@@ -81,18 +111,6 @@ public static class DebugDraw
     Debug.DrawLine(points[3], points[5], color, duration, depthTest);
   }
 
-
-  public static void DrawBoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction,
-    Quaternion orientation, Color color, float duration, bool depthTest, RaycastHit hit, bool drawOrigin = true)
-  {
-    float endDistance = Vector3.Dot(hit.point - center, direction);
-    // actual end point
-    Vector3 end = (center + direction * endDistance) - direction * halfExtents.z;
-    // subtract z as that's the direction.
-    DrawBoxCast(center, halfExtents, direction, orientation, Vector3.Distance(center, end), color, duration, depthTest, drawOrigin);
-  }
-
-
   private static void DrawBox(Vector3 center, Vector3 halfExtents, Quaternion orientation, Color color, float duration, bool depthTest)
   {
     Vector3[] points = new Vector3[8] {
@@ -119,36 +137,6 @@ public static class DebugDraw
     Debug.DrawLine(points[7], points[5], color, duration, depthTest);
   }
 
-  public static void DrawVector(Vector3 start, Vector3 end, Color color, float duration, float scale)
-  {
-    Vector3 direction = (end - start).normalized;
-    Vector3 right = Vector3.zero;
-    Vector3 up = Vector3.zero;
-    if (direction != Vector3.up)
-    {
-      right = Vector3.Cross(direction, Vector3.up).normalized;
-      up = Vector3.Cross(direction, right).normalized;
-    }
-    else
-    {
-      up = Vector3.Cross(direction, Vector3.right).normalized;
-      right = Vector3.Cross(direction, up).normalized;
-    }
-    right = right * scale;
-    up = up * scale;
-    direction = direction * scale;
-    Debug.DrawLine(start, end, color, duration);
-    Debug.DrawLine(end, end - direction + up, color, duration);
-    Debug.DrawLine(end, end - direction - up, color, duration);
-    Debug.DrawLine(end, end - direction + right, color, duration);
-    Debug.DrawLine(end, end - direction - right, color, duration);
-  }
-
-  public static void DrawRaycast(Vector3 start, Vector3 end, Color color, float duration, bool depthTest = false)
-  {
-    Debug.DrawLine(start, end, color, duration, depthTest);
-  }
-
   public static void DrawSphereCast(Vector3 origin, float radius, Vector3 direction, float maxDistance, Color color, float duration, bool drawOriginSphere = true, bool depthTest = false, RaycastHit hitInfo = new RaycastHit())
   {
     Vector3 end = Vector3.zero;
@@ -170,18 +158,8 @@ public static class DebugDraw
 
   private static void DrawSphereLines(Vector3 origin, Vector3 direction, Vector3 end, float radius, Color color, float duration, bool depthTest)
   {
-    Vector3 right = Vector3.zero;
-    Vector3 up = Vector3.zero;
-    if (direction != Vector3.up)
-    {
-      right = Vector3.Cross(direction, Vector3.up).normalized;
-      up = Vector3.Cross(direction, right).normalized;
-    }
-    else
-    {
-      up = Vector3.Cross(direction, Vector3.right).normalized;
-      right = Vector3.Cross(direction, up).normalized;
-    }
+    Vector3 up = Vector3.Cross(direction, Vector3.right).normalized;
+    Vector3 right = Vector3.Cross(direction, up).normalized;
     Debug.DrawLine(origin + up * radius, end + up * radius, color, duration, depthTest);
     Debug.DrawLine(origin + right * radius, end + right * radius, color, duration, depthTest);
     Debug.DrawLine(origin - up * radius, end - up * radius, color, duration, depthTest);
@@ -191,19 +169,8 @@ public static class DebugDraw
   public static void DrawSphere(Vector3 position, float radius, Vector3 direction, Color color, float duration, bool depthTest)
   {
     if (radius < 0) radius *= -1;
-    Vector3 right = Vector3.zero;
-    Vector3 up = Vector3.zero;
-    if (direction != Vector3.up)
-    {
-      right = Vector3.Cross(direction, Vector3.up);
-      up = Vector3.Cross(direction, right);
-    }
-    else
-    {
-      up = Vector3.Cross(direction, Vector3.right);
-      right = Vector3.Cross(direction, up);
-    }
-    direction = direction.normalized;
+    Vector3 up = Vector3.Cross(direction, Vector3.right).normalized;
+    Vector3 right = Vector3.Cross(direction, up).normalized;
     Quaternion r = Quaternion.LookRotation(direction, up);
     float x1 = 0;
     float y1 = radius;
@@ -244,6 +211,108 @@ public static class DebugDraw
       v1 = r * new Vector3(0, -x1, y1);
       v2 = r * new Vector3(0, -x2, y2);
       Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
+      v1 = r * new Vector3(0, -x1, -y1);
+      v2 = r * new Vector3(0, -x2, -y2);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
+      v1 = r * new Vector3(0, x1, -y1);
+      v2 = r * new Vector3(0, x2, -y2);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
+      x1 = x2;
+      y1 = y2;
+    }
+  }
+
+
+  public static void DrawCapsule(Vector3 point1, Vector3 point2, float radius, Color color, float duration, bool depthTest)
+  {
+    DrawSphereLines(point1, point2 - point1, point2, radius, color, duration, depthTest);
+    DrawCapsuleSphere(point1, radius, point2 - point1, color, duration, depthTest);
+    DrawCapsuleSphere(point2, radius, point1 - point2, color, duration, depthTest);
+  }
+
+  public static void DrawCapsuleCast(Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4,
+    float radius, Color color, float duration, bool depthTest)
+  {
+    DrawCapsule(point1, point2, radius, color, duration, depthTest);
+    DrawCapsule(point3, point4, radius, color, duration, depthTest);
+    DrawCapsuleCastLines(point1, point2, point3, point4, radius, color, duration, depthTest);
+  }
+
+  public static void DrawCapsuleCast(Vector3 point1, Vector3 point2,
+    float radius, Vector3 direction, Color color, float duration, bool depthTest, RaycastHit hit)
+  {
+    DrawCapsule(point1, point2, radius, color, duration, depthTest);
+    Vector3 midPoint = (point1 + point2) / 2;
+    float distance = Vector3.Dot(hit.point - midPoint, direction);
+    DrawPoint(midPoint + direction * distance, Color.red, duration, depthTest);
+    DrawCapsule(point1 + direction * distance, point2 + direction * distance, radius, color, duration, depthTest);
+
+  }
+
+  private static void DrawCapsuleCastLines(Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4,
+    float radius, Color color, float duration, bool depthTest)
+  {
+    if (radius < 0) radius *= -1;
+    Vector3 direction = (point2 - point1).normalized;
+    Vector3 up = Vector3.Cross(direction, Vector3.right).normalized;
+    Quaternion r = Quaternion.LookRotation(direction, up);
+    Vector3[] spherePoints = new Vector3[4] {
+      r * new Vector3(0.5f, 0, 0),
+      r * new Vector3(-0.5f, 0, 0),
+      r * new Vector3(0, 0, 0.5f),
+      r * new Vector3(0, 0, -0.5f)
+    };
+    Vector3[] points = new Vector3[6] {
+      spherePoints[0] + point1,
+      spherePoints[1] + point1,
+      spherePoints[3] + point1,
+      spherePoints[0] + point2,
+      spherePoints[1] + point2,
+      spherePoints[2] + point2,
+    };
+    Vector3 pointDir = point3 - point1;
+    Debug.DrawLine(points[0], points[0] + pointDir, color, duration, depthTest);
+    Debug.DrawLine(points[1], points[1] + pointDir, color, duration, depthTest);
+    Debug.DrawLine(points[2], points[2] + pointDir, color, duration, depthTest);
+    Debug.DrawLine(points[3], points[3] + pointDir, color, duration, depthTest);
+    Debug.DrawLine(points[4], points[4] + pointDir, color, duration, depthTest);
+    Debug.DrawLine(points[5], points[5] + pointDir, color, duration, depthTest);
+  }
+
+
+  private static void DrawCapsuleSphere(Vector3 position, float radius, Vector3 direction, Color color, float duration, bool depthTest)
+  {
+    if (radius < 0) radius *= -1;
+    Vector3 up = Vector3.Cross(direction, Vector3.right).normalized;
+    direction = direction.normalized;
+    Quaternion r = Quaternion.LookRotation(direction, up);
+    float x1 = 0;
+    float y1 = radius;
+    for (int i = 1; i < SphereQuarterSegments; i++)
+    {
+      float x2 = radius * Mathf.Sin(((float)i / (SphereQuarterSegments - 1)) * (Mathf.PI / 2));
+      float y2 = Mathf.Sqrt((radius * radius) - (x2 * x2));
+      // Draw XY
+      Vector3 v1 = r * new Vector3(x1, y1, 0);
+      Vector3 v2 = r * new Vector3(x2, y2, 0);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
+      v1 = r * new Vector3(-x1, y1, 0);
+      v2 = r * new Vector3(-x2, y2, 0);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
+      v1 = r * new Vector3(-x1, -y1, 0);
+      v2 = r * new Vector3(-x2, -y2, 0);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
+      v1 = r * new Vector3(x1, -y1, 0);
+      v2 = r * new Vector3(x2, -y2, 0);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
+      // Draw XZ
+      v1 = r * new Vector3(-x1, 0, -y1);
+      v2 = r * new Vector3(-x2, 0, -y2);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
+      v1 = r * new Vector3(x1, 0, -y1);
+      v2 = r * new Vector3(x2, 0, -y2);
+      Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);
+      // // Draw YZ
       v1 = r * new Vector3(0, -x1, -y1);
       v2 = r * new Vector3(0, -x2, -y2);
       Debug.DrawLine(position + v1, position + v2, color, duration, depthTest);

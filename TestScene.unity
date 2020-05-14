@@ -1482,8 +1482,9 @@ MonoBehaviour:
   DoLinecastHit: 0
   DoBoxCast: 0
   DoBoxCastHit: 0
-  DoBoxCastAll: 1
+  DoBoxCastAll: 0
   DoBoxCastAllNonAlloc: 0
+  DoCapsuleCast: 0
 --- !u!1 &1877737866
 GameObject:
   m_ObjectHideFlags: 0
