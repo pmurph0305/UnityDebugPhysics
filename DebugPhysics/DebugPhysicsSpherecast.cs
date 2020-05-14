@@ -7,6 +7,34 @@ using UnityEngine;
 public static partial class DebugPhysics
 {
 
+  private static void DrawSphereCast(Vector3 origin, float radius, Vector3 direction, float maxDistance, bool drawOriginSphere, bool DepthTest, RaycastHit hit)
+  {
+    if (hit.normal == -direction && hit.distance == 0.0f && hit.point == Vector3.zero)
+    {
+      DebugDraw.DrawSphere(origin, radius, direction, HitColor, DrawLineTime, DepthTest);
+      if (DrawHitPoints)
+      {
+        DebugDraw.DrawPoint(origin, HitColor, DrawLineTime, DepthTest);
+      }
+      if (DrawHitNormals)
+      {
+        DebugDraw.DrawLine(origin, origin + hit.normal, HitNormalColor, DrawLineTime, DepthTest);
+      }
+    }
+    else
+    {
+      DebugDraw.DrawSphereCast(origin, radius, direction, maxDistance, HitColor, DrawLineTime, drawOriginSphere, DepthTest, hit);
+      if (DrawHitPoints)
+      {
+        DebugDraw.DrawPoint(hit.point, HitColor, DrawLineTime, DepthTest);
+      }
+      if (DrawHitNormals)
+      {
+        Debug.DrawLine(hit.point, hit.point + hit.normal, HitNormalColor, DrawLineTime, DepthTest);
+      }
+    }
+  }
+
   public static RaycastHit[] SphereCastAll(Ray ray, float radius, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
@@ -18,17 +46,8 @@ public static partial class DebugPhysics
       bool drawOriginSphere = true;
       for (int i = 0; i < hits.Length; i++)
       {
-        // but don't draw other origin spheres, just where they hit.
-        DebugDraw.DrawSphereCast(origin, radius, ray.direction, maxDistance, HitColor, DrawLineTime, drawOriginSphere, DepthTest, hits[i]);
-        if (DrawHitPoints)
-        {
-          DebugDraw.DrawPoint(hits[i].point, HitColor, DrawLineTime, DepthTest);
-        }
-        if (DrawHitNormals)
-        {
-          Debug.DrawLine(hits[i].point, hits[i].point + hits[i].normal, HitNormalColor, DrawLineTime, DepthTest);
-        }
-        origin = hits[i].point + hits[i].normal * radius;
+        DrawSphereCast(origin, radius, ray.direction, maxDistance, drawOriginSphere, DepthTest, hits[i]);
+        origin = (hits[i].normal == -ray.direction) ? origin : hits[i].point + hits[i].normal * radius;
         drawOriginSphere = false;
       }
       if (Vector3.Distance(ray.origin, origin) < maxDistance)
@@ -56,16 +75,8 @@ public static partial class DebugPhysics
       bool drawOriginSphere = true;
       for (int i = 0; i < val; i++)
       {
-        DebugDraw.DrawSphereCast(origin, radius, ray.direction, maxDistance, HitColor, DrawLineTime, drawOriginSphere, DepthTest, results[i]);
-        if (DrawHitPoints)
-        {
-          DebugDraw.DrawPoint(results[i].point, HitColor, DrawLineTime, DepthTest);
-        }
-        if (DrawHitNormals)
-        {
-          Debug.DrawLine(results[i].point, results[i].point + results[i].normal, HitNormalColor, DrawLineTime, DepthTest);
-        }
-        origin = results[i].point + results[i].normal * radius;
+        DrawSphereCast(origin, radius, ray.direction, maxDistance, drawOriginSphere, DepthTest, results[i]);
+        origin = (results[i].normal == -ray.direction) ? origin : results[i].point + results[i].normal * radius;
         drawOriginSphere = false;
       }
       if (Vector3.Distance(ray.origin, origin) < maxDistance)

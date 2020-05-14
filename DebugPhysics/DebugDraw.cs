@@ -66,13 +66,13 @@ public static class DebugDraw
   public static void DrawBoxLinesBetween(Vector3 start, Vector3 end, Vector3 halfExtents, Vector3 direction, Quaternion orientation, Color color, float duration, bool depthTest)
   {
     Vector3[] points = new Vector3[] {
-      orientation * (halfExtents) + start,
-      orientation * (new Vector3(- halfExtents.x, - halfExtents.y,  + halfExtents.z)) + start,
-      orientation * (new Vector3( - halfExtents.x,  + halfExtents.y,  + halfExtents.z)) + start,
-      orientation * (new Vector3( + halfExtents.x,  - halfExtents.y,  + halfExtents.z)) + start,
-      orientation * (new Vector3( + halfExtents.x,  + halfExtents.y,  - halfExtents.z)) + end,
-      orientation * (new Vector3( + halfExtents.x,  - halfExtents.y,  - halfExtents.z)) + end,
-      orientation * (new Vector3( - halfExtents.x,  + halfExtents.y,  - halfExtents.z)) + end,
+      orientation * (new Vector3(halfExtents.x, halfExtents.y, 0)) + start,
+      orientation * (new Vector3(-halfExtents.x, -halfExtents.y, 0)) + start,
+      orientation * (new Vector3(-halfExtents.x, +halfExtents.y, 0)) + start,
+      orientation * (new Vector3(+halfExtents.x, -halfExtents.y, 0)) + start,
+      orientation * (new Vector3(+halfExtents.x, +halfExtents.y, -halfExtents.z)) + end,
+      orientation * (new Vector3(+halfExtents.x, -halfExtents.y, -halfExtents.z)) + end,
+      orientation * (new Vector3(-halfExtents.x, +halfExtents.y, -halfExtents.z)) + end,
       orientation * (-halfExtents) + end
     };
     Debug.DrawLine(points[0], points[4], color, duration, depthTest);

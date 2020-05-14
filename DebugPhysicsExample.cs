@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DebugPhysicsExample : MonoBehaviour
 {
+  public Vector3 BoxCastHalfExtents = new Vector3(0.5f, 0.5f, 0.5f);
   public float RayCastLength = 100.0f;
   public float SphereCastRadius = 0.5f;
   public bool DoRaycast = false;
@@ -108,7 +109,7 @@ public class DebugPhysicsExample : MonoBehaviour
 
     if (DoBoxCast)
     {
-      if (DebugPhysics.BoxCast(transform.position, new Vector3(0.5f, 0.5f, 0.5f), transform.forward, transform.rotation, RayCastLength))
+      if (DebugPhysics.BoxCast(transform.position, BoxCastHalfExtents, transform.forward, transform.rotation, RayCastLength))
       {
         // do something
       }
@@ -117,7 +118,7 @@ public class DebugPhysicsExample : MonoBehaviour
     if (DoBoxCastHit)
     {
       RaycastHit hit;
-      if (DebugPhysics.BoxCast(transform.position, new Vector3(0.5f, 0.5f, 0.5f), transform.forward, out hit, transform.rotation, RayCastLength))
+      if (DebugPhysics.BoxCast(transform.position, BoxCastHalfExtents, transform.forward, out hit, transform.rotation, RayCastLength))
       {
         // do something
       }
@@ -125,7 +126,7 @@ public class DebugPhysicsExample : MonoBehaviour
 
     if (DoBoxCastAll)
     {
-      RaycastHit[] hits = DebugPhysics.BoxCastAll(transform.position, new Vector3(0.5f, 0.5f, 0.5f), transform.forward, transform.rotation, RayCastLength);
+      RaycastHit[] hits = DebugPhysics.BoxCastAll(transform.position, BoxCastHalfExtents, transform.forward, transform.rotation, RayCastLength);
       foreach (RaycastHit hit in hits)
       {
         // do something
@@ -135,7 +136,7 @@ public class DebugPhysicsExample : MonoBehaviour
     if (DoBoxCastAllNonAlloc)
     {
       RaycastHit[] hits = new RaycastHit[10];
-      int numHits = DebugPhysics.BoxCastNonAlloc(transform.position, new Vector3(0.5f, 0.5f, 0.5f), transform.forward, hits, transform.rotation, RayCastLength);
+      int numHits = DebugPhysics.BoxCastNonAlloc(transform.position, BoxCastHalfExtents, transform.forward, hits, transform.rotation, RayCastLength);
       foreach (RaycastHit hit in hits)
       {
         // do something
