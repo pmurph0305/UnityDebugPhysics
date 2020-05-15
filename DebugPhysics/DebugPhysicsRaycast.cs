@@ -6,32 +6,51 @@ using UnityEngine;
 
 public static partial class DebugPhysics
 {
+  public static void DrawRaycastHit(Ray ray, RaycastHit hit)
+  {
+    DebugDraw.DrawRaycast(ray.origin, hit.point, HitColor, DrawLineTime, DepthTest);
+    if (DrawHitPoints)
+    {
+      DebugDraw.DrawPoint(hit.point, HitColor, DrawLineTime, DepthTest);
+    }
+    if (DrawHitNormals)
+    {
+      DebugDraw.DrawLine(hit.point, hit.point + hit.normal, HitNormalColor, DrawLineTime, DepthTest);
+    }
+  }
+
+  public static void DrawRaycastHits(Ray ray, RaycastHit[] hits, float maxDistance)
+  {
+    float maxHitDistance = -Mathf.Infinity;
+    for (int i = 0; i < hits.Length; i++)
+    {
+      if (hits[i].transform == null) continue;
+      float distance = Vector3.Distance(ray.origin, hits[i].point);
+      if (distance > maxHitDistance)
+      {
+        maxHitDistance = distance;
+      }
+    }
+    maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
+    if (maxDistance > maxHitDistance)
+    {
+      DebugDraw.DrawRaycast(ray.origin, ray.origin + ray.direction * maxDistance, NoHitColor, DrawLineTime, DepthTest);
+    }
+    for (int i = 0; i < hits.Length; i++)
+    {
+      if (hits[i].transform == null) continue;
+      DrawRaycastHit(ray, hits[i]);
+    }
+  }
+
+
   public static int RaycastNonAlloc(Ray ray, RaycastHit[] results, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
     int val = Physics.RaycastNonAlloc(ray, results, maxDistance, layerMask, queryTriggerInteraction);
     if (val > 0)
     {
-      Vector3 start = ray.origin;
-      for (int i = 0; i < val; i++)
-      {
-        DebugDraw.DrawRaycast(start, results[i].point, HitColor, DrawLineTime, DepthTest);
-        if (DrawHitPoints)
-        {
-          DebugDraw.DrawPoint(results[i].point, HitColor, DrawLineTime, DepthTest);
-        }
-        if (DrawHitNormals)
-        {
-          DebugDraw.DrawLine(results[i].point, results[i].point + results[i].normal, HitNormalColor, DrawLineTime, DepthTest);
-        }
-        start = results[i].point;
-      }
-      if (Vector3.Distance(ray.origin, start) < maxDistance)
-      {
-        maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance; // cap max distance to max draw length
-        maxDistance = maxDistance - Vector3.Distance(ray.origin, start); // subtract already drawn distance.
-        DebugDraw.DrawRaycast(start, start + ray.direction * maxDistance, NoHitColor, DrawLineTime, DepthTest);
-      }
+      DrawRaycastHits(ray, results, maxDistance);
     }
     else
     {
@@ -64,16 +83,7 @@ public static partial class DebugPhysics
   {
     if (Physics.Raycast(ray, out hitInfo, maxDistance, layerMask, queryTriggerInteraction))
     {
-      maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
-      DebugDraw.DrawRaycast(ray.origin, hitInfo.point, HitColor, DrawLineTime, DepthTest);
-      if (DrawHitPoints)
-      {
-        DebugDraw.DrawPoint(hitInfo.point, HitColor, DrawLineTime, DepthTest);
-      }
-      if (DrawHitNormals)
-      {
-        DebugDraw.DrawLine(hitInfo.point, hitInfo.point + hitInfo.normal, HitNormalColor, DrawLineTime, DepthTest);
-      }
+      DrawRaycastHit(ray, hitInfo);
       return true;
     }
     else
@@ -90,18 +100,7 @@ public static partial class DebugPhysics
     RaycastHit[] hits = Physics.RaycastAll(ray, maxDistance, layerMask, queryTriggerInteraction);
     if (hits.Length > 0)
     {
-      Vector3 start = ray.origin;
-      foreach (RaycastHit hit in hits)
-      {
-        DebugDraw.DrawRaycast(start, hit.point, HitColor, DrawLineTime, DepthTest);
-        start = hit.point;
-      }
-      if (Vector3.Distance(ray.origin, start) < maxDistance)
-      {
-        maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance; // cap max distance to max draw length
-        maxDistance = maxDistance - Vector3.Distance(ray.origin, start); // subtract already drawn distance.
-        DebugDraw.DrawRaycast(start, start + ray.direction * maxDistance, NoHitColor, DrawLineTime, DepthTest);
-      }
+      DrawRaycastHits(ray, hits, maxDistance);
     }
     else
     {
@@ -110,10 +109,6 @@ public static partial class DebugPhysics
     }
     return hits;
   }
-
-
-
-
 
   // Origin + direction casts just do use the ray method as it's easier to just maintain one method.
   public static bool Raycast(Vector3 origin, Vector3 direction, float maxDistance = Mathf.Infinity,

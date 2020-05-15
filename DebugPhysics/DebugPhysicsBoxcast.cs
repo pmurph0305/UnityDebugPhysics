@@ -37,6 +37,31 @@ public static partial class DebugPhysics
     }
   }
 
+  private static void DrawBoxCastHits(Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit[] hits, Quaternion orientation, float maxDistance)
+  {
+    //draw last box first
+    float maxHitDistance = -Mathf.Infinity;
+    for (int i = 0; i < hits.Length; i++)
+    {
+      if (hits[i].transform == null) continue;
+      float endDistance = Vector3.Dot(hits[i].point - center, direction);
+      if (endDistance > maxHitDistance)
+      {
+        maxHitDistance = endDistance;
+      }
+    }
+    maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
+    if (maxDistance + halfExtents.z > maxHitDistance)
+    {
+      DebugDraw.DrawBoxCast((center + direction * maxHitDistance), halfExtents, direction, orientation, maxDistance - maxHitDistance, NoHitColor, DrawLineTime, DepthTest, false);
+    }
+    for (int i = 0; i < hits.Length; i++)
+    {
+      if (hits[i].transform == null) continue;
+      DrawBoxCastHit(center, halfExtents, direction, hits[i], orientation, maxDistance);
+    }
+  }
+
 
   public static int BoxCastNonAlloc(Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit[] results, Quaternion orientation,
     float maxDistance = Mathf.Infinity, int layermask = Physics.DefaultRaycastLayers,
@@ -45,22 +70,7 @@ public static partial class DebugPhysics
     int val = Physics.BoxCastNonAlloc(center, halfExtents, direction, results, orientation, maxDistance, layermask, queryTriggerInteraction);
     if (val > 0)
     {
-      float maxHitDistance = -Mathf.Infinity;
-      for (int i = 0; i < val; i++)
-      {
-        DrawBoxCastHit(center, halfExtents, direction, results[i], orientation, maxDistance);
-        // distance to end
-        float endDistance = Vector3.Dot(results[i].point - center, direction);
-        if (endDistance > maxHitDistance)
-        {
-          maxHitDistance = endDistance;
-        }
-      }
-      maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
-      if (maxDistance + halfExtents.z > maxHitDistance)
-      {
-        DebugDraw.DrawBoxCast((center + direction * maxHitDistance), halfExtents, direction, orientation, maxDistance - maxHitDistance, NoHitColor, DrawLineTime, DepthTest, false);
-      }
+      DrawBoxCastHits(center, halfExtents, direction, results, orientation, maxDistance);
     }
     else
     {
@@ -77,21 +87,7 @@ public static partial class DebugPhysics
     RaycastHit[] hits = Physics.BoxCastAll(center, halfExtents, direction, orientation, maxDistance, layermask, queryTriggerInteraction);
     if (hits.Length > 0)
     {
-      float maxHitDistance = -Mathf.Infinity;
-      for (int i = 0; i < hits.Length; i++)
-      {
-        DrawBoxCastHit(center, halfExtents, direction, hits[i], orientation, maxDistance);
-        float endDistance = Vector3.Dot(hits[i].point - center, direction);
-        if (endDistance > maxHitDistance)
-        {
-          maxHitDistance = endDistance;
-        }
-      }
-      maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
-      if (maxDistance + halfExtents.z > maxHitDistance)
-      {
-        DebugDraw.DrawBoxCast((center + direction * maxHitDistance), halfExtents, direction, orientation, maxDistance - maxHitDistance, NoHitColor, DrawLineTime, DepthTest, false);
-      }
+      DrawBoxCastHits(center, halfExtents, direction, hits, orientation, maxDistance);
     }
     else
     {
@@ -125,15 +121,7 @@ public static partial class DebugPhysics
   {
     if (Physics.BoxCast(center, halfExtents, direction, out hitInfo, orientation, maxDistance, layerMask, queryTriggerInteraction))
     {
-      DebugDraw.DrawBoxCast(center, halfExtents, direction, orientation, HitColor, DrawLineTime, DepthTest, hitInfo);
-      if (DrawHitPoints)
-      {
-        DebugDraw.DrawPoint(hitInfo.point, HitColor, DrawLineTime, DepthTest);
-      }
-      if (DrawHitNormals)
-      {
-        DebugDraw.DrawLine(hitInfo.point, hitInfo.point + hitInfo.normal, HitNormalColor, DrawLineTime, DepthTest);
-      }
+      DrawBoxCastHit(center, halfExtents, direction, hitInfo, orientation, maxDistance);
       return true;
     }
     else

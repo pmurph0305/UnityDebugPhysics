@@ -137,7 +137,7 @@ public static class DebugDraw
     Debug.DrawLine(points[7], points[5], color, duration, depthTest);
   }
 
-  public static void DrawSphereCast(Vector3 origin, float radius, Vector3 direction, float maxDistance, Color color, float duration, bool drawOriginSphere = true, bool depthTest = false, RaycastHit hitInfo = new RaycastHit())
+  public static void DrawSphereCast(Vector3 origin, float radius, Vector3 direction, float maxDistance, Color color, float duration, bool depthTest = false, RaycastHit hitInfo = new RaycastHit())
   {
     Vector3 end = Vector3.zero;
     if (hitInfo.transform != null)
@@ -149,10 +149,7 @@ public static class DebugDraw
       end = origin + direction * maxDistance;
     }
     DebugDraw.DrawSphere(end, radius, direction, color, duration, depthTest);
-    if (drawOriginSphere)
-    {
-      DebugDraw.DrawSphere(origin, radius, direction, color, duration, depthTest);
-    }
+    DebugDraw.DrawSphere(origin, radius, direction, color, duration, depthTest);
     DrawSphereLines(origin, direction, end, radius, color, duration, depthTest);
   }
 
@@ -241,6 +238,7 @@ public static class DebugDraw
   public static void DrawCapsuleCast(Vector3 point1, Vector3 point2,
     float radius, Vector3 direction, Color color, float duration, bool depthTest, RaycastHit hit)
   {
+    if (radius < 0) radius *= -1;
     direction = direction.normalized;
     DrawCapsule(point1, point2, radius, color, duration, depthTest);
     // axis of cylinder
@@ -260,6 +258,7 @@ public static class DebugDraw
     Vector3 endPoint2 = point2 - direction * distance;
     // draw the capsule.
     DrawCapsule(endPoint1, endPoint2, radius, color, duration, depthTest);
+    DrawCapsuleCastLines(point1, point2, endPoint1, endPoint2, radius, color, duration, depthTest);
   }
 
   private static void DrawCapsuleCastLines(Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4,

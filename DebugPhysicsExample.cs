@@ -28,6 +28,8 @@ public class DebugPhysicsExample : MonoBehaviour
   public bool DoCapsuleCast = false;
 
   public bool DoCapsuleCastHit = false;
+  public bool DoCapsuleCastAll = false;
+  public bool DoCapsuleCastNonAlloc = false;
   // Update is called once per frame
   void Update()
   {
@@ -164,6 +166,28 @@ public class DebugPhysicsExample : MonoBehaviour
       if (DebugPhysics.CapsuleCast(transform.position, transform.position + point2, SphereCastRadius, transform.forward, out hit, RayCastLength))
       {
         // do something
+      }
+    }
+
+    if (DoCapsuleCastAll)
+    {
+      RaycastHit[] hits = DebugPhysics.CapsuleCastAll(transform.position, transform.position + point2, SphereCastRadius, transform.forward, RayCastLength);
+      foreach (RaycastHit hit in hits)
+      {
+        // do something
+      }
+    }
+
+    if (DoCapsuleCastNonAlloc)
+    {
+      RaycastHit[] hits = new RaycastHit[10];
+      int numHits = DebugPhysics.CapsuleCastNonAlloc(transform.position, transform.position + point2, SphereCastRadius, transform.forward, hits, RayCastLength);
+      if (numHits > 0)
+      {
+        foreach (RaycastHit hit in hits)
+        {
+          // do something
+        }
       }
     }
   }

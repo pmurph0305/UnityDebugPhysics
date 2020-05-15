@@ -7,7 +7,7 @@ using UnityEngine;
 public static partial class DebugPhysics
 {
 
-  private static void DrawSphereCast(Vector3 origin, float radius, Vector3 direction, float maxDistance, bool drawOriginSphere, bool DepthTest, RaycastHit hit)
+  private static void DrawSphereCastHit(Vector3 origin, float radius, Vector3 direction, float maxDistance, RaycastHit hit)
   {
     if (hit.normal == -direction && hit.distance == 0.0f && hit.point == Vector3.zero)
     {
@@ -23,7 +23,7 @@ public static partial class DebugPhysics
     }
     else
     {
-      DebugDraw.DrawSphereCast(origin, radius, direction, maxDistance, HitColor, DrawLineTime, drawOriginSphere, DepthTest, hit);
+      DebugDraw.DrawSphereCast(origin, radius, direction, maxDistance, HitColor, DrawLineTime, DepthTest, hit);
       if (DrawHitPoints)
       {
         DebugDraw.DrawPoint(hit.point, HitColor, DrawLineTime, DepthTest);
@@ -35,32 +35,42 @@ public static partial class DebugPhysics
     }
   }
 
+  private static void DrawSphereCastHits(Ray ray, float radius, float maxDistance, RaycastHit[] hits)
+  {
+    float maxHitDistance = -Mathf.Infinity;
+    for (int i = 0; i < hits.Length; i++)
+    {
+      if (hits[i].transform == null) continue;
+      float distance = Vector3.Distance(ray.origin, hits[i].point + hits[i].normal * radius);
+      if (distance > maxHitDistance)
+      {
+        maxHitDistance = distance;
+      }
+    }
+    maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
+    if (maxDistance > maxHitDistance)
+    {
+      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, NoHitColor, DrawLineTime);
+    }
+    for (int i = 0; i < hits.Length; i++)
+    {
+      if (hits[i].transform == null) continue;
+      DrawSphereCastHit(ray.origin, radius, ray.direction, maxDistance, hits[i]);
+    }
+  }
+
   public static RaycastHit[] SphereCastAll(Ray ray, float radius, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
     RaycastHit[] hits = Physics.SphereCastAll(ray, radius, maxDistance, layerMask, queryTriggerInteraction);
     if (hits.Length > 0)
     {
-      Vector3 origin = ray.origin;
-      // draw first origin sphere
-      bool drawOriginSphere = true;
-      for (int i = 0; i < hits.Length; i++)
-      {
-        DrawSphereCast(origin, radius, ray.direction, maxDistance, drawOriginSphere, DepthTest, hits[i]);
-        origin = (hits[i].normal == -ray.direction) ? origin : hits[i].point + hits[i].normal * radius;
-        drawOriginSphere = false;
-      }
-      if (Vector3.Distance(ray.origin, origin) < maxDistance)
-      {
-        maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance; // cap max distance to max draw length
-        maxDistance = maxDistance - Vector3.Distance(ray.origin, origin); // subtract already drawn distance.
-        DebugDraw.DrawSphereCast(origin, radius, ray.direction, maxDistance, NoHitColor, DrawLineTime, false, DepthTest);
-      }
+      DrawSphereCastHits(ray, radius, maxDistance, hits);
     }
     else
     {
       maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance; // cap max distance to max draw length
-      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, HitColor, DrawLineTime, true, DepthTest);
+      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, HitColor, DrawLineTime, DepthTest);
     }
     return hits;
   }
@@ -71,25 +81,12 @@ public static partial class DebugPhysics
     int val = Physics.SphereCastNonAlloc(ray, radius, results, maxDistance, layerMask, queryTriggerInteraction);
     if (val > 0) // have hits
     {
-      Vector3 origin = ray.origin;
-      bool drawOriginSphere = true;
-      for (int i = 0; i < val; i++)
-      {
-        DrawSphereCast(origin, radius, ray.direction, maxDistance, drawOriginSphere, DepthTest, results[i]);
-        origin = (results[i].normal == -ray.direction) ? origin : results[i].point + results[i].normal * radius;
-        drawOriginSphere = false;
-      }
-      if (Vector3.Distance(ray.origin, origin) < maxDistance)
-      {
-        maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
-        maxDistance = maxDistance - Vector3.Distance(ray.origin, origin); // subtract already drawn distance.
-        DebugDraw.DrawSphereCast(origin, radius, ray.direction, maxDistance, NoHitColor, DrawLineTime, drawOriginSphere, DepthTest);
-      }
+      DrawSphereCastHits(ray, radius, maxDistance, results);
     }
     else
     {
       maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
-      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, NoHitColor, DrawLineTime, true, DepthTest);
+      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, NoHitColor, DrawLineTime, DepthTest);
     }
     return val;
   }
@@ -100,13 +97,13 @@ public static partial class DebugPhysics
     if (Physics.SphereCast(ray, radius, maxDistance, layerMask, queryTriggerInteraction))
     {
       maxDistance = maxDistance >= MaxDrawLength ? MaxDrawLength : maxDistance;
-      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, HitColor, DrawLineTime, true, DepthTest);
+      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, HitColor, DrawLineTime, DepthTest);
       return true;
     }
     else
     {
       maxDistance = maxDistance >= MaxDrawLength ? MaxDrawLength : maxDistance;
-      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, NoHitColor, DrawLineTime, true, DepthTest);
+      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, NoHitColor, DrawLineTime, DepthTest);
       return false;
     }
   }
@@ -116,22 +113,13 @@ public static partial class DebugPhysics
   {
     if (Physics.SphereCast(ray, radius, out hitInfo, maxDistance, layerMask, queryTriggerInteraction))
     {
-      maxDistance = maxDistance >= MaxDrawLength ? MaxDrawLength : maxDistance;
-      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, HitColor, DrawLineTime, true, DepthTest, hitInfo);
-      if (DrawHitPoints)
-      {
-        DebugDraw.DrawPoint(hitInfo.point, HitColor, DrawLineTime, DepthTest);
-      }
-      if (DrawHitNormals)
-      {
-        Debug.DrawLine(hitInfo.point, hitInfo.point + hitInfo.normal, HitNormalColor, DrawLineTime, DepthTest);
-      }
+      DrawSphereCastHit(ray.origin, radius, ray.direction, maxDistance, hitInfo);
       return true;
     }
     else
     {
       maxDistance = maxDistance >= MaxDrawLength ? MaxDrawLength : maxDistance;
-      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, NoHitColor, DrawLineTime, true, DepthTest, hitInfo);
+      DebugDraw.DrawSphereCast(ray.origin, radius, ray.direction, maxDistance, NoHitColor, DrawLineTime, DepthTest, hitInfo);
       return false;
     }
   }
