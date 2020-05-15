@@ -241,12 +241,25 @@ public static class DebugDraw
   public static void DrawCapsuleCast(Vector3 point1, Vector3 point2,
     float radius, Vector3 direction, Color color, float duration, bool depthTest, RaycastHit hit)
   {
+    direction = direction.normalized;
     DrawCapsule(point1, point2, radius, color, duration, depthTest);
-    Vector3 midPoint = (point1 + point2) / 2;
-    float distance = Vector3.Dot(hit.point - midPoint, direction);
-    DrawPoint(midPoint + direction * distance, Color.red, duration, depthTest);
-    DrawCapsule(point1 + direction * distance, point2 + direction * distance, radius, color, duration, depthTest);
-
+    // axis of cylinder
+    Vector3 dir = (point2 - point1).normalized;
+    // height of cylinder
+    float h = (point2 - point1).magnitude;
+    // point on new axis of cylinder.
+    Vector3 dPoint1 = hit.point + hit.normal * radius + dir * h / 2;
+    // rotation of new axis with axis as forward, so we get a normal vector.
+    Quaternion look = Quaternion.LookRotation(dir, direction);
+    Vector3 axisNormal = look * -Vector3.up;
+    // dot product of from pt -> axis point and normal gives minimum distance / one side of triangle
+    float dotNormal = Vector3.Dot(point1 - dPoint1, axisNormal);
+    // hyp = adjacent / cos0.
+    float distance = dotNormal / Mathf.Cos(Vector3.Angle(direction, axisNormal) * Mathf.Deg2Rad);
+    Vector3 endPoint1 = point1 - direction * distance;
+    Vector3 endPoint2 = point2 - direction * distance;
+    // draw the capsule.
+    DrawCapsule(endPoint1, endPoint2, radius, color, duration, depthTest);
   }
 
   private static void DrawCapsuleCastLines(Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4,

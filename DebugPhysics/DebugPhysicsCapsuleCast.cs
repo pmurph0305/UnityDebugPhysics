@@ -45,7 +45,8 @@ public static partial class DebugPhysics
     }
     else
     {
-
+      maxDistance = maxDistance > MaxDrawLength ? MaxDrawLength : maxDistance;
+      DebugDraw.DrawCapsuleCast(point1, point2, point1 + direction * maxDistance, point2 + direction * maxDistance, radius, NoHitColor, DrawLineTime, DepthTest);
     }
     return false;
   }

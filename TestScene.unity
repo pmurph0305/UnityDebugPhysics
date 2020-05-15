@@ -1468,7 +1468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BoxCastHalfExtents: {x: 0.1, y: 0.1, z: 0.1}
-  RayCastLength: 100
+  RayCastLength: 10
   SphereCastRadius: 0.5
   DoRaycast: 0
   DoRaycastHit: 0
@@ -1485,6 +1485,8 @@ MonoBehaviour:
   DoBoxCastAll: 0
   DoBoxCastAllNonAlloc: 0
   DoCapsuleCast: 0
+  DoCapsuleCastHit: 1
+  point2: {x: 0, y: 1, z: 0}
 --- !u!1 &1877737866
 GameObject:
   m_ObjectHideFlags: 0
