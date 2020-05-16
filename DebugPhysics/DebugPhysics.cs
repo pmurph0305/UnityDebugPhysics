@@ -4,19 +4,12 @@ using UnityEngine;
 
 public static partial class DebugPhysics
 {
-  // DONE
-  // Raycasts
-  // Spherecasts
-
   // TODO:
-  // BoxCast
-  // CapsuleCast
-  // LineCast
-
   // Compute Penetration
   // OverlapSphere
   // OverlapBox
   // OverlapCapsule
+  // Draw overlap colliders?
 
   // DebugRigidbody
   // since things are appled with a rigidbody instance
@@ -24,9 +17,6 @@ public static partial class DebugPhysics
   // would need to make it work with find and replace
   // ie rigidbody.AddForce => DebugRigidbody.AddForce(rigidbody rb.. etc)
   // or DebugPhysics.AddForce(rigidbody rb etc...)
-
-
-
 
   public static Color HitColor = Color.green;
   public static Color NoHitColor = Color.red;
