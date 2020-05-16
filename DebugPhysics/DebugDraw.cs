@@ -111,7 +111,7 @@ public static class DebugDraw
     Debug.DrawLine(points[3], points[5], color, duration, depthTest);
   }
 
-  private static void DrawBox(Vector3 center, Vector3 halfExtents, Quaternion orientation, Color color, float duration, bool depthTest)
+  public static void DrawBox(Vector3 center, Vector3 halfExtents, Quaternion orientation, Color color, float duration, bool depthTest)
   {
     Vector3[] points = new Vector3[8] {
       orientation * (- halfExtents) + center,
