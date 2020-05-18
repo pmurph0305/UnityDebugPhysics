@@ -8,13 +8,13 @@ public static partial class DebugPhysics
   // BoxCast, BoxCastAll, BoxCastNonAlloc (done)
   // CapsuleCast, CapsuleCastAll, CapsuleCastNonAlloc (done)
   // CheckBox, CheckCapsule, CheckSphere (done)
-  // ClosestPoint
-  // Compute Penetration
+  // ClosestPoint (done)
+  // Compute Penetration (done)
   // GetIgnoreCollisionLayer
   // IgnoreCollision
   // IgnoreLayerCollision
   // LineCast (done)
-  // OverlapBox, OverlapBoxNonAlloc, OverlapCapsule, OverlapCapsuleNonAlloc, OverlapSphere, OverlapSphereNonAlloc,
+  // OverlapBox, OverlapBoxNonAlloc, OverlapCapsule, OverlapCapsuleNonAlloc, OverlapSphere, OverlapSphereNonAlloc (done, except draw mesh collider)
   // Raycast, RaycastAll, RaycastNonAlloc (done)
   // Simulate
   // SphereCast, SphereCastAll, SphereCastNonAlloc (done)
@@ -27,11 +27,31 @@ public static partial class DebugPhysics
   // ie rigidbody.AddForce => DebugRigidbody.AddForce(rigidbody rb.. etc)
   // or DebugPhysics.AddForce(rigidbody rb etc...)
 
+  /// <summary>
+  /// Color to draw with when the result is a hit, overlap, check is true, or collision is not ignored
+  /// Also used to draw any relevant points like hit.point and closest point.
+  /// </summary>
   public static Color HitColor = Color.green;
+
+  /// <summary>
+  /// Color to draw with when the result is not a hit, overlap, check is false, or collision is ignored
+  /// </summary>
   public static Color NoHitColor = Color.red;
+
+  /// <summary>
+  /// Color of lines to use to draw raycast hit normals
+  /// </summary>
   public static Color HitNormalColor = Color.cyan;
 
+  /// <summary>
+  /// Color of colliders to draw overlapped colliders with
+  /// </summary>
+  public static Color OverlapColor = Color.blue;
+
   private static float drawLineTime = 0.0001f;
+  /// <summary>
+  /// Length of time to do all drawing
+  /// </summary>
   public static float DrawLineTime
   {
     get
@@ -52,7 +72,11 @@ public static partial class DebugPhysics
     }
   }
 
+
   private static float maxDrawLength = 1000f;
+  /// <summary>
+  /// Maximum length to draw raycasts
+  /// </summary>
   public static float MaxDrawLength
   {
     get { return maxDrawLength; }
@@ -70,8 +94,39 @@ public static partial class DebugPhysics
     }
   }
 
+
+  /// <summary>
+  /// Draw the results with a depth test?
+  /// </summary>
   public static bool DepthTest = false;
+
+  /// <summary>
+  /// Draw the hit points of raycast hits?
+  /// </summary>
   public static bool DrawHitPoints = true;
+
+  /// <summary>
+  /// Draw the normals of raycast hits?
+  /// </summary>
   public static bool DrawHitNormals = true;
-  public static bool DrawOverlappedColliders = true;
+
+  /// <summary>
+  /// Draw the Colliders that are overlapping?
+  /// </summary>
+  public static bool DrawOverlapColliders = true;
+
+  /// <summary>
+  /// Draw the colliders when using ComputePenetration
+  /// </summary>
+  public static bool DrawPenetrationColliders = true;
+
+  /// <summary>
+  /// Draw the collider that you want to find the closest point on?
+  /// </summary>
+  public static bool DrawClosestPointCollider = true;
+
+  /// <summary>
+  /// Duration to draw colliders for IgnoreCollision
+  /// </summary>
+  public static float IgnoreCollisionDrawTime = 5f;
 }

@@ -42,6 +42,8 @@ public class DebugPhysicsExample : MonoBehaviour
   public bool DoCapsuleOverlapNonAlloc = false;
   public bool DoSphereOverlap = false;
   public bool DoSphereOverlapNonAlloc = false;
+
+  public bool ComputePenetration = false;
   // Update is called once per frame
   void Update()
   {
@@ -282,7 +284,16 @@ public class DebugPhysicsExample : MonoBehaviour
         // do something
       }
     }
+    if (ComputePenetration)
+    {
+      Vector3 penetrateDirection = Vector3.zero;
+      float penetrateDistance = 0.0f;
+      if (DebugPhysics.ComputePenetration(GetComponent<Collider>(), transform.position + point2, transform.rotation, penetrate, penetrate.transform.position, penetrate.transform.rotation, out penetrateDirection, out penetrateDistance))
+      {
+        // do something
+      }
+    }
   }
-
+  public Collider penetrate;
   public Vector3 point2 = Vector3.up;
 }

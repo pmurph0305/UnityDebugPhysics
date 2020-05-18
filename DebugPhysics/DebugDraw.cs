@@ -219,7 +219,6 @@ public static class DebugDraw
     }
   }
 
-
   public static void DrawCapsule(Vector3 point1, Vector3 point2, float radius, Color color, float duration, bool depthTest)
   {
     DrawSphereLines(point1, point2 - point1, point2, radius, color, duration, depthTest);
@@ -291,7 +290,6 @@ public static class DebugDraw
     Debug.DrawLine(points[5], points[5] + pointDir, color, duration, depthTest);
   }
 
-
   private static void DrawCapsuleSphere(Vector3 position, float radius, Vector3 direction, Color color, float duration, bool depthTest)
   {
     if (radius < 0) radius *= -1;
@@ -334,5 +332,167 @@ public static class DebugDraw
       x1 = x2;
       y1 = y2;
     }
+  }
+
+  public static void DrawColliderAtPositionAndRotation(Collider colliderA, Vector3 positionA, Quaternion rotationA, Color color, float duration, bool depthTest)
+  {
+    BoxCollider box = colliderA as BoxCollider;
+    if (box != null)
+    {
+      Vector3 size = box.size;
+      size.x *= box.transform.lossyScale.x;
+      size.y *= box.transform.lossyScale.y;
+      size.z *= box.transform.lossyScale.z;
+      DebugDraw.DrawBox(positionA, size / 2, rotationA, color, duration, depthTest);
+      return;
+    }
+    SphereCollider sphere = colliderA as SphereCollider;
+    if (sphere != null)
+    {
+      float r = sphere.radius;
+      Vector3 scale = sphere.transform.lossyScale;
+      if (scale.x > scale.y && scale.x > scale.z)
+      {
+        r *= scale.x;
+      }
+      else if (scale.y > scale.x && scale.y > scale.z)
+      {
+        r *= scale.y;
+      }
+      else
+      {
+        r *= scale.z;
+      }
+      DebugDraw.DrawSphere(positionA, r, colliderA.transform.position - positionA, color, duration, depthTest);
+    }
+    CapsuleCollider cap = colliderA as CapsuleCollider;
+    if (cap != null)
+    {
+      Vector3 point1, point2 = point1 = cap.center;
+      float heightToAdd = cap.height / 2 - cap.radius;
+      Vector3 scale = cap.transform.lossyScale;
+      float r = cap.radius;
+      if (scale.x >= scale.y && scale.x >= scale.z)
+      {
+        r *= scale.x;
+      }
+      else if (scale.y >= scale.x && scale.y >= scale.z)
+      {
+        r *= scale.y;
+      }
+      else
+      {
+        r *= scale.z;
+      }
+      if (cap.direction == 0)
+      {
+        point1.x += heightToAdd * scale.x;
+        point2.x -= heightToAdd * scale.x;
+      }
+      else if (cap.direction == 1)
+      {
+        point1.y += heightToAdd * scale.y;
+        point2.y -= heightToAdd * scale.y;
+      }
+      else
+      {
+        point1.z += heightToAdd * scale.z;
+        point2.z -= heightToAdd * scale.z;
+      }
+      point1 = rotationA * point1;
+      point2 = rotationA * point2;
+      DebugDraw.DrawCapsule(point1 + positionA, point2 + positionA, r, color, duration, depthTest);
+    }
+  }
+
+  public static void DrawColliders(Collider[] colliders, Color color, float duration, bool depthTest)
+  {
+    foreach (Collider col in colliders)
+    {
+      DrawCollider(col, color, duration, depthTest);
+    }
+
+  }
+
+  public static void DrawCollider(Collider col, Color color, float duration, bool depthTest)
+  {
+    if (col == null) return;
+    BoxCollider box = col as BoxCollider;
+    if (box != null) { DrawBoxCollider(box, color, duration, depthTest); return; }
+    CapsuleCollider cap = col as CapsuleCollider;
+    if (cap != null) { DrawCapsuleCollider(cap, color, duration, depthTest); return; }
+    SphereCollider sphere = col as SphereCollider;
+    if (sphere != null) { DrawSphereCollider(sphere, color, duration, depthTest); return; }
+    MeshCollider mc = col as MeshCollider;
+    if (mc != null) { DrawMeshCollider(mc, color); }
+  }
+
+  public static void DrawBoxCollider(BoxCollider col, Color color, float duration, bool depthTest)
+  {
+    Vector3 size = col.size;
+    size.x *= col.transform.lossyScale.x;
+    size.y *= col.transform.lossyScale.y;
+    size.z *= col.transform.lossyScale.z;
+    DebugDraw.DrawBox(col.transform.TransformPoint(col.center), size / 2, col.transform.rotation, color, duration, depthTest);
+  }
+  public static void DrawSphereCollider(SphereCollider col, Color color, float duration, bool depthTest)
+  {
+    float r = col.radius;
+    Vector3 scale = col.transform.lossyScale;
+    if (scale.x > scale.y && scale.x > scale.z)
+    {
+      r *= scale.x;
+    }
+    else if (scale.y > scale.x && scale.y > scale.z)
+    {
+      r *= scale.y;
+    }
+    else
+    {
+      r *= scale.z;
+    }
+    DebugDraw.DrawSphere(col.transform.TransformPoint(col.center), r, col.transform.forward, color, duration, depthTest);
+  }
+  public static void DrawCapsuleCollider(CapsuleCollider col, Color color, float duration, bool depthTest)
+  {
+    Vector3 point1, point2 = point1 = col.center;
+    float r = col.radius;
+    Vector3 scale = col.transform.lossyScale;
+    float heightToAdd = col.height / 2 - col.radius;
+    if (scale.x >= scale.y && scale.x >= scale.z)
+    {
+      r *= scale.x;
+    }
+    else if (scale.y >= scale.x && scale.y >= scale.z)
+    {
+      r *= scale.y;
+    }
+    else
+    {
+      r *= scale.z;
+    }
+    if (col.direction == 0)
+    {
+      point1.x += heightToAdd;
+      point2.x -= heightToAdd;
+    }
+    else if (col.direction == 1)
+    {
+      point1.y += heightToAdd;
+      point2.y -= heightToAdd;
+    }
+    else
+    {
+      point1.z += heightToAdd;
+      point2.z -= heightToAdd;
+    }
+    point1 = col.transform.TransformVector(point1);
+    point2 = col.transform.TransformVector(point2);
+    DebugDraw.DrawCapsule(point1 + col.transform.position, point2 + col.transform.position, r, color, duration, depthTest);
+  }
+
+  public static void DrawMeshCollider(MeshCollider col, Color color)
+  {
+    throw new System.NotImplementedException("Draw Mesh Collider not implemented.");
   }
 }
