@@ -19,6 +19,8 @@ public static partial class DebugPhysics
   // Simulate
   // SphereCast, SphereCastAll, SphereCastNonAlloc (done)
 
+  //TODO:
+  // create documentation using unity's documentation.
 
   // DebugRigidbody
   // since things are appled with a rigidbody instance

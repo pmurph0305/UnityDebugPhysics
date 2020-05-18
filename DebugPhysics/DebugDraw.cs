@@ -5,9 +5,16 @@ using UnityEngine;
 public static class DebugDraw
 {
   public static float DefaultVectorArrowScale = 0.1f;
+
+  /// <summary>
+  /// Scale to use to draw points.
+  /// </summary>
   public static float DefaultPointScale = 0.05f;
 
   private static int sphereQuarterSegments = 8;
+  /// <summary>
+  /// Number of line sections to use per quarter sphere. Must be >= 2.
+  /// </summary>
   public static int SphereQuarterSegments
   {
     get
@@ -28,25 +35,50 @@ public static class DebugDraw
     }
   }
 
-  public static void DrawPoint(Vector3 point, Color color, float time, bool depthTest = false)
+  /// <summary>
+  /// Draws a point using lines aligned with the world-space axis'
+  /// </summary>
+  /// <param name="point">Location in world space to draw the point</param>
+  /// <param name="color">Color to draw point</param>
+  /// <param name="duration">	How long the point should be visible for.</param>
+  /// <param name="depthTest">	Should the line be obscured by objects closer to the camera?</param>
+  public static void DrawPoint(Vector3 point, Color color, float duration, bool depthTest = false)
   {
-    Debug.DrawLine(point - Vector3.up * DefaultPointScale, point + Vector3.up * DefaultPointScale, color, time, depthTest);
-    Debug.DrawLine(point - Vector3.left * DefaultPointScale, point + Vector3.left * DefaultPointScale, color, time, depthTest);
-    Debug.DrawLine(point - Vector3.forward * DefaultPointScale, point + Vector3.forward * DefaultPointScale, color, time, depthTest);
+    Debug.DrawLine(point - Vector3.up * DefaultPointScale, point + Vector3.up * DefaultPointScale, color, duration, depthTest);
+    Debug.DrawLine(point - Vector3.left * DefaultPointScale, point + Vector3.left * DefaultPointScale, color, duration, depthTest);
+    Debug.DrawLine(point - Vector3.forward * DefaultPointScale, point + Vector3.forward * DefaultPointScale, color, duration, depthTest);
   }
 
-  public static void DrawLine(Vector3 start, Vector3 end, Color color, float time, bool depthTest = false)
+  /// <summary>
+  /// Draws a line between start and end points.
+  /// </summary>
+  /// <param name="start">Point in world space where the line should start</param>
+  /// <param name="end">Point in world space where the line should end.</param>
+  /// <param name="color">Color of the line.</param>
+  /// <param name="time">How long the line should be visible for.</param>
+  /// <param name="depthTest">Should the line be obscured by objects closer to the camera?</param>
+  public static void DrawLine(Vector3 start, Vector3 end, Color color, float duration, bool depthTest = false)
   {
-    Debug.DrawLine(start, end, color, time, depthTest);
+    Debug.DrawLine(start, end, color, duration, depthTest);
   }
 
+  /// <summary>
+  /// Draws a raycast using a line between start and end poitns.
+  /// </summary>
+  /// <param name="start">Point in world space where the line should start</param>
+  /// <param name="end">Point in world space where the line should end.</param>
+  /// <param name="color">Color of the line.</param>
+  /// <param name="duration">How long the line should be visible for.</param>
+  /// <param name="depthTest">Should the line be obscured by objects closer to the camera?</param>
   public static void DrawRaycast(Vector3 start, Vector3 end, Color color, float duration, bool depthTest = false)
   {
     Debug.DrawLine(start, end, color, duration, depthTest);
   }
 
+
   public static void DrawVector(Vector3 start, Vector3 end, Color color, float duration, float scale)
   {
+    throw new System.NotImplementedException();
     Vector3 direction = (end - start).normalized;
     Vector3 right = Vector3.zero;
     Vector3 up = Vector3.zero;
@@ -70,6 +102,18 @@ public static class DebugDraw
     Debug.DrawLine(end, end - direction - right, color, duration);
   }
 
+  /// <summary>
+  /// Draws a single boxcast from center to direction using raycasthit data.
+  /// </summary>
+  /// <param name="center">Center of the box</param>
+  /// <param name="halfExtents">Half the size of the box in each dimension</param>
+  /// <param name="direction">Direction in which the box was cast</param>
+  /// <param name="orientation">Rotation of the box</param>
+  /// <param name="color">Color to draw the boxcast with</param>
+  /// <param name="duration">Length of time to draw the boxcast</param>
+  /// <param name="depthTest">Should the drawing be obscured by objects in the scene?</param>
+  /// <param name="hit">Hit data of the boxcast</param>
+  /// <param name="drawOrigin">Should a box be drawn at center?</param>
   public static void DrawBoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction,
     Quaternion orientation, Color color, float duration, bool depthTest, RaycastHit hit, bool drawOrigin = true)
   {
@@ -80,6 +124,18 @@ public static class DebugDraw
     DrawBoxCast(center, halfExtents, direction, orientation, Vector3.Distance(center, end), color, duration, depthTest, drawOrigin);
   }
 
+  /// <summary>
+  /// Draws a single boxcast from center to center + direction * distance.
+  /// </summary>
+  /// <param name="center">Center of the box</param>
+  /// <param name="halfExtents">Half the size of the box in each dimension</param>
+  /// <param name="direction">Direction in which the box was cast</param>
+  /// <param name="orientation">Rotation of the box</param>
+  /// <param name="distance">Distance of the boxcast</param>
+  /// <param name="color">Color to draw the boxcast with</param>
+  /// <param name="duration">Length of time to draw the boxcast</param>
+  /// <param name="depthTest">Should the drawing be obscured by objects in the scene?</param>
+  /// <param name="drawOrigin">Should a box be drawn at center?</param>
   public static void DrawBoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction,
     Quaternion orientation, float distance, Color color, float duration, bool depthTest, bool drawOrigin = true)
   {
@@ -93,7 +149,18 @@ public static class DebugDraw
     DrawBox(end, halfExtents, orientation, color, duration, depthTest);
   }
 
-  public static void DrawBoxLinesBetween(Vector3 start, Vector3 end, Vector3 halfExtents, Vector3 direction, Quaternion orientation, Color color, float duration, bool depthTest)
+  /// <summary>
+  /// Draws the lines between the leading corners of the box at start, and the trailing cornerns of the box at end.
+  /// </summary>
+  /// <param name="start">Center of the box at the start</param>
+  /// <param name="end">Center of the box at the end</param>
+  /// <param name="halfExtents">Half the size of the box in each dimension</param>
+  /// <param name="direction">Direction in which the box was cast</param>
+  /// <param name="orientation">Rotation of the box</param>
+  /// <param name="color">Color to draw the boxcast with</param>
+  /// <param name="duration">Length of time to draw the boxcast</param>
+  /// <param name="depthTest">Should the drawing be obscured by objects in the scene?</param>
+  private static void DrawBoxLinesBetween(Vector3 start, Vector3 end, Vector3 halfExtents, Vector3 direction, Quaternion orientation, Color color, float duration, bool depthTest)
   {
     Vector3[] points = new Vector3[] {
       orientation * (new Vector3(halfExtents.x, halfExtents.y, 0)) + start,
@@ -111,6 +178,15 @@ public static class DebugDraw
     Debug.DrawLine(points[3], points[5], color, duration, depthTest);
   }
 
+  /// <summary>
+  /// Draws a box at a position
+  /// </summary>
+  /// <param name="center">Center of the box</param>
+  /// <param name="halfExtents">Half the size of the box in each dimension</param>
+  /// <param name="orientation">Rotation of the box</param>
+  /// <param name="color">Color to draw the box with</param>
+  /// <param name="duration">Length of time to draw the box for</param>
+  /// <param name="depthTest">Should the box be obscured by objects in the scene?</param>
   public static void DrawBox(Vector3 center, Vector3 halfExtents, Quaternion orientation, Color color, float duration, bool depthTest)
   {
     Vector3[] points = new Vector3[8] {
@@ -137,6 +213,17 @@ public static class DebugDraw
     Debug.DrawLine(points[7], points[5], color, duration, depthTest);
   }
 
+  /// <summary>
+  /// Draws a spherecast using raycasthit data.
+  /// </summary>
+  /// <param name="origin">Start of the spherecast</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="direction">Direction of the spherecast</param>
+  /// <param name="maxDistance">Distance of the spherecast</param>
+  /// <param name="color">Color to draw the spherecast</param>
+  /// <param name="duration">Length of time to draw the spherecast</param>
+  /// <param name="depthTest">Should the drawing be obscured by objects in the scene?</param>
+  /// <param name="hitInfo">Spherecast's raycasthit data</param>
   public static void DrawSphereCast(Vector3 origin, float radius, Vector3 direction, float maxDistance, Color color, float duration, bool depthTest = false, RaycastHit hitInfo = new RaycastHit())
   {
     Vector3 end = Vector3.zero;
@@ -153,6 +240,16 @@ public static class DebugDraw
     DrawSphereLines(origin, direction, end, radius, color, duration, depthTest);
   }
 
+  /// <summary>
+  /// Draws the lines from the origin spheres up/down/left/right to the end spheres up/down/left/right
+  /// </summary>
+  /// <param name="origin">World space start of the spherecast</param>
+  /// <param name="direction">World space direction of the spherecast</param>
+  /// <param name="end">World space end of the spherecast</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="color">Color to draw the sphere with</param>
+  /// <param name="duration">Length of time to draw the sphere</param>
+  /// <param name="depthTest">Should the sphere be obscured by objects in the scene?</param>
   private static void DrawSphereLines(Vector3 origin, Vector3 direction, Vector3 end, float radius, Color color, float duration, bool depthTest)
   {
     Vector3 up = Vector3.Cross(direction, Vector3.right).normalized;
@@ -163,6 +260,15 @@ public static class DebugDraw
     Debug.DrawLine(origin - right * radius, end - right * radius, color, duration, depthTest);
   }
 
+  /// <summary>
+  /// Draws a sphere at a world position
+  /// </summary>
+  /// <param name="position">World space position of the sphere</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="direction">World space direction of the sphere's forward</param>
+  /// <param name="color">Color to draw the sphere with</param>
+  /// <param name="duration">Length of time to draw the sphere</param>
+  /// <param name="depthTest">Should the sphere be obscured by objects in the scene?</param>
   public static void DrawSphere(Vector3 position, float radius, Vector3 direction, Color color, float duration, bool depthTest)
   {
     if (radius < 0) radius *= -1;
@@ -226,6 +332,17 @@ public static class DebugDraw
     DrawCapsuleSphere(point2, radius, point1 - point2, color, duration, depthTest);
   }
 
+  /// <summary>
+  /// Draws a capsule cast
+  /// </summary>
+  /// <param name="point1">The center of the sphere at the start of the start capsule.</param>
+  /// <param name="point2">The center of the sphere at the end of the start capsule.</param>
+  /// <param name="point3">The center of the sphere at the start of the end capsule.</param>
+  /// <param name="point4">The center of the sphere at the end of the end capsule.</param>
+  /// <param name="radius">The radius of the capsule.</param>
+  /// <param name="color">The color to draw the capsule with</param>
+  /// <param name="duration">The length of time to draw the capsule</param>
+  /// <param name="depthTest">Should the capsule be obscured by objects in the scene</param>
   public static void DrawCapsuleCast(Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4,
     float radius, Color color, float duration, bool depthTest)
   {
@@ -234,6 +351,17 @@ public static class DebugDraw
     DrawCapsuleCastLines(point1, point2, point3, point4, radius, color, duration, depthTest);
   }
 
+  /// <summary>
+  /// Draws a single capsule cast in a direction using raycasthit data
+  /// </summary>
+  /// <param name="point1">The center of the sphere at the start of the capsule.</param>
+  /// <param name="point2">The center of the sphere at the end of the capsule.</param>
+  /// <param name="radius">Radius of the capsule</param>
+  /// <param name="direction">Direction of the capsule cast</param>
+  /// <param name="color">The color to draw the capsule with</param>
+  /// <param name="duration">The length of time to draw the capsule</param>
+  /// <param name="depthTest">Should the capsule be obscured by objects in the scene</param>
+  /// <param name="hit">Raycasthit data of the capsule cast</param>
   public static void DrawCapsuleCast(Vector3 point1, Vector3 point2,
     float radius, Vector3 direction, Color color, float duration, bool depthTest, RaycastHit hit)
   {
@@ -260,6 +388,17 @@ public static class DebugDraw
     DrawCapsuleCastLines(point1, point2, endPoint1, endPoint2, radius, color, duration, depthTest);
   }
 
+  /// <summary>
+  /// Draws the lines between the start capsules top and bottom sphere, and the end capsules top and bottom spheres
+  /// </summary>
+  /// <param name="point1">The center of the sphere at the start of the start capsule.</param>
+  /// <param name="point2">The center of the sphere at the end of the start capsule.</param>
+  /// <param name="point3">The center of the sphere at the start of the end capsule.</param>
+  /// <param name="point4">The center of the sphere at the end of the end capsule.</param>
+  /// <param name="radius">The radius of the capsule.</param>
+  /// <param name="color">The color to draw the capsule with</param>
+  /// <param name="duration">The length of time to draw the capsule</param>
+  /// <param name="depthTest">Should the capsule be obscured by objects in the scene</param>
   private static void DrawCapsuleCastLines(Vector3 point1, Vector3 point2, Vector3 point3, Vector3 point4,
     float radius, Color color, float duration, bool depthTest)
   {
@@ -290,6 +429,15 @@ public static class DebugDraw
     Debug.DrawLine(points[5], points[5] + pointDir, color, duration, depthTest);
   }
 
+  /// <summary>
+  /// Draws the lines of the sphereical portion of a capsule
+  /// </summary>
+  /// <param name="position">Position of the sphere</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="direction">Sphere's forward direction</param>
+  /// <param name="color">Color of the sphere</param>
+  /// <param name="duration">Length of time to draw the sphere</param>
+  /// <param name="depthTest">Should the sphere be obscured by objects in the scene</param>
   private static void DrawCapsuleSphere(Vector3 position, float radius, Vector3 direction, Color color, float duration, bool depthTest)
   {
     if (radius < 0) radius *= -1;
@@ -334,6 +482,15 @@ public static class DebugDraw
     }
   }
 
+  /// <summary>
+  /// Draws a collider at a position with a rotation
+  /// </summary>
+  /// <param name="colliderA">Collider to draw</param>
+  /// <param name="positionA">Worldspace position to draw collider at</param>
+  /// <param name="rotationA">Rotation of collider</param>
+  /// <param name="color">Color to draw with</param>
+  /// <param name="duration">Length of time to draw the collider</param>
+  /// <param name="depthTest">Should the collider be obscured by objects in the scene?</param>
   public static void DrawColliderAtPositionAndRotation(Collider colliderA, Vector3 positionA, Quaternion rotationA, Color color, float duration, bool depthTest)
   {
     BoxCollider box = colliderA as BoxCollider;
@@ -405,6 +562,13 @@ public static class DebugDraw
     }
   }
 
+  /// <summary>
+  /// Draws all the colliders in colliders using each collider's properties and transform.
+  /// </summary>
+  /// <param name="colliders">Array of colliders to draw</param>
+  /// <param name="color">Color to draw all the colliders with</param>
+  /// <param name="duration">Length of time to draw all the colliders</param>
+  /// <param name="depthTest">Should the drawn colliders be obscured by the camera?</param>
   public static void DrawColliders(Collider[] colliders, Color color, float duration, bool depthTest)
   {
     foreach (Collider col in colliders)
@@ -414,6 +578,13 @@ public static class DebugDraw
 
   }
 
+  /// <summary>
+  /// Draws a single collider
+  /// </summary>
+  /// <param name="col">Collider to draw</param>
+  /// <param name="color">Color to draw the collider with</param>
+  /// <param name="duration">Length of time to draw the collider</param>
+  /// <param name="depthTest">Should the drawn collider be obscured by the camera?</param>
   public static void DrawCollider(Collider col, Color color, float duration, bool depthTest)
   {
     if (col == null) return;
@@ -424,10 +595,18 @@ public static class DebugDraw
     SphereCollider sphere = col as SphereCollider;
     if (sphere != null) { DrawSphereCollider(sphere, color, duration, depthTest); return; }
     MeshCollider mc = col as MeshCollider;
-    if (mc != null) { DrawMeshCollider(mc, color); }
+    if (mc != null) { DrawMeshCollider(mc, color, duration, depthTest); }
   }
 
-  public static void DrawBoxCollider(BoxCollider col, Color color, float duration, bool depthTest)
+
+  /// <summary>
+  /// Draw a Box collider
+  /// </summary>
+  /// <param name="col">Box Collider to draw</param>
+  /// <param name="color">Color to draw the collider with</param>
+  /// <param name="duration">Length of time to draw the collider</param>
+  /// <param name="depthTest">Should the drawn collider be obscured by the camera?</param>
+  private static void DrawBoxCollider(BoxCollider col, Color color, float duration, bool depthTest)
   {
     Vector3 size = col.size;
     size.x *= col.transform.lossyScale.x;
@@ -435,7 +614,15 @@ public static class DebugDraw
     size.z *= col.transform.lossyScale.z;
     DebugDraw.DrawBox(col.transform.TransformPoint(col.center), size / 2, col.transform.rotation, color, duration, depthTest);
   }
-  public static void DrawSphereCollider(SphereCollider col, Color color, float duration, bool depthTest)
+
+  /// <summary>
+  /// Draw a Sphere Collider
+  /// </summary>
+  /// <param name="col">Sphere Collider to draw</param>
+  /// <param name="color">Color to draw the collider with</param>
+  /// <param name="duration">Length of time to draw the collider</param>
+  /// <param name="depthTest">Should the drawn collider be obscured by the camera?</param>
+  private static void DrawSphereCollider(SphereCollider col, Color color, float duration, bool depthTest)
   {
     float r = col.radius;
     Vector3 scale = col.transform.lossyScale;
@@ -453,7 +640,15 @@ public static class DebugDraw
     }
     DebugDraw.DrawSphere(col.transform.TransformPoint(col.center), r, col.transform.forward, color, duration, depthTest);
   }
-  public static void DrawCapsuleCollider(CapsuleCollider col, Color color, float duration, bool depthTest)
+
+  /// <summary>
+  /// Draw a Capsule Collider
+  /// </summary>
+  /// <param name="col">Capsule collider to draw</param>
+  /// <param name="color">Color to draw the collider with</param>
+  /// <param name="duration">Length of time to draw the collider</param>
+  /// <param name="depthTest">Should the drawn collider be obscured by the camera?</param>
+  private static void DrawCapsuleCollider(CapsuleCollider col, Color color, float duration, bool depthTest)
   {
     Vector3 point1, point2 = point1 = col.center;
     float r = col.radius;
@@ -491,7 +686,14 @@ public static class DebugDraw
     DebugDraw.DrawCapsule(point1 + col.transform.position, point2 + col.transform.position, r, color, duration, depthTest);
   }
 
-  public static void DrawMeshCollider(MeshCollider col, Color color)
+  /// <summary>
+  /// Draw a mesh collider
+  /// </summary>
+  /// <param name="col">Mesh collider to draw</param>
+  /// <param name="color">Color to draw the collider with</param>
+  /// <param name="duration">Length of time to draw the collider</param>
+  /// <param name="depthTest">Should the drawn collider be obscured by the camera?</param>
+  public static void DrawMeshCollider(MeshCollider col, Color color, float duration, bool depthTest)
   {
     throw new System.NotImplementedException("Draw Mesh Collider not implemented.");
   }
