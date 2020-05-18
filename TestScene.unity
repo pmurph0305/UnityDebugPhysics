@@ -1105,7 +1105,6 @@ GameObject:
   - component: {fileID: 745906625}
   - component: {fileID: 745906624}
   - component: {fileID: 745906623}
-  - component: {fileID: 745906628}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1183,18 +1182,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &745906628
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 745906622}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: caf786f6795d92e4a92bae1c946b2003, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lookAtPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &827552271
 GameObject:
   m_ObjectHideFlags: 0
@@ -1780,6 +1767,7 @@ GameObject:
   - component: {fileID: 1174568992}
   - component: {fileID: 1174568991}
   - component: {fileID: 1174568990}
+  - component: {fileID: 1174568993}
   m_Layer: 0
   m_Name: Capsule (1)
   m_TagString: Untagged
@@ -1840,7 +1828,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 1174568988}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
@@ -1851,6 +1839,20 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1174568988}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!64 &1174568993
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1174568988}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Convex: 0
+  m_InflateMesh: 1
+  m_SkinWidth: 1.00000005e-20
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1273009098
 GameObject:
@@ -2714,6 +2716,7 @@ GameObject:
   - component: {fileID: 1831802322}
   - component: {fileID: 1831802320}
   - component: {fileID: 1831802324}
+  - component: {fileID: 1831802321}
   m_Layer: 0
   m_Name: RaycastFrom
   m_TagString: Untagged
@@ -2753,6 +2756,18 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!65 &1831802321
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1831802319}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &1831802322
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2814,6 +2829,8 @@ MonoBehaviour:
   DoCapsuleOverlapNonAlloc: 0
   DoSphereOverlap: 0
   DoSphereOverlapNonAlloc: 0
+  ComputePenetration: 0
+  penetrate: {fileID: 206772284}
   point2: {x: 0, y: 1, z: 0}
 --- !u!1 &1841781566
 GameObject:

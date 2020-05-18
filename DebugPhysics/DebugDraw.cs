@@ -687,7 +687,7 @@ public static class DebugDraw
   }
 
   /// <summary>
-  /// Draw a mesh collider
+  /// Draw a mesh collider using it's shared mesh if non-convex, or AABB if convex (actual convex mesh is not exposed in unity)
   /// </summary>
   /// <param name="col">Mesh collider to draw</param>
   /// <param name="color">Color to draw the collider with</param>
@@ -695,6 +695,24 @@ public static class DebugDraw
   /// <param name="depthTest">Should the drawn collider be obscured by the camera?</param>
   public static void DrawMeshCollider(MeshCollider col, Color color, float duration, bool depthTest)
   {
-    throw new System.NotImplementedException("Draw Mesh Collider not implemented.");
+    if (!col.convex)
+    {
+      Vector3[] verts = col.sharedMesh.vertices;
+      int[] triangles = col.sharedMesh.triangles;
+      Vector3 p0, p1, p2 = p1 = p0 = Vector3.zero;
+      for (int i = 0; i < triangles.Length; i += 3)
+      {
+        p0 = col.transform.TransformPoint(verts[triangles[i]]);
+        p1 = col.transform.TransformPoint(verts[triangles[i + 1]]);
+        p2 = col.transform.TransformPoint(verts[triangles[i + 2]]);
+        Debug.DrawLine(p0, p1, color, duration, depthTest);
+        Debug.DrawLine(p0, p2, color, duration, depthTest);
+        Debug.DrawLine(p1, p2, color, duration, depthTest);
+      }
+    }
+    else
+    {
+      DrawBox(col.bounds.center, col.bounds.extents, Quaternion.identity, color, duration, depthTest);
+    }
   }
 }
