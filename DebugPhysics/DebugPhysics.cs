@@ -73,5 +73,5 @@ public static partial class DebugPhysics
   public static bool DepthTest = false;
   public static bool DrawHitPoints = true;
   public static bool DrawHitNormals = true;
-
+  public static bool DrawOverlappedColliders = true;
 }

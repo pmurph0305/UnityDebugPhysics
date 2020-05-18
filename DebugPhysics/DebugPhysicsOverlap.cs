@@ -6,19 +6,22 @@ using UnityEngine;
 public static partial class DebugPhysics
 {
 
-  public static void DrawOverlappedColliders(Collider[] colliders)
+  public static void DrawOverlapColliders(Collider[] colliders)
   {
-    foreach (Collider col in colliders)
+    if (DrawOverlappedColliders)
     {
-      if (col == null) continue;
-      BoxCollider box = col as BoxCollider;
-      if (box != null) { DrawBoxCollider(box); continue; }
-      CapsuleCollider cap = col as CapsuleCollider;
-      if (cap != null) { DrawCapsuleCollider(cap); continue; }
-      SphereCollider sphere = col as SphereCollider;
-      if (sphere != null) { DrawSphereCollider(sphere); continue; }
-      MeshCollider mc = col as MeshCollider;
-      if (mc != null) { DrawMeshCollider(mc); }
+      foreach (Collider col in colliders)
+      {
+        if (col == null) continue;
+        BoxCollider box = col as BoxCollider;
+        if (box != null) { DrawBoxCollider(box); continue; }
+        CapsuleCollider cap = col as CapsuleCollider;
+        if (cap != null) { DrawCapsuleCollider(cap); continue; }
+        SphereCollider sphere = col as SphereCollider;
+        if (sphere != null) { DrawSphereCollider(sphere); continue; }
+        MeshCollider mc = col as MeshCollider;
+        if (mc != null) { DrawMeshCollider(mc); }
+      }
     }
   }
 
@@ -96,7 +99,7 @@ public static partial class DebugPhysics
     Collider[] colliders = Physics.OverlapBox(center, halfExtents, orientation, layerMask, queryTriggerInteraction);
     if (colliders.Length > 0)
     {
-      DrawOverlappedColliders(colliders);
+      DrawOverlapColliders(colliders);
       DebugDraw.DrawBox(center, halfExtents, orientation, HitColor, DrawLineTime, DepthTest);
     }
     else
@@ -118,7 +121,7 @@ public static partial class DebugPhysics
     int val = Physics.OverlapBoxNonAlloc(center, halfExtents, results, orientation, layerMask, queryTriggerInteraction);
     if (val > 0)
     {
-      DrawOverlappedColliders(results);
+      DrawOverlapColliders(results);
       DebugDraw.DrawBox(center, halfExtents, orientation, HitColor, DrawLineTime, DepthTest);
     }
     else
@@ -140,7 +143,7 @@ public static partial class DebugPhysics
     Collider[] colliders = Physics.OverlapCapsule(point0, point1, radius, layerMask, queryTriggerInteraction);
     if (colliders.Length > 0)
     {
-      DrawOverlappedColliders(colliders);
+      DrawOverlapColliders(colliders);
       DebugDraw.DrawCapsule(point0, point1, radius, HitColor, DrawLineTime, DepthTest);
     }
     else
@@ -156,7 +159,7 @@ public static partial class DebugPhysics
     int val = Physics.OverlapCapsuleNonAlloc(point0, point1, radius, results, layerMask, queryTriggerInteraction);
     if (val > 0)
     {
-      DrawOverlappedColliders(results);
+      DrawOverlapColliders(results);
       DebugDraw.DrawCapsule(point0, point1, radius, HitColor, DrawLineTime, DepthTest);
     }
     else
@@ -172,7 +175,7 @@ public static partial class DebugPhysics
     Collider[] colliders = Physics.OverlapSphere(position, radius, layerMask, queryTriggerInteraction);
     if (colliders.Length > 0)
     {
-      DrawOverlappedColliders(colliders);
+      DrawOverlapColliders(colliders);
       DebugDraw.DrawSphere(position, radius, Vector3.up, HitColor, DrawLineTime, DepthTest);
     }
     else
@@ -188,7 +191,7 @@ public static partial class DebugPhysics
     int val = Physics.OverlapSphereNonAlloc(position, radius, results, layerMask, queryTriggerInteraction);
     if (val > 0)
     {
-      DrawOverlappedColliders(results);
+      DrawOverlapColliders(results);
       DebugDraw.DrawSphere(position, radius, Vector3.up, HitColor, DrawLineTime, DepthTest);
     }
     else
