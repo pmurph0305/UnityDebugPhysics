@@ -30,9 +30,23 @@ public class DebugPhysicsExample : MonoBehaviour
   public bool DoCapsuleCastHit = false;
   public bool DoCapsuleCastAll = false;
   public bool DoCapsuleCastNonAlloc = false;
+
+  public bool DoBoxCheck = false;
+  public bool DoCapsuleCheck = false;
+  public bool DoSphereCheck = false;
+
+
+  public bool DoBoxOverlap = false;
+  public bool DoBoxOverlapNonAlloc = false;
+  public bool DoCapsuleOverlap = false;
+  public bool DoCapsuleOverlapNonAlloc = false;
+  public bool DoSphereOverlap = false;
+  public bool DoSphereOverlapNonAlloc = false;
   // Update is called once per frame
   void Update()
   {
+
+    // Raycasts.
     if (DoRaycast)
     {
       if (DebugPhysics.Raycast(transform.position, transform.forward, RayCastLength))
@@ -188,6 +202,84 @@ public class DebugPhysicsExample : MonoBehaviour
         {
           // do something
         }
+      }
+    }
+
+
+    // BoxCapsuleSphere Check
+    if (DoBoxCheck)
+    {
+      if (DebugPhysics.CheckBox(transform.position, BoxCastHalfExtents, transform.rotation))
+      {
+
+      }
+    }
+    if (DoCapsuleCheck)
+    {
+      if (DebugPhysics.CheckCapsule(transform.position, transform.position + point2, SphereCastRadius))
+      {
+
+      }
+    }
+    if (DoSphereCheck)
+    {
+      if (DebugPhysics.CheckSphere(transform.position, SphereCastRadius))
+      {
+
+      }
+    }
+
+    // Overlaps
+    if (DoBoxOverlap)
+    {
+      Collider[] colliders = DebugPhysics.OverlapBox(transform.position, BoxCastHalfExtents, transform.rotation);
+      if (colliders.Length > 0)
+      {
+        // do something
+      }
+    }
+    if (DoBoxOverlapNonAlloc)
+    {
+      Collider[] colliders = new Collider[8];
+      DebugPhysics.OverlapBoxNonAlloc(transform.position, BoxCastHalfExtents, colliders, transform.rotation);
+      foreach (Collider c in colliders)
+      {
+        // do something
+
+      }
+    }
+    if (DoSphereOverlap)
+    {
+      Collider[] colliders = DebugPhysics.OverlapSphere(transform.position, SphereCastRadius);
+      if (colliders.Length > 0)
+      {
+        // do something
+      }
+    }
+    if (DoSphereOverlapNonAlloc)
+    {
+      Collider[] colliders = new Collider[8];
+      DebugPhysics.OverlapSphereNonAlloc(transform.position, SphereCastRadius, colliders);
+      foreach (Collider c in colliders)
+      {
+        // do something
+      }
+    }
+    if (DoCapsuleOverlap)
+    {
+      Collider[] colliders = DebugPhysics.OverlapCapsule(transform.position, transform.position + point2, SphereCastRadius);
+      if (colliders.Length > 0)
+      {
+        // do something
+      }
+    }
+    if (DoCapsuleOverlapNonAlloc)
+    {
+      Collider[] colliders = new Collider[8];
+      DebugPhysics.OverlapCapsuleNonAlloc(transform.position, transform.position + point2, SphereCastRadius, colliders);
+      foreach (Collider c in colliders)
+      {
+        // do something
       }
     }
   }

@@ -4,12 +4,21 @@ using UnityEngine;
 
 public static partial class DebugPhysics
 {
-  // TODO:
+  // All:
+  // BoxCast, BoxCastAll, BoxCastNonAlloc (done)
+  // CapsuleCast, CapsuleCastAll, CapsuleCastNonAlloc (done)
+  // CheckBox, CheckCapsule, CheckSphere (done)
+  // ClosestPoint
   // Compute Penetration
-  // OverlapSphere
-  // OverlapBox
-  // OverlapCapsule
-  // Draw overlap colliders?
+  // GetIgnoreCollisionLayer
+  // IgnoreCollision
+  // IgnoreLayerCollision
+  // LineCast (done)
+  // OverlapBox, OverlapBoxNonAlloc, OverlapCapsule, OverlapCapsuleNonAlloc, OverlapSphere, OverlapSphereNonAlloc,
+  // Raycast, RaycastAll, RaycastNonAlloc (done)
+  // Simulate
+  // SphereCast, SphereCastAll, SphereCastNonAlloc (done)
+
 
   // DebugRigidbody
   // since things are appled with a rigidbody instance
