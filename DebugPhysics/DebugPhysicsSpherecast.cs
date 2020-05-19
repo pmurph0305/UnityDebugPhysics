@@ -6,7 +6,14 @@ using UnityEngine;
 
 public static partial class DebugPhysics
 {
-
+  /// <summary>
+  /// Draws a single spherecast using RaycastHit data.
+  /// </summary>
+  /// <param name="origin">Origin of the spherecast</param>
+  /// <param name="radius">Radius of the spherecast</param>
+  /// <param name="direction">Direction of the spherecast</param>
+  /// <param name="maxDistance">Max length of the spherecast</param>
+  /// <param name="hit">RaycastHit data from the spherecast</param>
   private static void DrawSphereCastHit(Vector3 origin, float radius, Vector3 direction, float maxDistance, RaycastHit hit)
   {
     if (hit.normal == -direction && hit.distance == 0.0f && hit.point == Vector3.zero)
@@ -35,6 +42,13 @@ public static partial class DebugPhysics
     }
   }
 
+  /// <summary>
+  /// Draws all spherecasts in the hits array.
+  /// </summary>
+  /// <param name="ray">Origin and direction of the spherecast</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="maxDistance">Max length of the spherecast</param>
+  /// <param name="hits">Array of hits from a spherecast</param>
   private static void DrawSphereCastHits(Ray ray, float radius, float maxDistance, RaycastHit[] hits)
   {
     float maxHitDistance = -Mathf.Infinity;
@@ -59,6 +73,15 @@ public static partial class DebugPhysics
     }
   }
 
+  /// <summary>
+  /// Like Spherecast, but this function will return all hits the sphere sweep intersects.
+  /// </summary>
+  /// <param name="ray">Origin and direction of the ray used to spherecast</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="maxDistance">Max length of the spherecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this spherecast should hit triggers</param>
+  /// <returns>An array of all colliders hit and information in the sweep</returns>
   public static RaycastHit[] SphereCastAll(Ray ray, float radius, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
@@ -75,6 +98,16 @@ public static partial class DebugPhysics
     return hits;
   }
 
+  /// <summary>
+  /// Cast a sphere along the direction and store the results in the buffer
+  /// </summary>
+  /// <param name="ray">Origin and direction of the ray used to spherecast</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="results">Buffer to save the spherecast results to</param>
+  /// <param name="maxDistance">Max length of the spherecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this spherecast should hit triggers</param>
+  /// <returns>The amount of hits stored in the results buffer</returns>
   public static int SphereCastNonAlloc(Ray ray, float radius, RaycastHit[] results, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
@@ -91,6 +124,15 @@ public static partial class DebugPhysics
     return val;
   }
 
+  /// <summary>
+  /// Casts a sphere along a ray and returns true if it hit something
+  /// </summary>
+  /// <param name="ray">Origin and direction of the ray used to spherecast</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="maxDistance">Max length of the spherecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this spherecast should hit triggers</param>
+  /// <returns>True if spherecast intersects any collider</returns>
   public static bool SphereCast(Ray ray, float radius, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
@@ -108,6 +150,16 @@ public static partial class DebugPhysics
     }
   }
 
+  /// <summary>
+  /// Casts a sphere along a ray and returns true if it hit something, sets RaycastHit data if something is hit.
+  /// </summary>
+  /// <param name="ray">Origin and direction of the ray used to spherecast</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="hitInfo">If true is returned, hitInfo will contain more information about where the collider was hit</param>
+  /// <param name="maxDistance">Max length of the spherecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this spherecast should hit triggers</param>
+  /// <returns>True if spherecast intersects any collider</returns>
   public static bool SphereCast(Ray ray, float radius, out RaycastHit hitInfo, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
@@ -125,18 +177,52 @@ public static partial class DebugPhysics
   }
 
   // Suprisingly for Physics.SphereCast there is no origin + direction without a RaycastHit.
+
+  /// <summary>
+  /// Casts a sphere along a ray and returns detailed information on what was hit.
+  /// </summary>
+  /// <param name="origin">Center of the sphere to start the spherecast</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="direction">Direction in which to spherecast</param>
+  /// <param name="hitInfo">If true is returned, hitInfo will contain more information about where the collider was hit</param>
+  /// <param name="maxDistance">Max length of the spherecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this spherecast should hit triggers</param>
+  /// <returns>True when the spherecast intersects any collider, otherwise false.</returns>
   public static bool SphereCast(Vector3 origin, float radius, Vector3 direction, out RaycastHit hitInfo, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
     return SphereCast(new Ray(origin, direction), radius, out hitInfo, maxDistance, layerMask, queryTriggerInteraction);
   }
 
+  /// <summary>
+  ///  Like spherecast, but this function will return all hits the sphere sweep intersects.
+  /// </summary>
+  /// <param name="origin">Center of the sphere to start the spherecast</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="direction">Direction in which to spherecast</param>
+  /// <param name="maxDistance">Max length of the spherecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this spherecast should hit triggers</param>
+  /// <returns>An array of all colliders hit and information in the sweep</returns>
+  /// <returns></returns>
   public static RaycastHit[] SphereCastAll(Vector3 origin, float radius, Vector3 direction, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
     return SphereCastAll(new Ray(origin, direction), radius, maxDistance, layerMask, queryTriggerInteraction);
   }
 
+  /// <summary>
+  /// Cast a sphere along the direction and store the results in the buffer
+  /// </summary>
+  /// <param name="origin">Center of the sphere to start the spherecast</param>
+  /// <param name="radius">Radius of the sphere</param>
+  /// <param name="direction">Direction in which to spherecast</param>
+  /// <param name="results">Buffer to save the spherecast results to</param>
+  /// <param name="maxDistance">Max length of the spherecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this spherecast should hit triggers</param>
+  /// <returns>The amount of hits stored in the results buffer</returns>
   public static int SphereCastNonAlloc(Vector3 origin, float radius, Vector3 direction, RaycastHit[] results, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {
