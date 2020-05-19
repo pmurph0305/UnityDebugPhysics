@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public static class DebugDraw
 {
   public static float DefaultVectorArrowScale = 0.1f;
@@ -76,9 +75,9 @@ public static class DebugDraw
   }
 
 
-  public static void DrawVector(Vector3 start, Vector3 end, Color color, float duration, float scale)
+  public static void DrawVector(Vector3 start, Vector3 end, Color color, float scale, float duration, bool depthTest = false)
   {
-    throw new System.NotImplementedException();
+    // throw new System.NotImplementedException();
     Vector3 direction = (end - start).normalized;
     Vector3 right = Vector3.zero;
     Vector3 up = Vector3.zero;
@@ -95,11 +94,11 @@ public static class DebugDraw
     right = right * scale;
     up = up * scale;
     direction = direction * scale;
-    Debug.DrawLine(start, end, color, duration);
-    Debug.DrawLine(end, end - direction + up, color, duration);
-    Debug.DrawLine(end, end - direction - up, color, duration);
-    Debug.DrawLine(end, end - direction + right, color, duration);
-    Debug.DrawLine(end, end - direction - right, color, duration);
+    Debug.DrawLine(start, end, color, duration, depthTest);
+    // Debug.DrawLine(end, end - direction + up, color, duration, depthTest);
+    // Debug.DrawLine(end, end - direction - up, color, duration, depthTest);
+    Debug.DrawLine(end, end - direction + right, color, duration, depthTest);
+    Debug.DrawLine(end, end - direction - right, color, duration, depthTest);
   }
 
   /// <summary>
