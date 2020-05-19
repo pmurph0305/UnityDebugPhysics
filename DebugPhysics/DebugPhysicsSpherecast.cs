@@ -99,7 +99,7 @@ public static partial class DebugPhysics
   }
 
   /// <summary>
-  /// Cast a sphere along the direction and store the results in the buffer
+  /// Casts a sphere along the direction and store the results in the buffer
   /// </summary>
   /// <param name="ray">Origin and direction of the ray used to spherecast</param>
   /// <param name="radius">Radius of the sphere</param>
@@ -205,7 +205,6 @@ public static partial class DebugPhysics
   /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
   /// <param name="queryTriggerInteraction">Specifies whether this query should hit triggers</param>
   /// <returns>An array of all colliders hit and information in the sweep</returns>
-  /// <returns></returns>
   public static RaycastHit[] SphereCastAll(Vector3 origin, float radius, Vector3 direction, float maxDistance = Mathf.Infinity,
     int layerMask = Physics.DefaultRaycastLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
   {

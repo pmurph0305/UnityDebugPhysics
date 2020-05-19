@@ -5,7 +5,14 @@ using UnityEngine;
 // Capsule casts
 public static partial class DebugPhysics
 {
-
+  /// <summary>
+  /// Draws a single capsulecast using raycasthit data
+  /// </summary>
+  /// <param name="point1">Center of the sphere at the start of the capsule</param>
+  /// <param name="point2">Center of the sphere at the end of the capsule</param>
+  /// <param name="radius">Radius of the capsule</param>
+  /// <param name="direction">Direction of the capsulecast</param>
+  /// <param name="hit">RaycastHit data from the capsulecast</param>
   private static void DrawCapsuleCastHit(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit hit)
   {
     // if the values are the ones for when a capsule starts overlapping something..
@@ -35,7 +42,15 @@ public static partial class DebugPhysics
     }
   }
 
-
+  /// <summary>
+  /// Draws a capsulecast using an array of hits
+  /// </summary>
+  /// <param name="point1">Center of the sphere at the start of the capsule</param>
+  /// <param name="point2">Center of the sphere at the end of the capsule</param>
+  /// <param name="radius">Radius of the capsule</param>
+  /// <param name="direction">Direction of the capsulecast</param>
+  /// <param name="maxDistance">Max length of the capsulecast</param>
+  /// <param name="hits">Array of hits from a capsulecast</param>
   private static void DrawCapsuleCastHits(Vector3 point1, Vector3 point2, float radius, Vector3 direction, float maxDistance, RaycastHit[] hits)
   {
     float maxHitDistance = -Mathf.Infinity;
@@ -60,6 +75,18 @@ public static partial class DebugPhysics
     }
   }
 
+  /// <summary>
+  /// Casts a capsule along the direction and store the results in the buffer
+  /// </summary>
+  /// <param name="point1">Center of the sphere at the start of the capsule</param>
+  /// <param name="point2">Center of the sphere at the end of the capsule</param>
+  /// <param name="radius">Radius of the capsule</param>
+  /// <param name="direction">Direction of the capsulecast</param>
+  /// <param name="results">Buffer to store hits in</param>
+  /// <param name="maxDistance">Max length of the capsulecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this query should hit triggers</param>
+  /// <returns>The amount of hits stored in the results buffer</returns>
   public static int CapsuleCastNonAlloc(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit[] results,
     float maxDistance = Mathf.Infinity, int layermask = Physics.DefaultRaycastLayers,
     QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
@@ -77,6 +104,17 @@ public static partial class DebugPhysics
     return val;
   }
 
+  /// <summary>
+  /// Casts a capsule through the scene and returns an array of all the hits.
+  /// </summary>
+  /// <param name="point1">Center of the sphere at the start of the capsule</param>
+  /// <param name="point2">Center of the sphere at the end of the capsule</param>
+  /// <param name="radius">Radius of the capsule</param>
+  /// <param name="direction">Direction of the capsulecast</param>
+  /// <param name="maxDistance">Max length of the capsulecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this query should hit triggers</param>
+  /// <returns>RaycastHit array containing information on all colliders that were hit</returns>
   public static RaycastHit[] CapsuleCastAll(Vector3 point1, Vector3 point2, float radius, Vector3 direction,
     float maxDistance = Mathf.Infinity, int layermask = Physics.DefaultRaycastLayers,
     QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
@@ -93,6 +131,18 @@ public static partial class DebugPhysics
     }
     return hits;
   }
+
+  /// <summary>
+  /// Casts a capsule in a direction
+  /// </summary>
+  /// <param name="point1">Center of the sphere at the start of the capsule</param>
+  /// <param name="point2">Center of the sphere at the end of the capsule</param>
+  /// <param name="radius">Radius of the capsule</param>
+  /// <param name="direction">Direction of the capsulecast</param>
+  /// <param name="maxDistance">Max length of the capsulecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this query should hit triggers</param>
+  /// <returns>True when the capsulecast intersects any collider, otherwise false.</returns>
   public static bool CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 direction,
     float maxDistance = Mathf.Infinity, int layerMask = Physics.DefaultRaycastLayers,
     QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
@@ -111,6 +161,18 @@ public static partial class DebugPhysics
     return false;
   }
 
+  /// <summary>
+  /// Casts a capsule in a direction and returns detailed information on what was hit.
+  /// </summary>
+  /// <param name="point1">Center of the sphere at the start of the capsule</param>
+  /// <param name="point2">Center of the sphere at the end of the capsule</param>
+  /// <param name="radius">Radius of the capsule</param>
+  /// <param name="direction">Direction of the capsulecast</param>
+  /// <param name="hitInfo">If true is returned, hitInfo will contain more information about where the collider was hit</param>
+  /// <param name="maxDistance">Max length of the capsulecast</param>
+  /// <param name="layerMask">A layer mask used to selectively ignore colliders</param>
+  /// <param name="queryTriggerInteraction">Specifies whether this query should hit triggers</param>
+  /// <returns>True when the capsulecast intersects any collider, otherwise false.</returns>
   public static bool CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 direction, out RaycastHit hitInfo,
     float maxDistance = Mathf.Infinity, int layerMask = Physics.DefaultRaycastLayers,
     QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
