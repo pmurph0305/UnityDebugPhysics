@@ -10,6 +10,9 @@ using UnityEditor;
 // the math is the exact same, but we want to draw offset from the world space origin for better visualization.
 // ie: draw the math at the object the math is happening if the origin is set.
 
+
+// TODO: rest of the methods
+// alternative methods for passing in a vector3 instead of a debug vector3
 [System.Serializable]
 public struct DebugVector3
 {
@@ -34,9 +37,6 @@ public struct DebugVector3
     t = null;
     _origin = Vector3.zero;
     v3 = new Vector3(x, y, z);
-    this._x = x;
-    this._y = y;
-    this._z = z;
   }
 
   public DebugVector3(Vector3 vector)
@@ -44,9 +44,6 @@ public struct DebugVector3
     t = null;
     _origin = Vector3.zero;
     v3 = vector;
-    this._x = vector.x;
-    this._y = vector.y;
-    this._z = vector.z;
   }
 
   private Vector3 _origin;
@@ -64,42 +61,61 @@ public struct DebugVector3
   }
   public Transform t;
 
+
+
   [SerializeField]
   private Vector3 v3;
-  [SerializeField]
-  private float _x;
+
   public float x
   {
-    get { return _x; }
-    set
-    {
-      _x = value;
-      v3.x = value;
-    }
-  }
-  [SerializeField]
-  private float _y;
-  public float y
-  {
-    get { return _y; }
-    set
-    {
-      _y = value;
-      v3.y = value;
-    }
-  }
-  [SerializeField]
-  private float _z;
-  public float z
-  {
-    get { return _z; }
-    set
-    {
-      _z = value;
-      v3.z = value;
-    }
+    get { return v3.x; }
+    set { v3.x = value; }
   }
 
+  public float y
+  {
+    get { return v3.y; }
+    set { v3.y = value; }
+  }
+
+  public float z
+  {
+    get { return v3.z; }
+    set { v3.z = value; }
+  }
+
+  public float magnitude
+  {
+    get { return v3.magnitude; }
+  }
+
+  public DebugVector3 normalized
+  {
+    get { return (DebugVector3)v3.normalized; }
+  }
+
+  public float sqrMagnitude
+  {
+    get { return v3.sqrMagnitude; }
+  }
+
+  public float this[int index]
+  {
+    get
+    {
+      if (index == 0) return v3.x;
+      if (index == 1) return v3.y;
+      if (index == 2) return v3.z;
+      throw new System.Exception("Cannot access vector property at " + index);
+    }
+    set
+    {
+      if (index == 0) { v3.x = value; return; }
+      if (index == 1) { v3.y = value; return; }
+      if (index == 2) { v3.z = value; return; }
+      throw new System.Exception("Cannot access vector property at " + index);
+    }
+  }
 
   // Drawing
 
@@ -265,6 +281,53 @@ public struct DebugVector3
     return new DebugVector3(result);
   }
 
+  /// <summary>
+  /// Calculates a position between the points specified by current and target,
+  /// moving no further than the distance specified by maxDistanceDelta.
+  /// </summary>
+  /// <param name="current">Position to move from</param>
+  /// <param name="target">Position to move towards</param>
+  /// <param name="maxDistanceDelta">Max distance to move per call</param>
+  /// <returns></returns>
+  public static DebugVector3 MoveTowards(DebugVector3 current, DebugVector3 target, float maxDistanceDelta)
+  {
+    Vector3 result = Vector3.MoveTowards(current, target, maxDistanceDelta);
+    DrawVector(current.origin, current.origin + current.v3, DrawVectorColorA);
+    DrawVector(current.origin, current.origin + target.v3, DrawVectorColorB);
+    DrawVector(current.origin, current.origin + result, DrawResultColor);
+    return new DebugVector3(result);
+  }
+
+  /// <summary>
+  /// Calculates a vector with a magnitude of 1.
+  /// </summary>
+  /// <param name="value">Vector to normalize</param>
+  /// <returns>Vector with a magnitude of 1</returns>
+  public static DebugVector3 Normalize(DebugVector3 value)
+  {
+    DrawVector(value.origin, value.origin + value.v3, DrawVectorColorA);
+    DrawVector(value.origin, value.origin + value.v3.normalized, DrawResultColor);
+    return (DebugVector3)value.v3.normalized;
+  }
+  /// <summary>
+  /// Calculates a vector with a magnitude of 1.
+  /// </summary>
+  /// <param name="value">Vector to normalize</param>
+  /// <returns>Vector with a magnitude of 1</returns>
+  public static DebugVector3 Normalize(Vector3 value)
+  {
+    return Normalize((DebugVector3)value);
+  }
+
+  /// <summary>
+  /// Makes this vector have a magnitude of 1.
+  /// </summary>
+  public void Normalize()
+  {
+    DrawVector(origin, origin + v3, DrawVectorColorA);
+    this.v3 = v3.normalized;
+    DrawVector(origin, origin + v3, DrawResultColor);
+  }
 
   // Operators
   public static DebugVector3 operator +(DebugVector3 a, DebugVector3 b)
@@ -347,20 +410,21 @@ public class DebugVector3PropertyDrawer : PropertyDrawer
 
   public override void OnGUI(Rect pos, SerializedProperty prop, GUIContent label)
   {
-    // get all properties
-    SerializedProperty x = prop.FindPropertyRelative("_x");
-    SerializedProperty y = prop.FindPropertyRelative("_y");
-    SerializedProperty z = prop.FindPropertyRelative("_z");
+    // // get all properties
+    // SerializedProperty x = prop.FindPropertyRelative("x");
+    // SerializedProperty y = prop.FindPropertyRelative("_y");
+    // SerializedProperty z = prop.FindPropertyRelative("_z");
     SerializedProperty v3 = prop.FindPropertyRelative("v3");
+    SerializedProperty x = v3.FindPropertyRelative("x");
+    SerializedProperty y = v3.FindPropertyRelative("y");
+    SerializedProperty z = v3.FindPropertyRelative("z");
     // create a vector
     Vector3 val = new Vector3(x.floatValue, y.floatValue, z.floatValue);
     // use a vector3 field.
     val = EditorGUI.Vector3Field(pos, label, val);
     // use the values from the field.
-    x.floatValue = val.x;
-    y.floatValue = val.y;
-    z.floatValue = val.z;
     v3.vector3Value = val;
   }
 }
 #endif
+

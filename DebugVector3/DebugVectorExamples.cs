@@ -30,8 +30,11 @@ public class DebugVectorExamples : MonoBehaviour
 
   public bool DoDebugMax = false;
   public bool DoDebugMin = false;
+  public bool DoDebugMoveTowards = false;
+  public float MoveTowardsDistance = 0.25f;
 
-
+  public bool DoDebugStaticNormalize = false;
+  public bool DoDebugInstNormalize = false;
   // Use this for initialization
   void Start()
   {
@@ -42,7 +45,7 @@ public class DebugVectorExamples : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    Vector3 t = Vector3.zero;
+    Vector3 t = Vector3.one;
     DebugVector3 result = DebugVector3.zero;
     float f = 0.0f;
     if (DoDebugAdd)
@@ -65,38 +68,63 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoAngle)
     {
       f = DebugVector3.Angle(vector1, vector2);
+      // f = Vector3.Angle(vector1, vector2);
+
     }
     if (DoClampMagnitude)
     {
       result = DebugVector3.ClampMagnitude(vector1, MaxMagnitude);
+      // t = Vector3.ClampMagnitude(vector1, MaxMagnitude);
     }
     if (DoDebugCross)
     {
       result = DebugVector3.Cross(vector1, vector2);
+      // t = Vector3.Cross(vector1, vector2);
     }
     if (DoDebugDistance)
     {
       f = DebugVector3.Distance(vector1, vector2);
+      // f = Vector3.Distance(vector1, vector2);
     }
     if (DoDebugDot)
     {
       f = DebugVector3.Dot(vector1, vector2);
+      // f = Vector3.Dot(vector1, vector2);
     }
     if (DoDebugLerp)
     {
       result = DebugVector3.Lerp(vector1, vector2, Lerp);
+      // t = Vector3.Lerp(vector1, vector2, Lerp);
     }
     if (DoDebugLerpUnclamped)
     {
       result = DebugVector3.LerpUnclamped(vector1, vector2, Lerp);
+      // t = Vector3.LerpUnclamped(vector1, vector2, Lerp);
     }
     if (DoDebugMax)
     {
       result = DebugVector3.Max(vector1, vector2);
+      // t = Vector3.Max(vector1, vector2);
     }
     if (DoDebugMin)
     {
       result = DebugVector3.Min(vector1, vector2);
+      // t = Vector3.Min(vector1, vector2);
+    }
+    if (DoDebugMoveTowards)
+    {
+      result = DebugVector3.MoveTowards(vector1, vector2, MoveTowardsDistance);
+      // t = Vector3.MoveTowards(vector1, vector2, MoveTowardsDistance);
+    }
+    if (DoDebugStaticNormalize)
+    {
+      result = DebugVector3.Normalize(vector1);
+      Vector3 t1 = DebugVector3.Normalize(this.transform.position);
+      DebugVector3 t2 = DebugVector3.Normalize(this.transform.position + result);
+    }
+    if (DoDebugInstNormalize)
+    {
+      vector1.Normalize();
     }
   }
 }
