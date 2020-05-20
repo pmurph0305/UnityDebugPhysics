@@ -4,23 +4,32 @@ using UnityEngine;
 using UnityEditor;
 
 // Why not extension methods?
-// operators aren't allowed on extension methods, so replacing all Vector3 with DebugVector3 works better for covering everything.
+// primarily for the static origin property
+// so you can set DebugVector3.origin to transform.position
+// and view it more easily, as opposed to everything displaying at the world origin, which is less useful in my opinion
 
-// why draw from Vector a's origin?
-// the math is the exact same, but we want to draw offset from the world space origin for better visualization.
-// ie: draw the math at the object the math is happening if the origin is set.
-
+// static vs instance for origin
+// + static seems easier as you can just set it to transform.postion, or whereever, before the call.
+// - someone might forget to set the origin in the current script, but set it in a different script
+// Alternatives? instance transform to set and use instead of origin if it is set
 
 // TODO: rest of the methods
 // alternative methods for passing in a vector3 instead of a debug vector3
+// reduce as much casting for everything as possible.
+// option to disable drawing of basic operators
+
 [System.Serializable]
 public struct DebugVector3
 {
+  public static bool ShowOperatorInputs = true;
   public static bool ShowOperatorResult = true;
-  public static bool ShowOperatorIndividual = true;
+  public static bool ShowMethodResult = true;
+  public static bool ShowMethodInputs = true;
   public static float DrawLineTime = 0.0001f;
+  public static float DrawPermanentChangeTime = 5.0f;
   public static Color DrawVectorColorA = Color.yellow;
   public static Color DrawVectorColorB = Color.blue;
+  public static Color DrawVectorColorC = Color.magenta;
   public static Color DrawResultColor = Color.green;
   public static bool DepthTest = true;
   public static DebugVector3 forward = new DebugVector3(0, 0, 1);
@@ -34,34 +43,15 @@ public struct DebugVector3
   public static bool DrawDotAsProjectionAonB = true;
   public DebugVector3(float x, float y, float z)
   {
-    t = null;
-    _origin = Vector3.zero;
     v3 = new Vector3(x, y, z);
   }
 
   public DebugVector3(Vector3 vector)
   {
-    t = null;
-    _origin = Vector3.zero;
     v3 = vector;
   }
 
-  private Vector3 _origin;
-  public Vector3 origin
-  {
-    get
-    {
-      if (t != null)
-      {
-        return t.position;
-      }
-      return _origin;
-    }
-    set { _origin = value; }
-  }
-  public Transform t;
-
-
+  public static Vector3 origin;
 
   [SerializeField]
   private Vector3 v3;
@@ -119,10 +109,26 @@ public struct DebugVector3
 
   // Drawing
 
-  private static void DrawVector(Vector3 start, Vector3 end, Color color)
+  private static void DrawVector(Vector3 start, Vector3 end, Color color, float duration)
   {
     // only draw individual if we allow it
-    if (!ShowOperatorIndividual && (color == DrawVectorColorA || color == DrawVectorColorB)) return;
+    if (!ShowMethodInputs && (color == DrawVectorColorA || color == DrawVectorColorB || color == DrawVectorColorC)) return;
+    // only draw result if we want it.
+    if (!ShowMethodResult && color == DrawResultColor) return;
+    // Debug.DrawLine(start, end, color, DrawLineTime, DepthTest);
+    if (DrawVectorsWithArrows)
+    {
+      DebugDraw.DrawVector(start, end, color, DrawVectorArrowScale, duration, DepthTest);
+    }
+    else
+    {
+      DebugDraw.DrawLine(start, end, color, duration, DepthTest);
+    }
+  }
+
+  private static void DrawVectorOperator(Vector3 start, Vector3 end, Color color)
+  {
+    if (!ShowOperatorInputs && (color == DrawVectorColorA || color == DrawVectorColorB || color == DrawVectorColorC)) return;
     // only draw result if we want it.
     if (!ShowOperatorResult && color == DrawResultColor) return;
     // Debug.DrawLine(start, end, color, DrawLineTime, DepthTest);
@@ -134,6 +140,11 @@ public struct DebugVector3
     {
       DebugDraw.DrawLine(start, end, color, DrawLineTime, DepthTest);
     }
+  }
+
+  private static void DrawVector(Vector3 start, Vector3 end, Color color)
+  {
+    DrawVector(start, end, color, DrawLineTime);
   }
 
 
@@ -149,8 +160,8 @@ public struct DebugVector3
   public static float Angle(DebugVector3 from, DebugVector3 to)
   {
     float angle = Vector3.Angle(from, to);
-    DrawVector(from.origin, from.origin + from.v3, DrawVectorColorA);
-    DrawVector(from.origin, from.origin + to.v3, DrawVectorColorB);
+    DrawVector(origin, origin + from.v3, DrawVectorColorA);
+    DrawVector(origin, origin + to.v3, DrawVectorColorB);
     // draw an arc between the vectors?
     return angle;
   }
@@ -185,8 +196,8 @@ public struct DebugVector3
   public static DebugVector3 ClampMagnitude(DebugVector3 vector, float maxLength)
   {
     DebugVector3 result = (DebugVector3)Vector3.ClampMagnitude(vector, maxLength);
-    DrawVector(vector.origin, vector.origin + vector.v3, DrawVectorColorA);
-    DrawVector(vector.origin, vector.origin + result.v3, DrawResultColor);
+    DrawVector(origin, origin + vector.v3, DrawVectorColorA);
+    DrawVector(origin, origin + result.v3, DrawResultColor);
     return result;
   }
   /// <summary>
@@ -210,9 +221,9 @@ public struct DebugVector3
   public static DebugVector3 Cross(DebugVector3 lhs, DebugVector3 rhs)
   {
     Vector3 result = Vector3.Cross(lhs, rhs);
-    DrawVector(lhs.origin, lhs.origin + lhs.v3, DrawVectorColorA);
-    DrawVector(rhs.origin, rhs.origin + rhs.v3, DrawVectorColorB);
-    DrawVector(lhs.origin, lhs.origin + result, DrawResultColor);
+    DrawVector(origin, origin + lhs.v3, DrawVectorColorA);
+    DrawVector(origin, origin + rhs.v3, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
   /// <summary>
@@ -246,9 +257,9 @@ public struct DebugVector3
   public static float Distance(DebugVector3 a, DebugVector3 b)
   {
     float result = Vector3.Distance(a, b);
-    DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
-    DrawVector(a.origin, a.origin + b.v3, DrawVectorColorB);
-    DebugDraw.DrawLine(a.v3, b.v3, DrawResultColor, DrawLineTime, DepthTest);
+    DrawVector(origin, origin + a.v3, DrawVectorColorA);
+    DrawVector(origin, origin + b.v3, DrawVectorColorB);
+    DebugDraw.DrawLine(origin + a.v3, origin + b.v3, DrawResultColor, DrawLineTime, DepthTest);
     return result;
   }
   public static float Distance(DebugVector3 a, Vector3 b)
@@ -269,12 +280,12 @@ public struct DebugVector3
   /// <returns>The dot product of two vectors</returns>
   public static float Dot(DebugVector3 lhs, DebugVector3 rhs)
   {
-    DrawVector(lhs.origin, lhs.origin + lhs.v3, DrawVectorColorA);
-    DrawVector(lhs.origin, lhs.origin + rhs.v3, DrawVectorColorB);
+    DrawVector(origin, origin + lhs.v3, DrawVectorColorA);
+    DrawVector(origin, origin + rhs.v3, DrawVectorColorB);
     if (DrawDotAsProjectionAonB)
     {
       Vector3 f = Vector3.Project(lhs.v3, rhs.v3.normalized);
-      DrawVector(lhs.origin, lhs.origin + f, DrawResultColor);
+      DrawVector(origin, origin + f, DrawResultColor);
     }
     return Vector3.Dot(lhs, rhs);
   }
@@ -311,9 +322,9 @@ public struct DebugVector3
   public static DebugVector3 Lerp(DebugVector3 a, DebugVector3 b, float t)
   {
     Vector3 result = Vector3.Lerp(a, b, t);
-    DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
-    DrawVector(a.origin, a.origin + b.v3, DrawVectorColorB);
-    DrawVector(a.origin, a.origin + result, DrawResultColor);
+    DrawVector(origin, origin + a.v3, DrawVectorColorA);
+    DrawVector(origin, origin + b.v3, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
   /// <summary>
@@ -353,9 +364,9 @@ public struct DebugVector3
   public static DebugVector3 LerpUnclamped(DebugVector3 a, DebugVector3 b, float t)
   {
     Vector3 result = Vector3.LerpUnclamped(a, b, t);
-    DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
-    DrawVector(a.origin, a.origin + b.v3, DrawVectorColorB);
-    DrawVector(a.origin, a.origin + result, DrawResultColor);
+    DrawVector(origin, origin + a.v3, DrawVectorColorA);
+    DrawVector(origin, origin + b.v3, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
   /// <summary>
@@ -393,9 +404,9 @@ public struct DebugVector3
   public static DebugVector3 Max(DebugVector3 lhs, DebugVector3 rhs)
   {
     Vector3 result = Vector3.Max(lhs, rhs);
-    DrawVector(lhs.origin, lhs.origin + lhs.v3, DrawVectorColorA);
-    DrawVector(lhs.origin, lhs.origin + rhs.v3, DrawVectorColorB);
-    DrawVector(lhs.origin, lhs.origin + result, DrawResultColor);
+    DrawVector(origin, origin + lhs.v3, DrawVectorColorA);
+    DrawVector(origin, origin + rhs.v3, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
   /// <summary>
@@ -429,9 +440,9 @@ public struct DebugVector3
   public static DebugVector3 Min(DebugVector3 lhs, DebugVector3 rhs)
   {
     Vector3 result = Vector3.Min(lhs, rhs);
-    DrawVector(lhs.origin, lhs.origin + lhs.v3, DrawVectorColorA);
-    DrawVector(lhs.origin, lhs.origin + rhs.v3, DrawVectorColorB);
-    DrawVector(lhs.origin, lhs.origin + result, DrawResultColor);
+    DrawVector(origin, origin + lhs.v3, DrawVectorColorA);
+    DrawVector(origin, origin + rhs.v3, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
   /// <summary>
@@ -467,9 +478,9 @@ public struct DebugVector3
   public static DebugVector3 MoveTowards(DebugVector3 current, DebugVector3 target, float maxDistanceDelta)
   {
     Vector3 result = Vector3.MoveTowards(current, target, maxDistanceDelta);
-    DrawVector(current.origin, current.origin + current.v3, DrawVectorColorA);
-    DrawVector(current.origin, current.origin + target.v3, DrawVectorColorB);
-    DrawVector(current.origin, current.origin + result, DrawResultColor);
+    DrawVector(origin, origin + current.v3, DrawVectorColorA);
+    DrawVector(origin, origin + target.v3, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
   /// <summary>
@@ -505,8 +516,8 @@ public struct DebugVector3
   /// <returns>Vector with a magnitude of 1</returns>
   public static DebugVector3 Normalize(DebugVector3 value)
   {
-    DrawVector(value.origin, value.origin + value.v3, DrawVectorColorA);
-    DrawVector(value.origin, value.origin + value.v3.normalized, DrawResultColor);
+    DrawVector(origin, origin + value.v3, DrawVectorColorA);
+    DrawVector(origin, origin + value.v3.normalized, DrawResultColor);
     return (DebugVector3)value.v3.normalized;
   }
   /// <summary>
@@ -537,9 +548,9 @@ public struct DebugVector3
 
   public static DebugVector3 operator +(DebugVector3 a, DebugVector3 b)
   {
-    DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
-    DrawVector(a.origin + a.v3, a.origin + a.v3 + b.v3, DrawVectorColorB);
-    DrawVector(a.origin, a.origin + a.v3 + b.v3, DrawResultColor);
+    DrawVectorOperator(origin, origin + a.v3, DrawVectorColorA);
+    DrawVectorOperator(origin + a.v3, origin + a.v3 + b.v3, DrawVectorColorB);
+    DrawVectorOperator(origin, origin + a.v3 + b.v3, DrawResultColor);
     return new DebugVector3(a.x + b.x, a.y + b.y, a.z + b.z);
   }
   public static DebugVector3 operator +(DebugVector3 a, Vector3 b)
@@ -554,9 +565,9 @@ public struct DebugVector3
 
   public static DebugVector3 operator -(DebugVector3 a, DebugVector3 b)
   {
-    DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
-    DrawVector(a.origin + a.v3, a.origin + a.v3 - b.v3, DrawVectorColorB);
-    DrawVector(a.origin, a.origin + a.v3 - b.v3, DrawResultColor);
+    DrawVectorOperator(origin, origin + a.v3, DrawVectorColorA);
+    DrawVectorOperator(origin + a.v3, origin + a.v3 - b.v3, DrawVectorColorB);
+    DrawVectorOperator(origin, origin + a.v3 - b.v3, DrawResultColor);
     return new DebugVector3(a.x - b.x, a.y - b.y, a.z - b.z);
   }
   public static DebugVector3 operator -(DebugVector3 a, Vector3 b)
@@ -590,15 +601,31 @@ public struct DebugVector3
 
   public static DebugVector3 operator *(DebugVector3 a, float m)
   {
-    DrawVector(a.origin, a.origin + a.v3 * m, DrawResultColor);
-    DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
+    if (m > 1)
+    {
+      DrawVectorOperator(origin, origin + a.v3 * m, DrawResultColor);
+      DrawVectorOperator(origin, origin + a.v3, DrawVectorColorA);
+    }
+    else
+    {
+      DrawVectorOperator(origin, origin + a.v3, DrawVectorColorA);
+      DrawVectorOperator(origin, origin + a.v3 * m, DrawResultColor);
+    }
     return new DebugVector3(a.x * m, a.y * m, a.z * m);
   }
 
   public static DebugVector3 operator /(DebugVector3 a, float d)
   {
-    DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
-    DrawVector(a.origin, a.origin + a.v3 / d, DrawResultColor);
+    if (d >= 1)
+    {
+      DrawVectorOperator(origin, origin + a.v3, DrawVectorColorA);
+      DrawVectorOperator(origin, origin + a.v3 / d, DrawResultColor);
+    }
+    else
+    {
+      DrawVectorOperator(origin, origin + a.v3 / d, DrawResultColor);
+      DrawVectorOperator(origin, origin + a.v3, DrawVectorColorA);
+    }
     return new DebugVector3(a.x / d, a.y / d, a.z / d);
   }
 

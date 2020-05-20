@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class DebugVectorExamples : MonoBehaviour
 {
+  public bool ShowMethodResult = true;
+  public bool ShowMethodInputs = true;
+  public bool ShowOperatorResult = true;
+  public bool ShowOperatorInputs = true;
   public Vector3 test;
 
   public DebugVector3 vector1 = DebugVector3.up;
@@ -35,16 +39,17 @@ public class DebugVectorExamples : MonoBehaviour
 
   public bool DoDebugStaticNormalize = false;
   public bool DoDebugInstNormalize = false;
-  // Use this for initialization
-  void Start()
-  {
-    vector1.t = transform;
-    vector2.t = transform;
-  }
+
+  public bool DoOrthoNormalize = false;
 
   // Update is called once per frame
   void Update()
   {
+    DebugVector3.ShowOperatorResult = ShowOperatorResult;
+    DebugVector3.ShowOperatorInputs = ShowOperatorInputs;
+    DebugVector3.ShowMethodInputs = ShowMethodInputs;
+    DebugVector3.ShowMethodResult = ShowMethodResult;
+    DebugVector3.origin = transform.position;
     Vector3 t = Vector3.one;
     DebugVector3 result = DebugVector3.zero;
     float f = 0.0f;
@@ -68,12 +73,10 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoAngle)
     {
       f = DebugVector3.Angle(vector1, Vector3.one);
-      float r0 = DebugVector3.Angle(vector1, Vector3.right);
-      float r2 = DebugVector3.Angle(Vector3.right, vector1);
-      float r1 = DebugVector3.Angle(Vector3.one, Vector3.right);
-
+      // float r0 = DebugVector3.Angle(vector1, Vector3.right);
+      // float r2 = DebugVector3.Angle(Vector3.right, vector1);
+      // float r1 = DebugVector3.Angle(Vector3.one, Vector3.right);
       // f = Vector3.Angle(vector1, vector2);
-
     }
     if (DoClampMagnitude)
     {
@@ -88,7 +91,7 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoDebugDistance)
     {
       f = DebugVector3.Distance(vector1, vector2);
-      f = DebugVector3.Distance(Vector3.right, Vector3.up);
+      // f = DebugVector3.Distance(Vector3.right, Vector3.up);
       // f = Vector3.Distance(vector1, vector2);
     }
     if (DoDebugDot)
@@ -124,18 +127,18 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoDebugStaticNormalize)
     {
       result = DebugVector3.Normalize(vector1);
-      Vector3 t1 = DebugVector3.Normalize(this.transform.position);
-      DebugVector3 t2 = DebugVector3.Normalize(this.transform.position + result);
+      // result = vector1;
+      // // Vector3 t1 = DebugVector3.Normalize(this.transform.position);
+      // DebugVector3 t2 = DebugVector3.Normalize(this.transform.position + result);
     }
     if (DoDebugInstNormalize)
     {
       vector1.Normalize();
     }
-    DebugVector3 a = Vector3.one + (DebugVector3)Vector3.zero;
-    Vector3 b = a + Vector3.zero;
-    if (a == b)
+    if (DoOrthoNormalize)
     {
-      Debug.Log("equals");
+      DebugVector3.OrthoNormalize(ref vector1, ref vector2);
+      // Vector3 a = Vector3.OrthoNormalize()
     }
   }
 }
