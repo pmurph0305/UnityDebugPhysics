@@ -81,14 +81,14 @@ public static class DebugDraw
     Vector3 direction = (end - start).normalized;
     Vector3 right = Vector3.zero;
     Vector3 up = Vector3.zero;
-    if (direction != Vector3.up)
+    if (direction != Vector3.up && direction != -Vector3.up)
     {
       right = Vector3.Cross(direction, Vector3.up).normalized;
       up = Vector3.Cross(direction, right).normalized;
     }
     else
     {
-      up = Vector3.Cross(direction, Vector3.right).normalized;
+      up = Vector3.Cross(direction, Vector3.forward).normalized;
       right = Vector3.Cross(direction, up).normalized;
     }
     right = right * scale;

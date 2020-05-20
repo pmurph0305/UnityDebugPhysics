@@ -123,6 +123,42 @@ public struct DebugVector3
 
   // Static Methods
 
+
+  /// <summary>
+  /// Calculates the smaller of the two possible angles between from and to
+  /// </summary>
+  /// <param name="from">The vector from which the angular distance is measured</param>
+  /// <param name="to">The Vector to which the angular distance is measured</param>
+  /// <returns></returns>
+  public static float Angle(DebugVector3 from, DebugVector3 to)
+  {
+    float angle = Vector3.Angle(from, to);
+    DrawVector(from.origin, from.origin + from.v3, DrawVectorColorA);
+    DrawVector(from.origin, from.origin + to.v3, DrawVectorColorB);
+    // draw an arc between the vectors?
+    return angle;
+  }
+
+  /// <summary>
+  /// Returns a copy of vector with its magnitude clamped to max length
+  /// </summary>
+  /// <param name="vector">Vector to clamp</param>
+  /// <param name="maxLength">max length to clamp to</param>
+  /// <returns></returns>
+  public static DebugVector3 ClampMagnitude(DebugVector3 vector, float maxLength)
+  {
+    DebugVector3 result = (DebugVector3)Vector3.ClampMagnitude(vector, maxLength);
+    DrawVector(vector.origin, vector.origin + vector.v3, DrawVectorColorA);
+    DrawVector(vector.origin, vector.origin + result.v3, DrawResultColor);
+    return result;
+  }
+
+  /// <summary>
+  /// Cross product of two vectors, the vector perpindicular to the two input vectors
+  /// </summary>
+  /// <param name="lhs">Left hand side of cross (or thumb of left hand)</param>
+  /// <param name="rhs">Right hand side of cross (or index of left hand)</param>
+  /// <returns>The vector perpindicular to the two input vectors using left hand rule</returns>
   public static DebugVector3 Cross(DebugVector3 lhs, DebugVector3 rhs)
   {
     Vector3 result = Vector3.Cross(lhs, rhs);
@@ -131,6 +167,28 @@ public struct DebugVector3
     DrawVector(lhs.origin, lhs.origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
+
+  /// <summary>
+  /// Calculates the distance between a and b
+  /// </summary>
+  /// <param name="a">Vector A</param>
+  /// <param name="b">Vector B</param>
+  /// <returns>Distance between Vector A and Vector B</returns>
+  public static float Distance(DebugVector3 a, DebugVector3 b)
+  {
+    float result = Vector3.Distance(a, b);
+    DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
+    DrawVector(a.origin, a.origin + b.v3, DrawVectorColorB);
+    DebugDraw.DrawLine(a.v3, b.v3, DrawResultColor, DrawLineTime, DepthTest);
+    return result;
+  }
+
+  /// <summary>
+  /// Calculates the dot product of two vectors
+  /// </summary>
+  /// <param name="lhs">Left hand size of dot</param>
+  /// <param name="rhs">Right hand size of dot</param>
+  /// <returns>The dot product of two vectors</returns>
   public static float Dot(DebugVector3 lhs, DebugVector3 rhs)
   {
     DrawVector(lhs.origin, lhs.origin + lhs.v3, DrawVectorColorA);
@@ -141,6 +199,40 @@ public struct DebugVector3
       DrawVector(lhs.origin, lhs.origin + f, DrawResultColor);
     }
     return Vector3.Dot(lhs, rhs);
+  }
+
+  /// <summary>
+  /// Linearly interpolates between two points
+  /// When t is 0, returns a. When t is 1, returns b.
+  /// </summary>
+  /// <param name="a">Point A</param>
+  /// <param name="b">Point B</param>
+  /// <param name="t">Interpolant</param>
+  /// <returns>Linear interpolation of a and b by t.</returns>
+  public static DebugVector3 Lerp(DebugVector3 a, DebugVector3 b, float t)
+  {
+    Vector3 result = Vector3.Lerp(a, b, t);
+    DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
+    DrawVector(a.origin, a.origin + b.v3, DrawVectorColorB);
+    DrawVector(a.origin, a.origin + result, DrawResultColor);
+    return new DebugVector3(result);
+  }
+
+  /// <summary>
+  /// Linearly interpolates between two points where t is unclamped.
+  /// When t is 0, returns a. When t is 1, returns b.
+  /// </summary>
+  /// <param name="a">Point A</param>
+  /// <param name="b">Point B</param>
+  /// <param name="t">Interpolant</param>
+  /// <returns>Linear interpolation of a and b by t.</returns>
+  public static DebugVector3 LerpUnclamped(DebugVector3 a, DebugVector3 b, float t)
+  {
+    Vector3 result = Vector3.LerpUnclamped(a, b, t);
+    DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
+    DrawVector(a.origin, a.origin + b.v3, DrawVectorColorB);
+    DrawVector(a.origin, a.origin + result, DrawResultColor);
+    return new DebugVector3(result);
   }
 
   // Operators
@@ -169,7 +261,7 @@ public struct DebugVector3
 
   public static implicit operator Vector3(DebugVector3 a) { return new Vector3(a.x, a.y, a.z); }
 
-  public static explicit operator DebugVector3(Vector3 a) { return new DebugVector3(a.x, a.y, a.z); }
+  public static explicit operator DebugVector3(Vector3 a) { return new DebugVector3(a); }
 
   public static bool operator ==(DebugVector3 a, DebugVector3 b)
   {

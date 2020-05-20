@@ -2665,7 +2665,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1751987224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2680,8 +2680,8 @@ MonoBehaviour:
   test: {x: 0, y: 0, z: 0}
   vector1:
     t: {fileID: 0}
-    v3: {x: 0, y: 1, z: 0}
-    _x: 0
+    v3: {x: 0.5, y: 1, z: 0}
+    _x: 0.5
     _y: 1
     _z: 0
   vector2:
@@ -2690,8 +2690,13 @@ MonoBehaviour:
     _x: 1
     _y: 0
     _z: 0
+  multDiv: 2
   DoDebugAdd: 0
   DoDebugMinus: 0
+  DoDebugMultiply: 0
+  DoDebugDivide: 0
+  DoDebugDot: 0
+  DoDebugCross: 0
 --- !u!4 &1751987225
 Transform:
   m_ObjectHideFlags: 0
