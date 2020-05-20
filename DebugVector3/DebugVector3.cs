@@ -145,7 +145,7 @@ public struct DebugVector3
   /// </summary>
   /// <param name="from">The vector from which the angular distance is measured</param>
   /// <param name="to">The Vector to which the angular distance is measured</param>
-  /// <returns></returns>
+  /// <returns>Smallest angle between from and to</returns>
   public static float Angle(DebugVector3 from, DebugVector3 to)
   {
     float angle = Vector3.Angle(from, to);
@@ -154,13 +154,34 @@ public struct DebugVector3
     // draw an arc between the vectors?
     return angle;
   }
+  /// <summary>
+  /// Calculates the smaller of the two possible angles between from and to
+  /// </summary>
+  /// <param name="from">The vector from which the angular distance is measured</param>
+  /// <param name="to">The Vector to which the angular distance is measured</param>
+  /// <returns>Smallest angle between from and to</returns>
+  public static float Angle(DebugVector3 from, Vector3 to)
+  {
+    return Angle(from, (DebugVector3)to);
+  }
+  /// <summary>
+  /// Calculates the smaller of the two possible angles between from and to
+  /// </summary>
+  /// <param name="from">The vector from which the angular distance is measured</param>
+  /// <param name="to">The Vector to which the angular distance is measured</param>
+  /// <returns>Smallest angle between from and to</returns>
+  public static float Angle(Vector3 from, Vector3 to)
+  {
+    return Angle((DebugVector3)from, (DebugVector3)to);
+  }
+
 
   /// <summary>
   /// Returns a copy of vector with its magnitude clamped to max length
   /// </summary>
   /// <param name="vector">Vector to clamp</param>
   /// <param name="maxLength">max length to clamp to</param>
-  /// <returns></returns>
+  /// <returns>Vector in same direction clamped to maxLength</returns>
   public static DebugVector3 ClampMagnitude(DebugVector3 vector, float maxLength)
   {
     DebugVector3 result = (DebugVector3)Vector3.ClampMagnitude(vector, maxLength);
@@ -168,6 +189,17 @@ public struct DebugVector3
     DrawVector(vector.origin, vector.origin + result.v3, DrawResultColor);
     return result;
   }
+  /// <summary>
+  /// Returns a copy of vector with its magnitude clamped to max length
+  /// </summary>
+  /// <param name="vector">Vector to clamp</param>
+  /// <param name="maxLength">max length to clamp to</param>
+  /// <returns>Vector in same direction clamped to maxLength</returns>
+  public static DebugVector3 ClampMagnitude(Vector3 vector, float maxLength)
+  {
+    return ClampMagnitude((DebugVector3)vector, maxLength);
+  }
+
 
   /// <summary>
   /// Cross product of two vectors, the vector perpindicular to the two input vectors
@@ -183,6 +215,27 @@ public struct DebugVector3
     DrawVector(lhs.origin, lhs.origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
+  /// <summary>
+  /// Cross product of two vectors, the vector perpindicular to the two input vectors
+  /// </summary>
+  /// <param name="lhs">Left hand side of cross (or thumb of left hand)</param>
+  /// <param name="rhs">Right hand side of cross (or index of left hand)</param>
+  /// <returns>The vector perpindicular to the two input vectors using left hand rule</returns>
+  public static DebugVector3 Cross(DebugVector3 lhs, Vector3 rhs)
+  {
+    return Cross(lhs, (DebugVector3)rhs);
+  }
+  /// <summary>
+  /// Cross product of two vectors, the vector perpindicular to the two input vectors
+  /// </summary>
+  /// <param name="lhs">Left hand side of cross (or thumb of left hand)</param>
+  /// <param name="rhs">Right hand side of cross (or index of left hand)</param>
+  /// <returns>The vector perpindicular to the two input vectors using left hand rule</returns>
+  public static DebugVector3 Cross(Vector3 lhs, Vector3 rhs)
+  {
+    return Cross((DebugVector3)lhs, (DebugVector3)rhs);
+  }
+
 
   /// <summary>
   /// Calculates the distance between a and b
@@ -198,6 +251,15 @@ public struct DebugVector3
     DebugDraw.DrawLine(a.v3, b.v3, DrawResultColor, DrawLineTime, DepthTest);
     return result;
   }
+  public static float Distance(DebugVector3 a, Vector3 b)
+  {
+    return Distance(a, (DebugVector3)b);
+  }
+  public static float Distance(Vector3 a, Vector3 b)
+  {
+    return Distance((DebugVector3)a, (DebugVector3)b);
+  }
+
 
   /// <summary>
   /// Calculates the dot product of two vectors
@@ -216,6 +278,27 @@ public struct DebugVector3
     }
     return Vector3.Dot(lhs, rhs);
   }
+  /// <summary>
+  /// Calculates the dot product of two vectors
+  /// </summary>
+  /// <param name="lhs">Left hand size of dot</param>
+  /// <param name="rhs">Right hand size of dot</param>
+  /// <returns>The dot product of two vectors</returns>
+  public static float Dot(DebugVector3 lhs, Vector3 rhs)
+  {
+    return Dot(lhs, (DebugVector3)rhs);
+  }
+  /// <summary>
+  /// Calculates the dot product of two vectors
+  /// </summary>
+  /// <param name="lhs">Left hand size of dot</param>
+  /// <param name="rhs">Right hand size of dot</param>
+  /// <returns>The dot product of two vectors</returns>
+  public static float Dot(Vector3 lhs, Vector3 rhs)
+  {
+    return Dot((DebugVector3)lhs, (DebugVector3)rhs);
+  }
+
 
   /// <summary>
   /// Linearly interpolates between two points
@@ -233,6 +316,31 @@ public struct DebugVector3
     DrawVector(a.origin, a.origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
+  /// <summary>
+  /// Linearly interpolates between two points
+  /// When t is 0, returns a. When t is 1, returns b.
+  /// </summary>
+  /// <param name="a">Point A</param>
+  /// <param name="b">Point B</param>
+  /// <param name="t">Interpolant</param>
+  /// <returns>Linear interpolation of a and b by t.</returns>
+  public static DebugVector3 Lerp(DebugVector3 a, Vector3 b, float t)
+  {
+    return Lerp(a, (DebugVector3)b, t);
+  }
+  /// <summary>
+  /// Linearly interpolates between two points
+  /// When t is 0, returns a. When t is 1, returns b.
+  /// </summary>
+  /// <param name="a">Point A</param>
+  /// <param name="b">Point B</param>
+  /// <param name="t">Interpolant</param>
+  /// <returns>Linear interpolation of a and b by t.</returns>
+  public static DebugVector3 Lerp(Vector3 a, Vector3 b, float t)
+  {
+    return Lerp((DebugVector3)a, (DebugVector3)b, t);
+  }
+
 
   /// <summary>
   /// Linearly interpolates between two points where t is unclamped.
@@ -250,6 +358,31 @@ public struct DebugVector3
     DrawVector(a.origin, a.origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
+  /// <summary>
+  /// Linearly interpolates between two points where t is unclamped.
+  /// When t is 0, returns a. When t is 1, returns b.
+  /// </summary>
+  /// <param name="a">Point A</param>
+  /// <param name="b">Point B</param>
+  /// <param name="t">Interpolant</param>
+  /// <returns>Linear interpolation of a and b by t.</returns>
+  public static DebugVector3 LerpUnclamped(DebugVector3 a, Vector3 b, float t)
+  {
+    return LerpUnclamped(a, (DebugVector3)b, t);
+  }
+  /// <summary>
+  /// Linearly interpolates between two points where t is unclamped.
+  /// When t is 0, returns a. When t is 1, returns b.
+  /// </summary>
+  /// <param name="a">Point A</param>
+  /// <param name="b">Point B</param>
+  /// <param name="t">Interpolant</param>
+  /// <returns>Linear interpolation of a and b by t.</returns>
+  public static DebugVector3 LerpUnclamped(Vector3 a, Vector3 b, float t)
+  {
+    return LerpUnclamped((DebugVector3)a, (DebugVector3)b, t);
+  }
+
 
   /// <summary>
   /// Returns a vector made from the largest components of the two vectors.
@@ -265,6 +398,27 @@ public struct DebugVector3
     DrawVector(lhs.origin, lhs.origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
+  /// <summary>
+  /// Returns a vector made from the largest components of the two vectors.
+  /// </summary>
+  /// <param name="lhs">Vector 1</param>
+  /// <param name="rhs">Vector 2</param>
+  /// <returns>Vector made from largest components of Vectors lhs and rhs</returns>
+  public static DebugVector3 Max(DebugVector3 lhs, Vector3 rhs)
+  {
+    return Max(lhs, (DebugVector3)rhs);
+  }
+  /// <summary>
+  /// Returns a vector made from the largest components of the two vectors.
+  /// </summary>
+  /// <param name="lhs">Vector 1</param>
+  /// <param name="rhs">Vector 2</param>
+  /// <returns>Vector made from largest components of Vectors lhs and rhs</returns>
+  public static DebugVector3 Max(Vector3 lhs, Vector3 rhs)
+  {
+    return Max((DebugVector3)lhs, (DebugVector3)rhs);
+  }
+
 
   /// <summary>
   /// Returns a vector made from the smallest components of the two vectors.
@@ -280,6 +434,27 @@ public struct DebugVector3
     DrawVector(lhs.origin, lhs.origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
+  /// <summary>
+  /// Returns a vector made from the smallest components of the two vectors.
+  /// </summary>
+  /// <param name="lhs">Vector 1</param>
+  /// <param name="rhs">Vector 2</param>
+  /// <returns>Vector made from smallest components of Vectors lhs and rhs</returns>
+  public static DebugVector3 Min(DebugVector3 lhs, Vector3 rhs)
+  {
+    return Min(lhs, (DebugVector3)rhs);
+  }
+  /// <summary>
+  /// Returns a vector made from the smallest components of the two vectors.
+  /// </summary>
+  /// <param name="lhs">Vector 1</param>
+  /// <param name="rhs">Vector 2</param>
+  /// <returns>Vector made from smallest components of Vectors lhs and rhs</returns>
+  public static DebugVector3 Min(Vector3 lhs, Vector3 rhs)
+  {
+    return Min((DebugVector3)lhs, (DebugVector3)rhs);
+  }
+
 
   /// <summary>
   /// Calculates a position between the points specified by current and target,
@@ -297,6 +472,31 @@ public struct DebugVector3
     DrawVector(current.origin, current.origin + result, DrawResultColor);
     return new DebugVector3(result);
   }
+  /// <summary>
+  /// Calculates a position between the points specified by current and target,
+  /// moving no further than the distance specified by maxDistanceDelta.
+  /// </summary>
+  /// <param name="current">Position to move from</param>
+  /// <param name="target">Position to move towards</param>
+  /// <param name="maxDistanceDelta">Max distance to move per call</param>
+  /// <returns></returns>
+  public static DebugVector3 MoveTowards(DebugVector3 current, Vector3 target, float maxDistanceDelta)
+  {
+    return MoveTowards(current, (DebugVector3)target, maxDistanceDelta);
+  }
+  /// <summary>
+  /// Calculates a position between the points specified by current and target,
+  /// moving no further than the distance specified by maxDistanceDelta.
+  /// </summary>
+  /// <param name="current">Position to move from</param>
+  /// <param name="target">Position to move towards</param>
+  /// <param name="maxDistanceDelta">Max distance to move per call</param>
+  /// <returns></returns>
+  public static DebugVector3 MoveTowards(Vector3 current, Vector3 target, float maxDistanceDelta)
+  {
+    return MoveTowards((DebugVector3)current, (DebugVector3)target, maxDistanceDelta);
+  }
+
 
   /// <summary>
   /// Calculates a vector with a magnitude of 1.
@@ -330,6 +530,11 @@ public struct DebugVector3
   }
 
   // Operators
+
+  public static implicit operator Vector3(DebugVector3 a) { return new Vector3(a.x, a.y, a.z); }
+  public static explicit operator DebugVector3(Vector3 a) { return new DebugVector3(a); }
+
+
   public static DebugVector3 operator +(DebugVector3 a, DebugVector3 b)
   {
     DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
@@ -341,6 +546,12 @@ public struct DebugVector3
   {
     return a + (DebugVector3)b;
   }
+  public static DebugVector3 operator +(Vector3 a, DebugVector3 b)
+  {
+    return (DebugVector3)a + b;
+  }
+
+
   public static DebugVector3 operator -(DebugVector3 a, DebugVector3 b)
   {
     DrawVector(a.origin, a.origin + a.v3, DrawVectorColorA);
@@ -352,10 +563,11 @@ public struct DebugVector3
   {
     return a - (DebugVector3)b;
   }
+  public static DebugVector3 operator -(Vector3 a, DebugVector3 b)
+  {
+    return (DebugVector3)a - b;
+  }
 
-  public static implicit operator Vector3(DebugVector3 a) { return new Vector3(a.x, a.y, a.z); }
-
-  public static explicit operator DebugVector3(Vector3 a) { return new DebugVector3(a); }
 
   public static bool operator ==(DebugVector3 a, DebugVector3 b)
   {

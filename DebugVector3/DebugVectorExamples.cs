@@ -67,7 +67,11 @@ public class DebugVectorExamples : MonoBehaviour
 
     if (DoAngle)
     {
-      f = DebugVector3.Angle(vector1, vector2);
+      f = DebugVector3.Angle(vector1, Vector3.one);
+      float r0 = DebugVector3.Angle(vector1, Vector3.right);
+      float r2 = DebugVector3.Angle(Vector3.right, vector1);
+      float r1 = DebugVector3.Angle(Vector3.one, Vector3.right);
+
       // f = Vector3.Angle(vector1, vector2);
 
     }
@@ -84,6 +88,7 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoDebugDistance)
     {
       f = DebugVector3.Distance(vector1, vector2);
+      f = DebugVector3.Distance(Vector3.right, Vector3.up);
       // f = Vector3.Distance(vector1, vector2);
     }
     if (DoDebugDot)
@@ -125,6 +130,12 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoDebugInstNormalize)
     {
       vector1.Normalize();
+    }
+    DebugVector3 a = Vector3.one + (DebugVector3)Vector3.zero;
+    Vector3 b = a + Vector3.zero;
+    if (a == b)
+    {
+      Debug.Log("equals");
     }
   }
 }
