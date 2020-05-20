@@ -28,6 +28,8 @@ public class DebugVectorExamples : MonoBehaviour
   public float Lerp = 0.5f;
   public bool DoDebugLerpUnclamped = false;
 
+  public bool DoDebugMax = false;
+  public bool DoDebugMin = false;
 
 
   // Use this for initialization
@@ -87,6 +89,14 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoDebugLerpUnclamped)
     {
       result = DebugVector3.LerpUnclamped(vector1, vector2, Lerp);
+    }
+    if (DoDebugMax)
+    {
+      result = DebugVector3.Max(vector1, vector2);
+    }
+    if (DoDebugMin)
+    {
+      result = DebugVector3.Min(vector1, vector2);
     }
   }
 }

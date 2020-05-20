@@ -2695,8 +2695,15 @@ MonoBehaviour:
   DoDebugMinus: 0
   DoDebugMultiply: 0
   DoDebugDivide: 0
-  DoDebugDot: 0
+  DoAngle: 0
+  DoClampMagnitude: 0
+  MaxMagnitude: 2
   DoDebugCross: 0
+  DoDebugDistance: 0
+  DoDebugDot: 0
+  DoDebugLerp: 0
+  Lerp: 0.505
+  DoDebugLerpUnclamped: 0
 --- !u!4 &1751987225
 Transform:
   m_ObjectHideFlags: 0

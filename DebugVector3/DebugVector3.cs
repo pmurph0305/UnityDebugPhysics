@@ -235,6 +235,37 @@ public struct DebugVector3
     return new DebugVector3(result);
   }
 
+  /// <summary>
+  /// Returns a vector made from the largest components of the two vectors.
+  /// </summary>
+  /// <param name="lhs">Vector 1</param>
+  /// <param name="rhs">Vector 2</param>
+  /// <returns>Vector made from largest components of Vectors lhs and rhs</returns>
+  public static DebugVector3 Max(DebugVector3 lhs, DebugVector3 rhs)
+  {
+    Vector3 result = Vector3.Max(lhs, rhs);
+    DrawVector(lhs.origin, lhs.origin + lhs.v3, DrawVectorColorA);
+    DrawVector(lhs.origin, lhs.origin + rhs.v3, DrawVectorColorB);
+    DrawVector(lhs.origin, lhs.origin + result, DrawResultColor);
+    return new DebugVector3(result);
+  }
+
+  /// <summary>
+  /// Returns a vector made from the smallest components of the two vectors.
+  /// </summary>
+  /// <param name="lhs">Vector 1</param>
+  /// <param name="rhs">Vector 2</param>
+  /// <returns>Vector made from smallest components of Vectors lhs and rhs</returns>
+  public static DebugVector3 Min(DebugVector3 lhs, DebugVector3 rhs)
+  {
+    Vector3 result = Vector3.Min(lhs, rhs);
+    DrawVector(lhs.origin, lhs.origin + lhs.v3, DrawVectorColorA);
+    DrawVector(lhs.origin, lhs.origin + rhs.v3, DrawVectorColorB);
+    DrawVector(lhs.origin, lhs.origin + result, DrawResultColor);
+    return new DebugVector3(result);
+  }
+
+
   // Operators
   public static DebugVector3 operator +(DebugVector3 a, DebugVector3 b)
   {
