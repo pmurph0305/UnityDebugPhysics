@@ -47,6 +47,12 @@ public class DebugVectorExamples : MonoBehaviour
   public bool DoDebugProjectOnPlane = false;
   public Vector3 PlaneNormal = Vector3.up;
 
+  public bool DoDebugReflect = false;
+
+  public bool DoDebugRotateTowards = false;
+  public float MaxRotateDelta = 5.0f;
+  public float MaxMagnitudeDelta = 5.0f;
+
   // Update is called once per frame
   void Update()
   {
@@ -158,14 +164,25 @@ public class DebugVectorExamples : MonoBehaviour
 
     if (DoDebugProject)
     {
-      Vector3 r = DebugVector3.Project(vector1, vector2);
-      DebugVector3 r2 = (DebugVector3)DebugVector3.Project(vector1, vector2);
-      Vector3 a = DebugVector3.Project(vector1, Vector3.one);
+      // Vector3 r = DebugVector3.Project(vector1, vector2);
+      // DebugVector3 r2 = (DebugVector3)DebugVector3.Project(vector1, vector2);
+      // Vector3 a = DebugVector3.Project(vector1, Vector3.one);
+      result = DebugVector3.Project(vector1, vector2);
     }
 
     if (DoDebugProjectOnPlane)
     {
       result = (DebugVector3)DebugVector3.ProjectOnPlane(vector1, PlaneNormal);
+    }
+
+    if (DoDebugReflect)
+    {
+      result = DebugVector3.Reflect(vector1, PlaneNormal);
+    }
+
+    if (DoDebugRotateTowards)
+    {
+      result = DebugVector3.RotateTowards(vector1, vector2, MaxRotateDelta, MaxMagnitudeDelta);
     }
   }
 }

@@ -35,12 +35,38 @@ public static class DebugDraw
   }
 
   /// <summary>
+  /// Draws a plane of size defined by its normal.
+  /// </summary>
+  /// <param name="normal">Normal orthogonal to plane</param>
+  /// <param name="size">Size of plane to draw</param>
+  /// <param name="color">Color of lines to draw with</param>
+  /// <param name="duration">Length of time to draw the plane</param>
+  /// <param name="depthTest">Should the lines be obscured by objects closer to the camera?</param>
+  public static void DrawPlane(Vector3 origin, Vector3 normal, float size, Color color, float duration, bool depthTest = false)
+  {
+    if (normal != Vector3.zero)
+    {
+      Quaternion look = Quaternion.LookRotation(normal);
+      Vector3[] pts = new Vector3[4] {
+      look * Vector3.right * size + origin,
+      look * Vector3.left* size + origin,
+      look * Vector3.up * size + origin,
+      look * Vector3.down* size + origin,
+    };
+      Debug.DrawLine(pts[0], pts[2], color, duration, depthTest);
+      Debug.DrawLine(pts[0], pts[3], color, duration, depthTest);
+      Debug.DrawLine(pts[1], pts[2], color, duration, depthTest);
+      Debug.DrawLine(pts[1], pts[3], color, duration, depthTest);
+    }
+  }
+
+  /// <summary>
   /// Draws a point using lines aligned with the world-space axis'
   /// </summary>
   /// <param name="point">Location in world space to draw the point</param>
   /// <param name="color">Color to draw point</param>
-  /// <param name="duration">	How long the point should be visible for.</param>
-  /// <param name="depthTest">	Should the line be obscured by objects closer to the camera?</param>
+  /// <param name="duration">How long the point should be visible for.</param>
+  /// <param name="depthTest">Should the line be obscured by objects closer to the camera?</param>
   public static void DrawPoint(Vector3 point, Color color, float duration, bool depthTest = false)
   {
     Debug.DrawLine(point - Vector3.up * DefaultPointScale, point + Vector3.up * DefaultPointScale, color, duration, depthTest);

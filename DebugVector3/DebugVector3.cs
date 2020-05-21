@@ -652,9 +652,9 @@ public struct DebugVector3
   /// <param name="vector">Vector to project</param>
   /// <param name="onNormal">Normalized vector to project on</param>
   /// <returns>Vector vector projected on onNormal</returns>
-  public static DebugVector3 Project(DebugVector3 vector, DebugVector3 onNormal)
+  public static DebugVector3 Project(Vector3 vector, Vector3 onNormal)
   {
-    DebugVector3 result = new DebugVector3(Vector3.Project(vector, onNormal));
+    Vector3 result = Vector3.Project(vector, onNormal);
     DrawVector(origin, origin + vector, DrawVectorColorA);
     if (result.sqrMagnitude > onNormal.sqrMagnitude)
     {
@@ -666,7 +666,7 @@ public struct DebugVector3
       DrawVector(origin, origin + onNormal, DrawVectorColorB);
       DrawVector(origin, origin + result, DrawResultColor);
     }
-    return result;
+    return (DebugVector3)result;
   }
   /// <summary>
   /// Projects a vector onto another vector
@@ -674,9 +674,9 @@ public struct DebugVector3
   /// <param name="vector">Vector to project</param>
   /// <param name="onNormal">Normalized vector to project on</param>
   /// <returns>Vector vector projected on onNormal</returns>
-  public static DebugVector3 Project(Vector3 vector, Vector3 onNormal)
+  public static DebugVector3 Project(DebugVector3 vector, DebugVector3 onNormal)
   {
-    return Project((DebugVector3)vector, (DebugVector3)onNormal);
+    return Project(vector.v3, onNormal.v3);
   }
 
 
@@ -688,26 +688,7 @@ public struct DebugVector3
   /// <returns>Vector projected on plane defined by planeNormal</returns>
   public static DebugVector3 ProjectOnPlane(DebugVector3 vector, DebugVector3 planeNormal)
   {
-    Vector3 result = Vector3.ProjectOnPlane(vector, planeNormal);
-    DrawVector(origin, origin + planeNormal, DrawVectorColorB);
-    // draw vector we're project after on the off chance it's the same as the plane normal.
-    DrawVector(origin, origin + vector, DrawVectorColorA);
-    if (planeNormal != Vector3.zero)
-    {
-      Quaternion look = Quaternion.LookRotation(planeNormal);
-      Vector3[] pts = new Vector3[4] {
-      look * Vector3.right,
-      look * Vector3.left,
-      look * Vector3.up,
-      look * Vector3.down,
-    };
-      Debug.DrawLine(pts[0], pts[2], DrawVectorColorB, DrawLineTime, DepthTest);
-      Debug.DrawLine(pts[0], pts[3], DrawVectorColorB, DrawLineTime, DepthTest);
-      Debug.DrawLine(pts[1], pts[2], DrawVectorColorB, DrawLineTime, DepthTest);
-      Debug.DrawLine(pts[1], pts[3], DrawVectorColorB, DrawLineTime, DepthTest);
-    }
-    DrawVector(origin, origin + result, DrawResultColor);
-    return (DebugVector3)result;
+    return ProjectOnPlane(vector.v3, planeNormal.v3);
   }
   /// <summary>
   /// Projects a vector onto a plane defined by a normal orthogonal to the plane.
@@ -717,7 +698,47 @@ public struct DebugVector3
   /// <returns>Vector projected on plane defined by planeNormal</returns>
   public static DebugVector3 ProjectOnPlane(Vector3 vector, Vector3 planeNormal)
   {
-    return ProjectOnPlane((DebugVector3)vector, (DebugVector3)planeNormal);
+    Vector3 result = Vector3.ProjectOnPlane(vector, planeNormal);
+    DrawVector(origin, origin + planeNormal.normalized, DrawVectorColorB);
+    // draw vector we're project after on the off chance it's the same as the plane normal.
+    DrawVector(origin, origin + vector, DrawVectorColorA);
+    DebugDraw.DrawPlane(origin, planeNormal, 1, DrawVectorColorB, DrawLineTime, DepthTest);
+    DrawVector(origin, origin + result, DrawResultColor);
+    return (DebugVector3)result;
+  }
+
+  /// <summary>
+  /// Reflects a vector off the plane defined by normal.
+  /// The visual shown is origin - vector returned (to better display the actual reflection)
+  /// </summary>
+  /// <param name="inDirection">Vector to reflect, treated as an arrow coming in to the plane</param>
+  /// <param name="inNormal">Normalized vector orthogonal to the plane.</param>
+  /// <returns>Actual reflected vector (Generally you want to use -returned value as the actual reflection)</returns>
+  public static DebugVector3 Reflect(Vector3 inDirection, Vector3 inNormal)
+  {
+    Vector3 result = Vector3.Reflect(inDirection, inNormal);
+    DrawVector(origin, origin + inNormal.normalized, DrawVectorColorB);
+    DrawVector(origin + inDirection, origin, DrawVectorColorA);
+    DebugDraw.DrawPlane(origin, inNormal, 1f, DrawVectorColorB, DrawLineTime, DepthTest);
+    DrawVector(origin, origin - result, DrawResultColor);
+    return (DebugVector3)result;
+  }
+
+  /// <summary>
+  /// Rotates a vector current towards target and while changing its magnitude
+  /// </summary>
+  /// <param name="current">Vector to move</param>
+  /// <param name="target">Target to move towards</param>
+  /// <param name="maxRadiansDelta">Max degrees to rotate current towards target (or away if negative)</param>
+  /// <param name="maxMagnitudeDelta">Maximum change in magnitude</param>
+  /// <returns>Vector rotated towards target</returns>
+  public static DebugVector3 RotateTowards(Vector3 current, Vector3 target, float maxRadiansDelta, float maxMagnitudeDelta)
+  {
+    Vector3 result = Vector3.RotateTowards(current, target, maxRadiansDelta, maxMagnitudeDelta);
+    DrawVector(origin, origin + current, DrawVectorColorA);
+    DrawVector(origin, origin + target, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
+    return (DebugVector3)result;
   }
 
   // Operators
