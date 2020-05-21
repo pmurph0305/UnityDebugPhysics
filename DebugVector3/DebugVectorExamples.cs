@@ -42,6 +42,11 @@ public class DebugVectorExamples : MonoBehaviour
 
   public bool DoOrthoNormalize = false;
 
+  public bool DoDebugProject = false;
+
+  public bool DoDebugProjectOnPlane = false;
+  public Vector3 PlaneNormal = Vector3.up;
+
   // Update is called once per frame
   void Update()
   {
@@ -150,6 +155,17 @@ public class DebugVectorExamples : MonoBehaviour
       Debug.Log("v1a:" + v1 + " v2a:" + v2);
 
     }
-    Debug.Log(vector1);
+
+    if (DoDebugProject)
+    {
+      Vector3 r = DebugVector3.Project(vector1, vector2);
+      DebugVector3 r2 = (DebugVector3)DebugVector3.Project(vector1, vector2);
+      Vector3 a = DebugVector3.Project(vector1, Vector3.one);
+    }
+
+    if (DoDebugProjectOnPlane)
+    {
+      result = (DebugVector3)DebugVector3.ProjectOnPlane(vector1, PlaneNormal);
+    }
   }
 }

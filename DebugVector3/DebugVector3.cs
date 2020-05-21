@@ -3,7 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+// don't think the extra debugvector3, vector3 and vector3, debugvector3 methods are needed. (except where ref is used)
+// just one debugvector3, debugvector3 and one vector3, vector3 covers all cases
+
 // Why not extension methods?
+// to have the custom operators
+// and since all the methods will also have the static methods that vector3 has,
+// the result is the same, just has the option to do more.
 // primarily for the static origin property
 // so you can set DebugVector3.origin to transform.position
 // and view it more easily, as opposed to everything displaying at the world origin, which is less useful in my opinion
@@ -634,6 +640,84 @@ public struct DebugVector3
     OrthoNormalize(ref n, ref t);
     tangent = t.v3;
     normal = n.v3;
+  }
+
+  // TODO: other orthonormalize with normal, tangent, binormal
+  // for all combinations of vector3 and debugvector3 (8 methods)
+
+
+  /// <summary>
+  /// Projects a vector onto another vector
+  /// </summary>
+  /// <param name="vector">Vector to project</param>
+  /// <param name="onNormal">Normalized vector to project on</param>
+  /// <returns>Vector vector projected on onNormal</returns>
+  public static DebugVector3 Project(DebugVector3 vector, DebugVector3 onNormal)
+  {
+    DebugVector3 result = new DebugVector3(Vector3.Project(vector, onNormal));
+    DrawVector(origin, origin + vector, DrawVectorColorA);
+    if (result.sqrMagnitude > onNormal.sqrMagnitude)
+    {
+      DrawVector(origin, origin + result, DrawResultColor);
+      DrawVector(origin, origin + onNormal, DrawVectorColorB);
+    }
+    else
+    {
+      DrawVector(origin, origin + onNormal, DrawVectorColorB);
+      DrawVector(origin, origin + result, DrawResultColor);
+    }
+    return result;
+  }
+  /// <summary>
+  /// Projects a vector onto another vector
+  /// </summary>
+  /// <param name="vector">Vector to project</param>
+  /// <param name="onNormal">Normalized vector to project on</param>
+  /// <returns>Vector vector projected on onNormal</returns>
+  public static DebugVector3 Project(Vector3 vector, Vector3 onNormal)
+  {
+    return Project((DebugVector3)vector, (DebugVector3)onNormal);
+  }
+
+
+  /// <summary>
+  /// Projects a vector onto a plane defined by a normal orthogonal to the plane.
+  /// </summary>
+  /// <param name="vector">Vector to project</param>
+  /// <param name="planeNormal">Normal orthogonal to plane to project on</param>
+  /// <returns>Vector projected on plane defined by planeNormal</returns>
+  public static DebugVector3 ProjectOnPlane(DebugVector3 vector, DebugVector3 planeNormal)
+  {
+    Vector3 result = Vector3.ProjectOnPlane(vector, planeNormal);
+    DrawVector(origin, origin + planeNormal, DrawVectorColorB);
+    // draw vector we're project after on the off chance it's the same as the plane normal.
+    DrawVector(origin, origin + vector, DrawVectorColorA);
+    if (planeNormal != Vector3.zero)
+    {
+      Quaternion look = Quaternion.LookRotation(planeNormal);
+      Vector3[] pts = new Vector3[4] {
+      look * Vector3.right,
+      look * Vector3.left,
+      look * Vector3.up,
+      look * Vector3.down,
+    };
+      Debug.DrawLine(pts[0], pts[2], DrawVectorColorB, DrawLineTime, DepthTest);
+      Debug.DrawLine(pts[0], pts[3], DrawVectorColorB, DrawLineTime, DepthTest);
+      Debug.DrawLine(pts[1], pts[2], DrawVectorColorB, DrawLineTime, DepthTest);
+      Debug.DrawLine(pts[1], pts[3], DrawVectorColorB, DrawLineTime, DepthTest);
+    }
+    DrawVector(origin, origin + result, DrawResultColor);
+    return (DebugVector3)result;
+  }
+  /// <summary>
+  /// Projects a vector onto a plane defined by a normal orthogonal to the plane.
+  /// </summary>
+  /// <param name="vector">Vector to project</param>
+  /// <param name="planeNormal">Normal orthogonal to plane to project on</param>
+  /// <returns>Vector projected on plane defined by planeNormal</returns>
+  public static DebugVector3 ProjectOnPlane(Vector3 vector, Vector3 planeNormal)
+  {
+    return ProjectOnPlane((DebugVector3)vector, (DebugVector3)planeNormal);
   }
 
   // Operators
