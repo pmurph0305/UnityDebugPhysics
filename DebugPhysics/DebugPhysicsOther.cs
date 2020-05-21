@@ -24,6 +24,17 @@ public static partial class DebugPhysics
   }
 
   /// <summary>
+  /// Are collisions between layer1 and layer2 being ignored?
+  /// </summary>
+  /// <param name="layer1">Layer 1</param>
+  /// <param name="layer2">Layer 2</param>
+  /// <returns>True if collisions between the two layers are ignored, false otherwise</returns>
+  public static bool GetIgnoreLayerCollision(int layer1, int layer2)
+  {
+    return Physics.GetIgnoreLayerCollision(layer1, layer2);
+  }
+
+  /// <summary>
   /// Makes the collision system ignore (or unignore) all collisions between collider1 and collider2
   /// </summary>
   /// <param name="collider1">Any collider</param>
@@ -42,6 +53,17 @@ public static partial class DebugPhysics
       DebugDraw.DrawCollider(collider1, HitColor, IgnoreCollisionDrawTime, DepthTest);
       DebugDraw.DrawCollider(collider2, HitColor, IgnoreCollisionDrawTime, DepthTest);
     }
+  }
+
+  /// <summary>
+  /// Makes the collision detecting system ignore(or unignore) all collisions between any collider in layer 1 and layer 2
+  /// </summary>
+  /// <param name="layer1">Layer 1</param>
+  /// <param name="layer2">Layer 2</param>
+  /// <param name="ignore">Should all collisions between these layers be ignored?</param>
+  public static void IgnoreLayerCollision(int layer1, int layer2, bool ignore = true)
+  {
+    Physics.IgnoreLayerCollision(layer1, layer2, ignore);
   }
 
   /// <summary>
@@ -78,5 +100,14 @@ public static partial class DebugPhysics
       DebugDraw.DrawLine(positionA, positionB, NoHitColor, DrawLineTime, DepthTest);
     }
     return canSeperate;
+  }
+
+  /// <summary>
+  /// Simulate physics in the scene
+  /// </summary>
+  /// <param name="step">The time to advance physics by</param>
+  public static void Simulate(float step)
+  {
+    Physics.Simulate(step);
   }
 }
