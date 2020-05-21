@@ -146,6 +146,12 @@ public struct DebugVector3
     }
   }
 
+
+
+
+
+  // Static functions
+
   // Drawing
 
   private static void DrawVector(Vector3 start, Vector3 end, Color color, float duration)
@@ -569,6 +575,7 @@ public struct DebugVector3
     return Normalize((DebugVector3)value);
   }
 
+
   /// <summary>
   /// Makes this vector have a magnitude of 1.
   /// </summary>
@@ -593,19 +600,33 @@ public struct DebugVector3
     DrawVector(origin, origin + normal, DrawResultColor, DrawPermanentChangeTime);
     DrawVector(origin, origin + tangent, DrawResultColor, DrawPermanentChangeTime);
   }
-
+  /// <summary>
+  /// Makes vectors normalized and orthognal to each other.
+  /// </summary>
+  /// <param name="normal">Vector to normalize</param>
+  /// <param name="tangent">Tangent to make orthogonal to normal</param>
   public static void OrthoNormalize(ref Vector3 normal, ref DebugVector3 tangent)
   {
     DebugVector3 n = (DebugVector3)normal;
     OrthoNormalize(ref n, ref tangent);
     normal = n.v3;
   }
+  /// <summary>
+  /// Makes vectors normalized and orthognal to each other.
+  /// </summary>
+  /// <param name="normal">Vector to normalize</param>
+  /// <param name="tangent">Tangent to make orthogonal to normal</param>
   public static void OrthoNormalize(ref DebugVector3 normal, ref Vector3 tangent)
   {
     DebugVector3 t = (DebugVector3)tangent;
     OrthoNormalize(ref normal, ref t);
     tangent = t.v3;
   }
+  /// <summary>
+  /// Makes vectors normalized and orthognal to each other.
+  /// </summary>
+  /// <param name="normal">Vector to normalize</param>
+  /// <param name="tangent">Tangent to make orthogonal to normal</param>
   public static void OrthoNormalize(ref Vector3 normal, ref Vector3 tangent)
   {
     DebugVector3 n = (DebugVector3)normal;
@@ -669,6 +690,7 @@ public struct DebugVector3
     return v3.GetHashCode();
   }
 
+
   public static bool operator !=(DebugVector3 a, DebugVector3 b)
   {
     return (a.x != b.x || a.y != b.y || a.z != b.z);
@@ -709,6 +731,20 @@ public struct DebugVector3
     return v3.ToString();
   }
 
+  /// <summary>
+  /// Sets the x, y, and z components on an existing Vector3
+  /// </summary>
+  /// <param name="newX">X component</param>
+  /// <param name="newY">Y component</param>
+  /// <param name="newZ">Z component</param>
+  public void Set(float newX, float newY, float newZ)
+  {
+    DrawVector(origin, origin + v3, DrawVectorColorA, DrawPermanentChangeTime);
+    v3.x = newX;
+    v3.y = newY;
+    v3.z = newZ;
+    DrawVector(origin, origin + v3, DrawResultColor, DrawPermanentChangeTime);
+  }
 }
 
 // Custom property drawer emulates vector3 drawer.
