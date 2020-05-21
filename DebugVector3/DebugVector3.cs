@@ -32,13 +32,52 @@ public struct DebugVector3
   public static Color DrawVectorColorC = Color.magenta;
   public static Color DrawResultColor = Color.green;
   public static bool DepthTest = true;
-  public static DebugVector3 forward = new DebugVector3(0, 0, 1);
-  public static DebugVector3 up = new DebugVector3(0, 1, 0);
-  public static DebugVector3 right = new DebugVector3(1, 0, 0);
-  public static DebugVector3 zero = new DebugVector3(0, 0, 0);
-
   public static bool DrawVectorsWithArrows = true;
   public static float DrawVectorArrowScale = 0.1f;
+
+  // static variables from normal Vector3
+
+  /// <summary>
+  /// Shorthand for writing DebugVector3(0, 0, 1)
+  /// </summary>
+  public static DebugVector3 forward = new DebugVector3(0, 0, 1);
+  /// <summary>
+  /// Shorthand for writing DebugVector3(0, 0, -1)
+  /// </summary>
+  public static DebugVector3 back = new DebugVector3(0, 0, -1);
+  /// <summary>
+  /// Shorthand for writing DebugVector3(0, 1, 0)
+  /// </summary>
+  public static DebugVector3 up = new DebugVector3(0, 1, 0);
+  /// <summary>
+  /// Shorthand for writing new DebugVector3(0, -1, 0)
+  /// </summary>
+  public static DebugVector3 down = new DebugVector3(0, -1, 0);
+  /// <summary>
+  /// Shorthand for writing new DebugVector3(1, 0, 0)
+  /// </summary>
+  public static DebugVector3 right = new DebugVector3(1, 0, 0);
+  /// <summary>
+  /// Shorthand for writing DebugVector3(-1, 0, 0)
+  /// </summary>
+  public static DebugVector3 left = new DebugVector3(-1, 0, 0);
+  /// <summary>
+  /// Shorthand for writing DebugVector3(0, 0, 0)
+  /// </summary>
+  public static DebugVector3 zero = new DebugVector3(0, 0, 0);
+  /// <summary>
+  /// Shorthand for writing DebugVector3(1, 1, 1)
+  /// </summary>
+  public static DebugVector3 one = new DebugVector3(1, 1, 1);
+  /// <summary>
+  /// Shorthand for writing DebugVector3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity)
+  /// </summary>
+  public static DebugVector3 negativeInfinity = new DebugVector3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
+  /// <summary>
+  /// Shorthand for writing DebugVector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity)
+  /// </summary>
+  public static DebugVector3 positiveInfinity = new DebugVector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+
 
   public static bool DrawDotAsProjectionAonB = true;
   public DebugVector3(float x, float y, float z)
@@ -535,9 +574,45 @@ public struct DebugVector3
   /// </summary>
   public void Normalize()
   {
-    DrawVector(origin, origin + v3, DrawVectorColorA);
+    DrawVector(origin, origin + v3, DrawVectorColorA, DrawPermanentChangeTime);
     this.v3 = v3.normalized;
-    DrawVector(origin, origin + v3, DrawResultColor);
+    DrawVector(origin, origin + v3, DrawResultColor, DrawPermanentChangeTime);
+  }
+
+
+  /// <summary>
+  /// Makes vectors normalized and orthognal to each other.
+  /// </summary>
+  /// <param name="normal">Vector to normalize</param>
+  /// <param name="tangent">Tangent to make orthogonal to normal</param>
+  public static void OrthoNormalize(ref DebugVector3 normal, ref DebugVector3 tangent)
+  {
+    DrawVector(origin, origin + normal, DrawVectorColorA, DrawPermanentChangeTime);
+    DrawVector(origin, origin + tangent, DrawVectorColorB, DrawPermanentChangeTime);
+    Vector3.OrthoNormalize(ref normal.v3, ref tangent.v3);
+    DrawVector(origin, origin + normal, DrawResultColor, DrawPermanentChangeTime);
+    DrawVector(origin, origin + tangent, DrawResultColor, DrawPermanentChangeTime);
+  }
+
+  public static void OrthoNormalize(ref Vector3 normal, ref DebugVector3 tangent)
+  {
+    DebugVector3 n = (DebugVector3)normal;
+    OrthoNormalize(ref n, ref tangent);
+    normal = n.v3;
+  }
+  public static void OrthoNormalize(ref DebugVector3 normal, ref Vector3 tangent)
+  {
+    DebugVector3 t = (DebugVector3)tangent;
+    OrthoNormalize(ref normal, ref t);
+    tangent = t.v3;
+  }
+  public static void OrthoNormalize(ref Vector3 normal, ref Vector3 tangent)
+  {
+    DebugVector3 n = (DebugVector3)normal;
+    DebugVector3 t = (DebugVector3)tangent;
+    OrthoNormalize(ref n, ref t);
+    tangent = t.v3;
+    normal = n.v3;
   }
 
   // Operators
@@ -627,6 +702,11 @@ public struct DebugVector3
       DrawVectorOperator(origin, origin + a.v3, DrawVectorColorA);
     }
     return new DebugVector3(a.x / d, a.y / d, a.z / d);
+  }
+
+  public override string ToString()
+  {
+    return v3.ToString();
   }
 
 }

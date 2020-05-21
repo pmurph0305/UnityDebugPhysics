@@ -2677,21 +2677,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7fa0b9b3b5b1b44d9e54f82374bc886, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMethodResult: 1
+  ShowMethodInputs: 1
+  ShowOperatorResult: 1
+  ShowOperatorInputs: 1
   test: {x: 0, y: 0, z: 0}
   vector1:
-    t: {fileID: 0}
     v3: {x: 0.5, y: 1, z: 0}
-    _x: 0.5
-    _y: 1
-    _z: 0
   vector2:
-    t: {fileID: 0}
     v3: {x: 1, y: 0, z: 0}
-    _x: 1
-    _y: 0
-    _z: 0
   multDiv: 2
-  DoDebugAdd: 0
+  DoDebugAdd: 1
   DoDebugMinus: 0
   DoDebugMultiply: 0
   DoDebugDivide: 0
@@ -2704,6 +2700,13 @@ MonoBehaviour:
   DoDebugLerp: 0
   Lerp: 0.505
   DoDebugLerpUnclamped: 0
+  DoDebugMax: 0
+  DoDebugMin: 0
+  DoDebugMoveTowards: 0
+  MoveTowardsDistance: 0.25
+  DoDebugStaticNormalize: 0
+  DoDebugInstNormalize: 0
+  DoOrthoNormalize: 0
 --- !u!4 &1751987225
 Transform:
   m_ObjectHideFlags: 0

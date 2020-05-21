@@ -134,11 +134,22 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoDebugInstNormalize)
     {
       vector1.Normalize();
+      DoDebugInstNormalize = false;
     }
     if (DoOrthoNormalize)
     {
+      Debug.Log("b:" + vector1 + " : " + vector2);
       DebugVector3.OrthoNormalize(ref vector1, ref vector2);
-      // Vector3 a = Vector3.OrthoNormalize()
+      Debug.Log("a:" + vector1 + " : " + vector2);
+      DoOrthoNormalize = false;
+
+      Vector3 v1 = Vector3.one;
+      DebugVector3 v2 = new DebugVector3(0.5f, 0.1f, 3.2f);
+      Debug.Log("v1b:" + v1 + " v2b:" + v2);
+      DebugVector3.OrthoNormalize(ref v2, ref v1);
+      Debug.Log("v1a:" + v1 + " v2a:" + v2);
+
     }
+    Debug.Log(vector1);
   }
 }
