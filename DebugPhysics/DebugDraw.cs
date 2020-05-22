@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public static class DebugDraw
 {
   public static float DefaultVectorArrowScale = 0.1f;
@@ -10,6 +9,12 @@ public static class DebugDraw
   /// Scale to use to draw points.
   /// </summary>
   public static float DefaultPointScale = 0.05f;
+
+
+  /// <summary>
+  /// Number of line segments to use when drawing angles.
+  /// </summary>
+  public static int AngleSegments = 8;
 
   private static int sphereQuarterSegments = 8;
   /// <summary>
@@ -36,12 +41,74 @@ public static class DebugDraw
   }
 
   /// <summary>
+  /// Draws an angle/arc between from and to using rotate towards
+  /// </summary>
+  /// <param name="from">From vector</param>
+  /// <param name="to">To Vector</param>
+  /// <param name="angle">Angle to rotate</param>
+  /// <param name="color">Color to draw lines with</param>
+  public static void DrawAngleBetween(Vector3 origin, Vector3 from, Vector3 to, float angle, Color color, bool drawAngleArrow, float scale, float duration, bool depthTest)
+  {
+    float r = 1.0f;
+    // use half magnitude of shortest vector for now..
+    if (from.sqrMagnitude > to.sqrMagnitude)
+    {
+      r = to.magnitude / 2;
+    }
+    else
+    {
+      r = from.magnitude / 2;
+    }
+    Vector3 p0 = from.normalized * r;
+    Vector3 p1 = p0;
+    for (int i = 0; i < AngleSegments; i++)
+    {
+      p1 = Vector3.RotateTowards(p0, to, angle / AngleSegments * Mathf.Deg2Rad, 0.0f);
+      if (i == AngleSegments - 1 && drawAngleArrow)
+      {
+        DrawVector(origin + p0, origin + p1, color, scale, duration, depthTest);
+      }
+      else
+      {
+        Debug.DrawLine(origin + p0, origin + p1, color, duration, depthTest);
+      }
+      p0 = p1;
+    }
+  }
+
+  /// <summary>
+  /// Draws a plane of size defined by its normal.
+  /// </summary>
+  /// <param name="normal">Normal orthogonal to plane</param>
+  /// <param name="size">Size of plane to draw</param>
+  /// <param name="color">Color of lines to draw with</param>
+  /// <param name="duration">Length of time to draw the plane</param>
+  /// <param name="depthTest">Should the lines be obscured by objects closer to the camera?</param>
+  public static void DrawPlane(Vector3 origin, Vector3 normal, float size, Color color, float duration, bool depthTest = false)
+  {
+    if (normal != Vector3.zero)
+    {
+      Quaternion look = Quaternion.LookRotation(normal);
+      Vector3[] pts = new Vector3[4] {
+      look * Vector3.right * size + origin,
+      look * Vector3.left* size + origin,
+      look * Vector3.up * size + origin,
+      look * Vector3.down* size + origin,
+    };
+      Debug.DrawLine(pts[0], pts[2], color, duration, depthTest);
+      Debug.DrawLine(pts[0], pts[3], color, duration, depthTest);
+      Debug.DrawLine(pts[1], pts[2], color, duration, depthTest);
+      Debug.DrawLine(pts[1], pts[3], color, duration, depthTest);
+    }
+  }
+
+  /// <summary>
   /// Draws a point using lines aligned with the world-space axis'
   /// </summary>
   /// <param name="point">Location in world space to draw the point</param>
   /// <param name="color">Color to draw point</param>
-  /// <param name="duration">	How long the point should be visible for.</param>
-  /// <param name="depthTest">	Should the line be obscured by objects closer to the camera?</param>
+  /// <param name="duration">How long the point should be visible for.</param>
+  /// <param name="depthTest">Should the line be obscured by objects closer to the camera?</param>
   public static void DrawPoint(Vector3 point, Color color, float duration, bool depthTest = false)
   {
     Debug.DrawLine(point - Vector3.up * DefaultPointScale, point + Vector3.up * DefaultPointScale, color, duration, depthTest);
@@ -76,30 +143,30 @@ public static class DebugDraw
   }
 
 
-  public static void DrawVector(Vector3 start, Vector3 end, Color color, float duration, float scale)
+  public static void DrawVector(Vector3 start, Vector3 end, Color color, float scale, float duration, bool depthTest = false)
   {
-    throw new System.NotImplementedException();
+    // throw new System.NotImplementedException();
     Vector3 direction = (end - start).normalized;
     Vector3 right = Vector3.zero;
     Vector3 up = Vector3.zero;
-    if (direction != Vector3.up)
+    if (direction != Vector3.up && direction != -Vector3.up)
     {
       right = Vector3.Cross(direction, Vector3.up).normalized;
       up = Vector3.Cross(direction, right).normalized;
     }
     else
     {
-      up = Vector3.Cross(direction, Vector3.right).normalized;
+      up = Vector3.Cross(direction, Vector3.forward).normalized;
       right = Vector3.Cross(direction, up).normalized;
     }
     right = right * scale;
     up = up * scale;
     direction = direction * scale;
-    Debug.DrawLine(start, end, color, duration);
-    Debug.DrawLine(end, end - direction + up, color, duration);
-    Debug.DrawLine(end, end - direction - up, color, duration);
-    Debug.DrawLine(end, end - direction + right, color, duration);
-    Debug.DrawLine(end, end - direction - right, color, duration);
+    Debug.DrawLine(start, end, color, duration, depthTest);
+    // Debug.DrawLine(end, end - direction + up, color, duration, depthTest);
+    // Debug.DrawLine(end, end - direction - up, color, duration, depthTest);
+    Debug.DrawLine(end, end - direction + right, color, duration, depthTest);
+    Debug.DrawLine(end, end - direction - right, color, duration, depthTest);
   }
 
   /// <summary>
