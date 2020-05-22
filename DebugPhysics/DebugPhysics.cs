@@ -4,30 +4,14 @@ using UnityEngine;
 
 public static partial class DebugPhysics
 {
-  // All:
-  // BoxCast, BoxCastAll, BoxCastNonAlloc (done)
-  // CapsuleCast, CapsuleCastAll, CapsuleCastNonAlloc (done)
-  // CheckBox, CheckCapsule, CheckSphere (done)
-  // ClosestPoint (done)
-  // Compute Penetration (done)
-  // GetIgnoreCollisionLayer
-  // IgnoreCollision
-  // IgnoreLayerCollision
-  // LineCast (done)
-  // OverlapBox, OverlapBoxNonAlloc, OverlapCapsule, OverlapCapsuleNonAlloc, OverlapSphere, OverlapSphereNonAlloc (done, except draw mesh collider)
-  // Raycast, RaycastAll, RaycastNonAlloc (done)
-  // Simulate
-  // SphereCast, SphereCastAll, SphereCastNonAlloc (done)
-
-  //TODO:
-  // create documentation using unity's documentation.
-
   // DebugRigidbody
   // since things are appled with a rigidbody instance
   // ie rigidbody.AddForce
   // would need to make it work with find and replace
   // ie rigidbody.AddForce => DebugRigidbody.AddForce(rigidbody rb.. etc)
   // or DebugPhysics.AddForce(rigidbody rb etc...)
+
+  //TransformExtensionMethods for rotation.
 
   /// <summary>
   /// Color to draw with when the result is a hit, overlap, check is true, or collision is not ignored

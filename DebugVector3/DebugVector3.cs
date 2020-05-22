@@ -3,26 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-// don't think the extra debugvector3, vector3 and vector3, debugvector3 methods are needed. (except where ref is used)
-// just one debugvector3, debugvector3 and one vector3, vector3 covers all cases
-
-// Why not extension methods?
-// to have the custom operators
-// and since all the methods will also have the static methods that vector3 has,
-// the result is the same, just has the option to do more.
-// primarily for the static origin property
-// so you can set DebugVector3.origin to transform.position
-// and view it more easily, as opposed to everything displaying at the world origin, which is less useful in my opinion
-
-// static vs instance for origin
-// + static seems easier as you can just set it to transform.postion, or whereever, before the call.
-// - someone might forget to set the origin in the current script, but set it in a different script
-// Alternatives? instance transform to set and use instead of origin if it is set
-
-// TODO: rest of the methods
-// alternative methods for passing in a vector3 instead of a debug vector3
-// reduce as much casting for everything as possible.
-// option to disable drawing of basic operators
+//TODO: orthonormalize methods since they use refs.
 
 [System.Serializable]
 public struct DebugVector3
