@@ -27,6 +27,7 @@ using UnityEditor;
 [System.Serializable]
 public struct DebugVector3
 {
+  public static bool ShowAngleAxis = true;
   public static bool ShowOperatorInputs = true;
   public static bool ShowOperatorResult = true;
   public static bool ShowMethodResult = true;
@@ -199,6 +200,48 @@ public struct DebugVector3
   }
 
 
+  public static void DrawAngleBetween(Vector3 from, Vector3 to, float angle, Color color)
+  {
+    Vector3 axis = Vector3.Cross(from, to);
+    if (ShowAngleAxis)
+    {
+      DrawVector(origin, origin + axis.normalized, color);
+    }
+    DrawAngleBetween(from, to, axis, angle, color);
+  }
+
+  public static void DrawAngleBetween(Vector3 from, Vector3 to, Vector3 axis, float angle, Color color)
+  {
+    float r = 1.0f;
+    // use half magnitude of shortest vector for now..
+    if (from.sqrMagnitude > to.sqrMagnitude)
+    {
+      r = to.magnitude / 2;
+    }
+    else
+    {
+      r = from.magnitude / 2;
+    }
+    Vector3 p0 = from.normalized * r;
+    Vector3 p1 = p0;
+    int angleSegments = 8;
+    if (angle < 0) { angle *= -1; }
+    for (int i = 0; i < angleSegments; i++)
+    {
+      p1 = Vector3.RotateTowards(p0, to, angle / angleSegments * Mathf.Deg2Rad, 0.0f);
+      if (i == angleSegments - 1)
+      {
+        DrawVector(p0, p1, color, DrawLineTime);
+      }
+      else
+      {
+        Debug.DrawLine(p0, p1, color, DrawLineTime, DepthTest);
+      }
+      p0 = p1;
+    }
+  }
+
+
   // Static Methods
 
 
@@ -213,6 +256,7 @@ public struct DebugVector3
     float angle = Vector3.Angle(from, to);
     DrawVector(origin, origin + from.v3, DrawVectorColorA);
     DrawVector(origin, origin + to.v3, DrawVectorColorB);
+    DrawAngleBetween(from, to, angle, DrawResultColor);
     // draw an arc between the vectors?
     return angle;
   }
@@ -747,7 +791,8 @@ public struct DebugVector3
   /// <param name="a">Vector a</param>
   /// <param name="b">Vector b</param>
   /// <returns>Vector3(a.x * b.x, a.y * b.y, a.z * b.z)</returns>
-  public static DebugVector3 Scale(Vector3 a, Vector3 b) {
+  public static DebugVector3 Scale(Vector3 a, Vector3 b)
+  {
     Vector3 result = Vector3.Scale(a, b);
     DrawVector(origin, origin + a, DrawVectorColorA);
     DrawVector(origin, origin + b, DrawVectorColorB);
@@ -763,11 +808,13 @@ public struct DebugVector3
   /// <param name="to">The vector to which the angle is measured</param>
   /// <param name="axis">A vector around which the other vecotors are rotated</param>
   /// <returns>Signed angle in degrees between from and to</returns>
-  public static float SignedAngle(Vector3 from, Vector3 to, Vector3 axis) {
+  public static float SignedAngle(Vector3 from, Vector3 to, Vector3 axis)
+  {
     float result = Vector3.SignedAngle(from, to, axis);
     DrawVector(origin, origin + from, DrawVectorColorA);
     DrawVector(origin, origin + to, DrawVectorColorB);
     DrawVector(origin, origin + axis, DrawVectorColorC);
+    DrawAngleBetween(from, to, axis, result, DrawResultColor);
     return result;
   }
 

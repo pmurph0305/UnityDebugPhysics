@@ -88,7 +88,7 @@ public class DebugVectorExamples : MonoBehaviour
 
     if (DoAngle)
     {
-      f = DebugVector3.Angle(vector1, Vector3.one);
+      f = DebugVector3.Angle(vector1, vector2);
       // float r0 = DebugVector3.Angle(vector1, Vector3.right);
       // float r2 = DebugVector3.Angle(Vector3.right, vector1);
       // float r1 = DebugVector3.Angle(Vector3.one, Vector3.right);
