@@ -13,8 +13,8 @@ public class DebugVectorExamples : MonoBehaviour
   public DebugVector3 vector1 = DebugVector3.up;
   public DebugVector3 vector2 = DebugVector3.right;
 
-  public float multDiv = 2.0f;
-  // public Vector3 test;
+  public float MultiplierDivider = 1.5f;
+
   public bool DoDebugAdd = false;
   public bool DoDebugMinus = false;
 
@@ -24,7 +24,7 @@ public class DebugVectorExamples : MonoBehaviour
 
   public bool DoAngle = false;
   public bool DoClampMagnitude = false;
-  public float MaxMagnitude;
+  public float MaxMagnitude = 0.5f;
   public bool DoDebugCross = false;
   public bool DoDebugDistance = false;
   public bool DoDebugDot = false;
@@ -50,8 +50,8 @@ public class DebugVectorExamples : MonoBehaviour
   public bool DoDebugReflect = false;
 
   public bool DoDebugRotateTowards = false;
-  public float MaxRotateDelta = 5.0f;
-  public float MaxMagnitudeDelta = 5.0f;
+  public float MaxRotateDelta = 0.2f;
+  public float MaxMagnitudeDelta = 1.0f;
 
   public bool DoDebugScale = false;
 
@@ -91,12 +91,12 @@ public class DebugVectorExamples : MonoBehaviour
 
     if (DoDebugMultiply)
     {
-      result = vector1 * multDiv;
+      result = vector1 * MultiplierDivider;
     }
 
     if (DoDebugDivide)
     {
-      result = vector1 / multDiv;
+      result = vector1 / MultiplierDivider;
     }
 
     if (DoAngle)

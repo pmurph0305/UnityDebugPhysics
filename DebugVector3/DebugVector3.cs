@@ -28,6 +28,14 @@ using UnityEditor;
 public struct DebugVector3
 {
   /// <summary>
+  /// Should Vector3.Reflect draw the vector as reflected? (origin - result)
+  /// </summary>
+  public static bool DrawReflectAsReflected = true;
+  /// <summary>
+  /// Shound an arrow be drawn when drawing angles?
+  /// </summary>
+  public static bool DrawAngleArrow = true;
+  /// <summary>
   /// When Vector.Dot is used, should the projection of A on B be drawn?
   /// </summary>
   public static bool DrawDotAsProjectionAonB = true;
@@ -277,33 +285,8 @@ public struct DebugVector3
   /// <param name="color">Color to draw lines with</param>
   public static void DrawAngleBetween(Vector3 from, Vector3 to, float angle, Color color)
   {
-    float r = 1.0f;
-    // use half magnitude of shortest vector for now..
-    if (from.sqrMagnitude > to.sqrMagnitude)
-    {
-      r = to.magnitude / 2;
-    }
-    else
-    {
-      r = from.magnitude / 2;
-    }
-    Vector3 p0 = from.normalized * r;
-    Vector3 p1 = p0;
-    int angleSegments = 8;
     if (IgnoreAngleSign && angle < 0) { angle *= -1; }
-    for (int i = 0; i < angleSegments; i++)
-    {
-      p1 = Vector3.RotateTowards(p0, to, angle / angleSegments * Mathf.Deg2Rad, 0.0f);
-      if (i == angleSegments - 1)
-      {
-        DrawVector(origin + p0, origin + p1, color, DrawLineTime);
-      }
-      else
-      {
-        Debug.DrawLine(origin + p0, origin + p1, color, DrawLineTime, DepthTest);
-      }
-      p0 = p1;
-    }
+    DebugDraw.DrawAngleBetween(origin, from, to, angle, color, DrawAngleArrow, DrawVectorArrowScale, DrawLineTime, DepthTest);
   }
 
 
@@ -613,7 +596,14 @@ public struct DebugVector3
     DrawVector(origin, origin + inNormal.normalized, DrawVectorColorB);
     DrawVector(origin + inDirection, origin, DrawVectorColorA);
     DebugDraw.DrawPlane(origin, inNormal, 1f, DrawVectorColorB, DrawLineTime, DepthTest);
-    DrawVector(origin, origin - result, DrawResultColor);
+    if (DrawReflectAsReflected)
+    {
+      DrawVector(origin, origin - result, DrawResultColor);
+    }
+    else
+    {
+      DrawVector(origin, origin + result, DrawResultColor);
+    }
     return (DebugVector3)result;
   }
 

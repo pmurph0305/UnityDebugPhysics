@@ -10,6 +10,12 @@ public static class DebugDraw
   /// </summary>
   public static float DefaultPointScale = 0.05f;
 
+
+  /// <summary>
+  /// Number of line segments to use when drawing angles.
+  /// </summary>
+  public static int AngleSegments = 8;
+
   private static int sphereQuarterSegments = 8;
   /// <summary>
   /// Number of line sections to use per quarter sphere. Must be >= 2.
@@ -31,6 +37,42 @@ public static class DebugDraw
       {
         sphereQuarterSegments = value;
       }
+    }
+  }
+
+  /// <summary>
+  /// Draws an angle/arc between from and to using rotate towards
+  /// </summary>
+  /// <param name="from">From vector</param>
+  /// <param name="to">To Vector</param>
+  /// <param name="angle">Angle to rotate</param>
+  /// <param name="color">Color to draw lines with</param>
+  public static void DrawAngleBetween(Vector3 origin, Vector3 from, Vector3 to, float angle, Color color, bool drawAngleArrow, float scale, float duration, bool depthTest)
+  {
+    float r = 1.0f;
+    // use half magnitude of shortest vector for now..
+    if (from.sqrMagnitude > to.sqrMagnitude)
+    {
+      r = to.magnitude / 2;
+    }
+    else
+    {
+      r = from.magnitude / 2;
+    }
+    Vector3 p0 = from.normalized * r;
+    Vector3 p1 = p0;
+    for (int i = 0; i < AngleSegments; i++)
+    {
+      p1 = Vector3.RotateTowards(p0, to, angle / AngleSegments * Mathf.Deg2Rad, 0.0f);
+      if (i == AngleSegments - 1 && drawAngleArrow)
+      {
+        DrawVector(origin + p0, origin + p1, color, scale, duration, depthTest);
+      }
+      else
+      {
+        Debug.DrawLine(origin + p0, origin + p1, color, duration, depthTest);
+      }
+      p0 = p1;
     }
   }
 
