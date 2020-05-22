@@ -741,6 +741,20 @@ public struct DebugVector3
     return (DebugVector3)result;
   }
 
+  /// <summary>
+  /// Multiplies two vectors component wise
+  /// </summary>
+  /// <param name="a">Vector a</param>
+  /// <param name="b">Vector b</param>
+  /// <returns>Vector3(a.x * b.x, a.y * b.y, a.z * b.z)</returns>
+  public static DebugVector3 Scale(Vector3 a, Vector3 b) {
+    Vector3 result = Vector3.Scale(a, b);
+    DrawVector(origin, origin + a, DrawVectorColorA);
+    DrawVector(origin, origin + b, DrawVectorColorB);
+    DrawVector(origin, origni + result, DrawResultColor);
+    return (DebugVector3)result
+  }
+
   // Operators
 
   public static implicit operator Vector3(DebugVector3 a) { return new Vector3(a.x, a.y, a.z); }
