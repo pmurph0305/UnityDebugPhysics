@@ -62,6 +62,12 @@ public class DebugVectorExamples : MonoBehaviour
   public float Slerp = 0.5f;
 
   public bool DoDebugSlerpUnclamped = false;
+
+  public bool DoDebugSmoothDamp = false;
+
+  public float SmoothDampTime = 0.5f;
+  public Vector3 SmoothDampVel = Vector3.one;
+  public DebugVector3 SmoothDampVelDebug = new DebugVector3(Vector3.one);
   // Update is called once per frame
   void Update()
   {
@@ -211,6 +217,12 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoDebugSlerpUnclamped)
     {
       result = DebugVector3.SlerpUnclamped(vector1, vector2, Slerp);
+    }
+
+    if (DoDebugSmoothDamp)
+    {
+      result = DebugVector3.SmoothDamp(vector1, vector2, ref SmoothDampVel, SmoothDampTime);
+      result = DebugVector3.SmoothDamp(vector1, vector2, ref SmoothDampVelDebug, SmoothDampTime);
     }
   }
 }

@@ -850,6 +850,73 @@ public struct DebugVector3
     return (DebugVector3)result;
   }
 
+
+  /// <summary>
+  /// Gradually changes a vector towards a desired goal over time. The vector is smoothed by some spring-damper function which will never overshoot.
+  /// </summary>
+  /// <param name="current">Current position</param>
+  /// <param name="target">Target position</param>
+  /// <param name="currentVelocity">Current velocity, value is modified by the function every time you call it</param>
+  /// <param name="smoothTime">Approximately the time it will take to reach the target, smaller reaches target faster</param>
+  /// <param name="maxSpeed">Optionally allows you to clamp maximum speed</param>
+  /// <param name="deltaTime">Time since the last call to this function, by default Time.deltaTime</param>
+  /// <returns>Next smoothed position from current position to target</returns>
+  public static DebugVector3 SmoothDamp(Vector3 current, Vector3 target,
+   ref Vector3 currentVelocity, float smoothTime, float maxSpeed, float deltaTime)
+  {
+    DebugDraw.DrawPoint(current, DrawVectorColorA, DrawLineTime, DepthTest);
+    DebugDraw.DrawPoint(target, DrawVectorColorB, DrawLineTime, DepthTest);
+    Vector3 result = Vector3.SmoothDamp(current, target, ref currentVelocity, smoothTime, maxSpeed, deltaTime);
+    DrawVector(current, current + currentVelocity, DrawResultColor, DrawPermanentChangeTime);
+    DebugDraw.DrawPoint(result, DrawResultColor, DrawLineTime, DepthTest);
+    return (DebugVector3)result;
+  }
+  /// <summary>
+  /// Gradually changes a vector towards a desired goal over time. The vector is smoothed by some spring-damper function which will never overshoot.
+  /// </summary>
+  /// <param name="current">Current position</param>
+  /// <param name="target">Target position</param>
+  /// <param name="currentVelocity">Current velocity, value is modified by the function every time you call it</param>
+  /// <param name="smoothTime">Approximately the time it will take to reach the target, smaller reaches target faster</param>
+  /// <param name="maxSpeed">Optionally allows you to clamp maximum speed</param>
+  /// <param name="deltaTime">Time since the last call to this function, by default Time.deltaTime</param>
+  /// <returns>Next smoothed position from current position to target</returns>
+  public static DebugVector3 SmoothDamp(Vector3 current, Vector3 target,
+   ref DebugVector3 currentVelocity, float smoothTime, float maxSpeed, float deltaTime)
+  {
+    return SmoothDamp(current, target, ref currentVelocity.v3, smoothTime, maxSpeed, deltaTime);
+  }
+  /// <summary>
+  /// Gradually changes a vector towards a desired goal over time. The vector is smoothed by some spring-damper function which will never overshoot.
+  /// </summary>
+  /// <param name="current">Current position</param>
+  /// <param name="target">Target position</param>
+  /// <param name="currentVelocity">Current velocity, value is modified by the function every time you call it</param>
+  /// <param name="smoothTime">Approximately the time it will take to reach the target, smaller reaches target faster</param>
+  /// <param name="maxSpeed">Optionally allows you to clamp maximum speed</param>
+  /// <returns>Next smoothed position from current position to target</returns>
+  public static DebugVector3 SmoothDamp(Vector3 current, Vector3 target,
+   ref Vector3 currentVelocity, float smoothTime, float maxSpeed = Mathf.Infinity)
+  {
+    return SmoothDamp(current, target, ref currentVelocity, smoothTime, maxSpeed, Time.deltaTime);
+  }
+  /// <summary>
+  /// Gradually changes a vector towards a desired goal over time. The vector is smoothed by some spring-damper function which will never overshoot.
+  /// </summary>
+  /// <param name="current">Current position</param>
+  /// <param name="target">Target position</param>
+  /// <param name="currentVelocity">Current velocity, value is modified by the function every time you call it</param>
+  /// <param name="smoothTime">Approximately the time it will take to reach the target, smaller reaches target faster</param>
+  /// <param name="maxSpeed">Optionally allows you to clamp maximum speed</param>
+  /// <returns>Next smoothed position from current position to target</returns>
+  public static DebugVector3 SmoothDamp(Vector3 current, Vector3 target,
+  ref DebugVector3 currentVelocity, float smoothTime, float maxSpeed = Mathf.Infinity)
+  {
+    return SmoothDamp(current, target, ref currentVelocity.v3, smoothTime, maxSpeed, Time.deltaTime);
+  }
+
+
+
   // Operators
 
   public static implicit operator Vector3(DebugVector3 a) { return new Vector3(a.x, a.y, a.z); }
