@@ -807,7 +807,7 @@ public struct DebugVector3
   /// <param name="from">The vector from which the angle is measured</param>
   /// <param name="to">The vector to which the angle is measured</param>
   /// <param name="axis">A vector around which the other vecotors are rotated</param>
-  /// <returns>Signed angle in degrees between from and to</returns>
+  /// <returns>Signed angle in degrees between from and to, positive for clockwise direction, negative for anti-clockwise direction.</returns>
   public static float SignedAngle(Vector3 from, Vector3 to, Vector3 axis)
   {
     float result = Vector3.SignedAngle(from, to, axis);
@@ -816,6 +816,38 @@ public struct DebugVector3
     DrawVector(origin, origin + axis, DrawVectorColorC);
     DrawAngleBetween(from, to, axis, result, DrawResultColor);
     return result;
+  }
+
+  /// <summary>
+  /// Spherically interpolates between two vectors with t clamped to [0,1]
+  /// </summary>
+  /// <param name="a">Vector a</param>
+  /// <param name="b">Vector b</param>
+  /// <param name="t">Interpolation amount, clamped to [0,1]</param>
+  /// <returns>Spherically interpolated vector between a and b by t</returns>
+  public static DebugVector3 Slerp(Vector3 a, Vector3 b, float t)
+  {
+    Vector3 result = Vector3.Slerp(a, b, t);
+    DrawVector(origin, origin + a, DrawVectorColorA);
+    DrawVector(origin, origin + b, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
+    return (DebugVector3)result;
+  }
+
+  /// <summary>
+  /// Spherically interpolates between two vectors with t unclamped
+  /// </summary>
+  /// <param name="a">Vector a</param>
+  /// <param name="b">Vector b</param>
+  /// <param name="t">Interpolation amount</param>
+  /// <returns>Spherically interpolated vector between a and b by t</returns>
+  public static DebugVector3 SlerpUnclamped(Vector3 a, Vector3 b, float t)
+  {
+    Vector3 result = Vector3.SlerpUnclamped(a, b, t);
+    DrawVector(origin, origin + a, DrawVectorColorA);
+    DrawVector(origin, origin + b, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
+    return (DebugVector3)result;
   }
 
   // Operators

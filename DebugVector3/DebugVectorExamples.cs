@@ -58,6 +58,10 @@ public class DebugVectorExamples : MonoBehaviour
   public bool DoDebugSignedAngle = false;
   public Vector3 signedAngleAxis;
 
+  public bool DoDebugSlerp = false;
+  public float Slerp = 0.5f;
+
+  public bool DoDebugSlerpUnclamped = false;
   // Update is called once per frame
   void Update()
   {
@@ -190,12 +194,23 @@ public class DebugVectorExamples : MonoBehaviour
       result = DebugVector3.RotateTowards(vector1, vector2, MaxRotateDelta, MaxMagnitudeDelta);
     }
 
-    if (DoDebugScale) {
+    if (DoDebugScale)
+    {
       result = DebugVector3.Scale(vector1, vector2);
     }
 
-    if (DoDebugSignedAngle) {
+    if (DoDebugSignedAngle)
+    {
       f = DebugVector3.SignedAngle(vector1, vector2, signedAngleAxis);
+    }
+
+    if (DoDebugSlerp)
+    {
+      result = DebugVector3.Slerp(vector1, vector2, Slerp);
+    }
+    if (DoDebugSlerpUnclamped)
+    {
+      result = DebugVector3.SlerpUnclamped(vector1, vector2, Slerp);
     }
   }
 }
