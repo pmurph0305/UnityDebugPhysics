@@ -28,6 +28,7 @@ using UnityEditor;
 public struct DebugVector3
 {
   public static bool ShowAngleAxis = true;
+  public static bool IgnoreAngleSign = true;
   public static bool ShowOperatorInputs = true;
   public static bool ShowOperatorResult = true;
   public static bool ShowMethodResult = true;
@@ -161,6 +162,13 @@ public struct DebugVector3
 
   // Drawing
 
+  /// <summary>
+  /// Draws vectors for methods
+  /// </summary>
+  /// <param name="start">Start of vector</param>
+  /// <param name="end">End of vector</param>
+  /// <param name="color">Color to draw lines with</param>
+  /// <param name="duration">Length of time to draw</param>
   private static void DrawVector(Vector3 start, Vector3 end, Color color, float duration)
   {
     // only draw individual if we allow it
@@ -178,6 +186,12 @@ public struct DebugVector3
     }
   }
 
+  /// <summary>
+  /// Draws the Vector Operators +- etc.
+  /// </summary>
+  /// <param name="start">Start vector</param>
+  /// <param name="end">End Vector</param>
+  /// <param name="color">Color to draw Vector with</param>
   private static void DrawVectorOperator(Vector3 start, Vector3 end, Color color)
   {
     if (!ShowOperatorInputs && (color == DrawVectorColorA || color == DrawVectorColorB || color == DrawVectorColorC)) return;
@@ -194,23 +208,25 @@ public struct DebugVector3
     }
   }
 
+  /// <summary>
+  /// Draws a vector between start and end with color
+  /// </summary>
+  /// <param name="start">Start position</param>
+  /// <param name="end">End position</param>
+  /// <param name="color">Color of lines to draw with</param>
   private static void DrawVector(Vector3 start, Vector3 end, Color color)
   {
     DrawVector(start, end, color, DrawLineTime);
   }
 
-
+  /// <summary>
+  /// Draws an angle/arc between from and to using rotate towards
+  /// </summary>
+  /// <param name="from">From vector</param>
+  /// <param name="to">To Vector</param>
+  /// <param name="angle">Angle to rotate</param>
+  /// <param name="color">Color to draw lines with</param>
   public static void DrawAngleBetween(Vector3 from, Vector3 to, float angle, Color color)
-  {
-    Vector3 axis = Vector3.Cross(from, to);
-    if (ShowAngleAxis)
-    {
-      DrawVector(origin, origin + axis.normalized, color);
-    }
-    DrawAngleBetween(from, to, axis, angle, color);
-  }
-
-  public static void DrawAngleBetween(Vector3 from, Vector3 to, Vector3 axis, float angle, Color color)
   {
     float r = 1.0f;
     // use half magnitude of shortest vector for now..
@@ -225,17 +241,17 @@ public struct DebugVector3
     Vector3 p0 = from.normalized * r;
     Vector3 p1 = p0;
     int angleSegments = 8;
-    if (angle < 0) { angle *= -1; }
+    if (IgnoreAngleSign && angle < 0) { angle *= -1; }
     for (int i = 0; i < angleSegments; i++)
     {
       p1 = Vector3.RotateTowards(p0, to, angle / angleSegments * Mathf.Deg2Rad, 0.0f);
       if (i == angleSegments - 1)
       {
-        DrawVector(p0, p1, color, DrawLineTime);
+        DrawVector(origin + p0, origin + p1, color, DrawLineTime);
       }
       else
       {
-        Debug.DrawLine(p0, p1, color, DrawLineTime, DepthTest);
+        Debug.DrawLine(origin + p0, origin + p1, color, DrawLineTime, DepthTest);
       }
       p0 = p1;
     }
@@ -244,32 +260,6 @@ public struct DebugVector3
 
   // Static Methods
 
-
-  /// <summary>
-  /// Calculates the smaller of the two possible angles between from and to
-  /// </summary>
-  /// <param name="from">The vector from which the angular distance is measured</param>
-  /// <param name="to">The Vector to which the angular distance is measured</param>
-  /// <returns>Smallest angle between from and to</returns>
-  public static float Angle(DebugVector3 from, DebugVector3 to)
-  {
-    float angle = Vector3.Angle(from, to);
-    DrawVector(origin, origin + from.v3, DrawVectorColorA);
-    DrawVector(origin, origin + to.v3, DrawVectorColorB);
-    DrawAngleBetween(from, to, angle, DrawResultColor);
-    // draw an arc between the vectors?
-    return angle;
-  }
-  /// <summary>
-  /// Calculates the smaller of the two possible angles between from and to
-  /// </summary>
-  /// <param name="from">The vector from which the angular distance is measured</param>
-  /// <param name="to">The Vector to which the angular distance is measured</param>
-  /// <returns>Smallest angle between from and to</returns>
-  public static float Angle(DebugVector3 from, Vector3 to)
-  {
-    return Angle(from, (DebugVector3)to);
-  }
   /// <summary>
   /// Calculates the smaller of the two possible angles between from and to
   /// </summary>
@@ -278,23 +268,19 @@ public struct DebugVector3
   /// <returns>Smallest angle between from and to</returns>
   public static float Angle(Vector3 from, Vector3 to)
   {
-    return Angle((DebugVector3)from, (DebugVector3)to);
+    float angle = Vector3.Angle(from, to);
+    DrawVector(origin, origin + from, DrawVectorColorA);
+    DrawVector(origin, origin + to, DrawVectorColorB);
+    Vector3 axis = Vector3.Cross(from, to);
+    if (ShowAngleAxis)
+    {
+      DrawVector(origin, origin + axis.normalized, DrawResultColor);
+    }
+    DrawAngleBetween(from, to, angle, DrawResultColor);
+    return angle;
   }
 
 
-  /// <summary>
-  /// Returns a copy of vector with its magnitude clamped to max length
-  /// </summary>
-  /// <param name="vector">Vector to clamp</param>
-  /// <param name="maxLength">max length to clamp to</param>
-  /// <returns>Vector in same direction clamped to maxLength</returns>
-  public static DebugVector3 ClampMagnitude(DebugVector3 vector, float maxLength)
-  {
-    DebugVector3 result = (DebugVector3)Vector3.ClampMagnitude(vector, maxLength);
-    DrawVector(origin, origin + vector.v3, DrawVectorColorA);
-    DrawVector(origin, origin + result.v3, DrawResultColor);
-    return result;
-  }
   /// <summary>
   /// Returns a copy of vector with its magnitude clamped to max length
   /// </summary>
@@ -303,34 +289,13 @@ public struct DebugVector3
   /// <returns>Vector in same direction clamped to maxLength</returns>
   public static DebugVector3 ClampMagnitude(Vector3 vector, float maxLength)
   {
-    return ClampMagnitude((DebugVector3)vector, maxLength);
-  }
-
-
-  /// <summary>
-  /// Cross product of two vectors, the vector perpindicular to the two input vectors
-  /// </summary>
-  /// <param name="lhs">Left hand side of cross (or thumb of left hand)</param>
-  /// <param name="rhs">Right hand side of cross (or index of left hand)</param>
-  /// <returns>The vector perpindicular to the two input vectors using left hand rule</returns>
-  public static DebugVector3 Cross(DebugVector3 lhs, DebugVector3 rhs)
-  {
-    Vector3 result = Vector3.Cross(lhs, rhs);
-    DrawVector(origin, origin + lhs.v3, DrawVectorColorA);
-    DrawVector(origin, origin + rhs.v3, DrawVectorColorB);
+    Vector3 result = Vector3.ClampMagnitude(vector, maxLength);
+    DrawVector(origin, origin + vector, DrawVectorColorA);
     DrawVector(origin, origin + result, DrawResultColor);
-    return new DebugVector3(result);
+    return (DebugVector3)result;
   }
-  /// <summary>
-  /// Cross product of two vectors, the vector perpindicular to the two input vectors
-  /// </summary>
-  /// <param name="lhs">Left hand side of cross (or thumb of left hand)</param>
-  /// <param name="rhs">Right hand side of cross (or index of left hand)</param>
-  /// <returns>The vector perpindicular to the two input vectors using left hand rule</returns>
-  public static DebugVector3 Cross(DebugVector3 lhs, Vector3 rhs)
-  {
-    return Cross(lhs, (DebugVector3)rhs);
-  }
+
+
   /// <summary>
   /// Cross product of two vectors, the vector perpindicular to the two input vectors
   /// </summary>
@@ -339,7 +304,11 @@ public struct DebugVector3
   /// <returns>The vector perpindicular to the two input vectors using left hand rule</returns>
   public static DebugVector3 Cross(Vector3 lhs, Vector3 rhs)
   {
-    return Cross((DebugVector3)lhs, (DebugVector3)rhs);
+    Vector3 result = Vector3.Cross(lhs, rhs);
+    DrawVector(origin, origin + lhs, DrawVectorColorA);
+    DrawVector(origin, origin + rhs, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
+    return (DebugVector3)result;
   }
 
 
@@ -349,51 +318,16 @@ public struct DebugVector3
   /// <param name="a">Vector A</param>
   /// <param name="b">Vector B</param>
   /// <returns>Distance between Vector A and Vector B</returns>
-  public static float Distance(DebugVector3 a, DebugVector3 b)
-  {
-    float result = Vector3.Distance(a, b);
-    DrawVector(origin, origin + a.v3, DrawVectorColorA);
-    DrawVector(origin, origin + b.v3, DrawVectorColorB);
-    DebugDraw.DrawLine(origin + a.v3, origin + b.v3, DrawResultColor, DrawLineTime, DepthTest);
-    return result;
-  }
-  public static float Distance(DebugVector3 a, Vector3 b)
-  {
-    return Distance(a, (DebugVector3)b);
-  }
   public static float Distance(Vector3 a, Vector3 b)
   {
-    return Distance((DebugVector3)a, (DebugVector3)b);
+    float result = Vector3.Distance(a, b);
+    DrawVector(origin, origin + a, DrawVectorColorA);
+    DrawVector(origin, origin + b, DrawVectorColorB);
+    DebugDraw.DrawLine(origin + a, origin + b, DrawResultColor, DrawLineTime, DepthTest);
+    return result;
   }
 
 
-  /// <summary>
-  /// Calculates the dot product of two vectors
-  /// </summary>
-  /// <param name="lhs">Left hand size of dot</param>
-  /// <param name="rhs">Right hand size of dot</param>
-  /// <returns>The dot product of two vectors</returns>
-  public static float Dot(DebugVector3 lhs, DebugVector3 rhs)
-  {
-    DrawVector(origin, origin + lhs.v3, DrawVectorColorA);
-    DrawVector(origin, origin + rhs.v3, DrawVectorColorB);
-    if (DrawDotAsProjectionAonB)
-    {
-      Vector3 f = Vector3.Project(lhs.v3, rhs.v3.normalized);
-      DrawVector(origin, origin + f, DrawResultColor);
-    }
-    return Vector3.Dot(lhs, rhs);
-  }
-  /// <summary>
-  /// Calculates the dot product of two vectors
-  /// </summary>
-  /// <param name="lhs">Left hand size of dot</param>
-  /// <param name="rhs">Right hand size of dot</param>
-  /// <returns>The dot product of two vectors</returns>
-  public static float Dot(DebugVector3 lhs, Vector3 rhs)
-  {
-    return Dot(lhs, (DebugVector3)rhs);
-  }
   /// <summary>
   /// Calculates the dot product of two vectors
   /// </summary>
@@ -402,38 +336,17 @@ public struct DebugVector3
   /// <returns>The dot product of two vectors</returns>
   public static float Dot(Vector3 lhs, Vector3 rhs)
   {
-    return Dot((DebugVector3)lhs, (DebugVector3)rhs);
+    DrawVector(origin, origin + lhs, DrawVectorColorA);
+    DrawVector(origin, origin + rhs, DrawVectorColorB);
+    if (DrawDotAsProjectionAonB)
+    {
+      Vector3 f = Vector3.Project(lhs, rhs.normalized);
+      DrawVector(origin, origin + f, DrawResultColor);
+    }
+    return Vector3.Dot(lhs, rhs);
   }
 
 
-  /// <summary>
-  /// Linearly interpolates between two points
-  /// When t is 0, returns a. When t is 1, returns b.
-  /// </summary>
-  /// <param name="a">Point A</param>
-  /// <param name="b">Point B</param>
-  /// <param name="t">Interpolant</param>
-  /// <returns>Linear interpolation of a and b by t.</returns>
-  public static DebugVector3 Lerp(DebugVector3 a, DebugVector3 b, float t)
-  {
-    Vector3 result = Vector3.Lerp(a, b, t);
-    DrawVector(origin, origin + a.v3, DrawVectorColorA);
-    DrawVector(origin, origin + b.v3, DrawVectorColorB);
-    DrawVector(origin, origin + result, DrawResultColor);
-    return new DebugVector3(result);
-  }
-  /// <summary>
-  /// Linearly interpolates between two points
-  /// When t is 0, returns a. When t is 1, returns b.
-  /// </summary>
-  /// <param name="a">Point A</param>
-  /// <param name="b">Point B</param>
-  /// <param name="t">Interpolant</param>
-  /// <returns>Linear interpolation of a and b by t.</returns>
-  public static DebugVector3 Lerp(DebugVector3 a, Vector3 b, float t)
-  {
-    return Lerp(a, (DebugVector3)b, t);
-  }
   /// <summary>
   /// Linearly interpolates between two points
   /// When t is 0, returns a. When t is 1, returns b.
@@ -444,38 +357,14 @@ public struct DebugVector3
   /// <returns>Linear interpolation of a and b by t.</returns>
   public static DebugVector3 Lerp(Vector3 a, Vector3 b, float t)
   {
-    return Lerp((DebugVector3)a, (DebugVector3)b, t);
-  }
-
-
-  /// <summary>
-  /// Linearly interpolates between two points where t is unclamped.
-  /// When t is 0, returns a. When t is 1, returns b.
-  /// </summary>
-  /// <param name="a">Point A</param>
-  /// <param name="b">Point B</param>
-  /// <param name="t">Interpolant</param>
-  /// <returns>Linear interpolation of a and b by t.</returns>
-  public static DebugVector3 LerpUnclamped(DebugVector3 a, DebugVector3 b, float t)
-  {
-    Vector3 result = Vector3.LerpUnclamped(a, b, t);
-    DrawVector(origin, origin + a.v3, DrawVectorColorA);
-    DrawVector(origin, origin + b.v3, DrawVectorColorB);
+    Vector3 result = Vector3.Lerp(a, b, t);
+    DrawVector(origin, origin + a, DrawVectorColorA);
+    DrawVector(origin, origin + b, DrawVectorColorB);
     DrawVector(origin, origin + result, DrawResultColor);
-    return new DebugVector3(result);
+    return (DebugVector3)result;
   }
-  /// <summary>
-  /// Linearly interpolates between two points where t is unclamped.
-  /// When t is 0, returns a. When t is 1, returns b.
-  /// </summary>
-  /// <param name="a">Point A</param>
-  /// <param name="b">Point B</param>
-  /// <param name="t">Interpolant</param>
-  /// <returns>Linear interpolation of a and b by t.</returns>
-  public static DebugVector3 LerpUnclamped(DebugVector3 a, Vector3 b, float t)
-  {
-    return LerpUnclamped(a, (DebugVector3)b, t);
-  }
+
+
   /// <summary>
   /// Linearly interpolates between two points where t is unclamped.
   /// When t is 0, returns a. When t is 1, returns b.
@@ -486,34 +375,14 @@ public struct DebugVector3
   /// <returns>Linear interpolation of a and b by t.</returns>
   public static DebugVector3 LerpUnclamped(Vector3 a, Vector3 b, float t)
   {
-    return LerpUnclamped((DebugVector3)a, (DebugVector3)b, t);
-  }
-
-
-  /// <summary>
-  /// Returns a vector made from the largest components of the two vectors.
-  /// </summary>
-  /// <param name="lhs">Vector 1</param>
-  /// <param name="rhs">Vector 2</param>
-  /// <returns>Vector made from largest components of Vectors lhs and rhs</returns>
-  public static DebugVector3 Max(DebugVector3 lhs, DebugVector3 rhs)
-  {
-    Vector3 result = Vector3.Max(lhs, rhs);
-    DrawVector(origin, origin + lhs.v3, DrawVectorColorA);
-    DrawVector(origin, origin + rhs.v3, DrawVectorColorB);
+    Vector3 result = Vector3.LerpUnclamped(a, b, t);
+    DrawVector(origin, origin + a, DrawVectorColorA);
+    DrawVector(origin, origin + b, DrawVectorColorB);
     DrawVector(origin, origin + result, DrawResultColor);
-    return new DebugVector3(result);
+    return (DebugVector3)result;
   }
-  /// <summary>
-  /// Returns a vector made from the largest components of the two vectors.
-  /// </summary>
-  /// <param name="lhs">Vector 1</param>
-  /// <param name="rhs">Vector 2</param>
-  /// <returns>Vector made from largest components of Vectors lhs and rhs</returns>
-  public static DebugVector3 Max(DebugVector3 lhs, Vector3 rhs)
-  {
-    return Max(lhs, (DebugVector3)rhs);
-  }
+
+
   /// <summary>
   /// Returns a vector made from the largest components of the two vectors.
   /// </summary>
@@ -522,34 +391,14 @@ public struct DebugVector3
   /// <returns>Vector made from largest components of Vectors lhs and rhs</returns>
   public static DebugVector3 Max(Vector3 lhs, Vector3 rhs)
   {
-    return Max((DebugVector3)lhs, (DebugVector3)rhs);
-  }
-
-
-  /// <summary>
-  /// Returns a vector made from the smallest components of the two vectors.
-  /// </summary>
-  /// <param name="lhs">Vector 1</param>
-  /// <param name="rhs">Vector 2</param>
-  /// <returns>Vector made from smallest components of Vectors lhs and rhs</returns>
-  public static DebugVector3 Min(DebugVector3 lhs, DebugVector3 rhs)
-  {
-    Vector3 result = Vector3.Min(lhs, rhs);
-    DrawVector(origin, origin + lhs.v3, DrawVectorColorA);
-    DrawVector(origin, origin + rhs.v3, DrawVectorColorB);
+    Vector3 result = Vector3.Max(lhs, rhs);
+    DrawVector(origin, origin + lhs, DrawVectorColorA);
+    DrawVector(origin, origin + rhs, DrawVectorColorB);
     DrawVector(origin, origin + result, DrawResultColor);
-    return new DebugVector3(result);
+    return (DebugVector3)result;
   }
-  /// <summary>
-  /// Returns a vector made from the smallest components of the two vectors.
-  /// </summary>
-  /// <param name="lhs">Vector 1</param>
-  /// <param name="rhs">Vector 2</param>
-  /// <returns>Vector made from smallest components of Vectors lhs and rhs</returns>
-  public static DebugVector3 Min(DebugVector3 lhs, Vector3 rhs)
-  {
-    return Min(lhs, (DebugVector3)rhs);
-  }
+
+
   /// <summary>
   /// Returns a vector made from the smallest components of the two vectors.
   /// </summary>
@@ -558,38 +407,14 @@ public struct DebugVector3
   /// <returns>Vector made from smallest components of Vectors lhs and rhs</returns>
   public static DebugVector3 Min(Vector3 lhs, Vector3 rhs)
   {
-    return Min((DebugVector3)lhs, (DebugVector3)rhs);
-  }
-
-
-  /// <summary>
-  /// Calculates a position between the points specified by current and target,
-  /// moving no further than the distance specified by maxDistanceDelta.
-  /// </summary>
-  /// <param name="current">Position to move from</param>
-  /// <param name="target">Position to move towards</param>
-  /// <param name="maxDistanceDelta">Max distance to move per call</param>
-  /// <returns></returns>
-  public static DebugVector3 MoveTowards(DebugVector3 current, DebugVector3 target, float maxDistanceDelta)
-  {
-    Vector3 result = Vector3.MoveTowards(current, target, maxDistanceDelta);
-    DrawVector(origin, origin + current.v3, DrawVectorColorA);
-    DrawVector(origin, origin + target.v3, DrawVectorColorB);
+    Vector3 result = Vector3.Min(lhs, rhs);
+    DrawVector(origin, origin + lhs, DrawVectorColorA);
+    DrawVector(origin, origin + rhs, DrawVectorColorB);
     DrawVector(origin, origin + result, DrawResultColor);
-    return new DebugVector3(result);
+    return (DebugVector3)result;
   }
-  /// <summary>
-  /// Calculates a position between the points specified by current and target,
-  /// moving no further than the distance specified by maxDistanceDelta.
-  /// </summary>
-  /// <param name="current">Position to move from</param>
-  /// <param name="target">Position to move towards</param>
-  /// <param name="maxDistanceDelta">Max distance to move per call</param>
-  /// <returns></returns>
-  public static DebugVector3 MoveTowards(DebugVector3 current, Vector3 target, float maxDistanceDelta)
-  {
-    return MoveTowards(current, (DebugVector3)target, maxDistanceDelta);
-  }
+
+
   /// <summary>
   /// Calculates a position between the points specified by current and target,
   /// moving no further than the distance specified by maxDistanceDelta.
@@ -600,21 +425,14 @@ public struct DebugVector3
   /// <returns></returns>
   public static DebugVector3 MoveTowards(Vector3 current, Vector3 target, float maxDistanceDelta)
   {
-    return MoveTowards((DebugVector3)current, (DebugVector3)target, maxDistanceDelta);
+    Vector3 result = Vector3.MoveTowards(current, target, maxDistanceDelta);
+    DrawVector(origin, origin + current, DrawVectorColorA);
+    DrawVector(origin, origin + target, DrawVectorColorB);
+    DrawVector(origin, origin + result, DrawResultColor);
+    return (DebugVector3)result;
   }
 
 
-  /// <summary>
-  /// Calculates a vector with a magnitude of 1.
-  /// </summary>
-  /// <param name="value">Vector to normalize</param>
-  /// <returns>Vector with a magnitude of 1</returns>
-  public static DebugVector3 Normalize(DebugVector3 value)
-  {
-    DrawVector(origin, origin + value.v3, DrawVectorColorA);
-    DrawVector(origin, origin + value.v3.normalized, DrawResultColor);
-    return (DebugVector3)value.v3.normalized;
-  }
   /// <summary>
   /// Calculates a vector with a magnitude of 1.
   /// </summary>
@@ -622,7 +440,9 @@ public struct DebugVector3
   /// <returns>Vector with a magnitude of 1</returns>
   public static DebugVector3 Normalize(Vector3 value)
   {
-    return Normalize((DebugVector3)value);
+    DrawVector(origin, origin + value, DrawVectorColorA);
+    DrawVector(origin, origin + value.normalized, DrawResultColor);
+    return (DebugVector3)value.normalized;
   }
 
 
@@ -712,28 +532,8 @@ public struct DebugVector3
     }
     return (DebugVector3)result;
   }
-  /// <summary>
-  /// Projects a vector onto another vector
-  /// </summary>
-  /// <param name="vector">Vector to project</param>
-  /// <param name="onNormal">Normalized vector to project on</param>
-  /// <returns>Vector vector projected on onNormal</returns>
-  public static DebugVector3 Project(DebugVector3 vector, DebugVector3 onNormal)
-  {
-    return Project(vector.v3, onNormal.v3);
-  }
 
 
-  /// <summary>
-  /// Projects a vector onto a plane defined by a normal orthogonal to the plane.
-  /// </summary>
-  /// <param name="vector">Vector to project</param>
-  /// <param name="planeNormal">Normal orthogonal to plane to project on</param>
-  /// <returns>Vector projected on plane defined by planeNormal</returns>
-  public static DebugVector3 ProjectOnPlane(DebugVector3 vector, DebugVector3 planeNormal)
-  {
-    return ProjectOnPlane(vector.v3, planeNormal.v3);
-  }
   /// <summary>
   /// Projects a vector onto a plane defined by a normal orthogonal to the plane.
   /// </summary>
@@ -814,7 +614,7 @@ public struct DebugVector3
     DrawVector(origin, origin + from, DrawVectorColorA);
     DrawVector(origin, origin + to, DrawVectorColorB);
     DrawVector(origin, origin + axis, DrawVectorColorC);
-    DrawAngleBetween(from, to, axis, result, DrawResultColor);
+    DrawAngleBetween(from, to, result, DrawResultColor);
     return result;
   }
 
@@ -920,8 +720,8 @@ public struct DebugVector3
   // Operators
 
   public static implicit operator Vector3(DebugVector3 a) { return new Vector3(a.x, a.y, a.z); }
-  public static explicit operator DebugVector3(Vector3 a) { return new DebugVector3(a); }
 
+  public static explicit operator DebugVector3(Vector3 a) { return new DebugVector3(a); }
 
   public static DebugVector3 operator +(DebugVector3 a, DebugVector3 b)
   {
@@ -930,15 +730,16 @@ public struct DebugVector3
     DrawVectorOperator(origin, origin + a.v3 + b.v3, DrawResultColor);
     return new DebugVector3(a.x + b.x, a.y + b.y, a.z + b.z);
   }
+
   public static DebugVector3 operator +(DebugVector3 a, Vector3 b)
   {
     return a + (DebugVector3)b;
   }
+
   public static DebugVector3 operator +(Vector3 a, DebugVector3 b)
   {
     return (DebugVector3)a + b;
   }
-
 
   public static DebugVector3 operator -(DebugVector3 a, DebugVector3 b)
   {
@@ -947,15 +748,16 @@ public struct DebugVector3
     DrawVectorOperator(origin, origin + a.v3 - b.v3, DrawResultColor);
     return new DebugVector3(a.x - b.x, a.y - b.y, a.z - b.z);
   }
+
   public static DebugVector3 operator -(DebugVector3 a, Vector3 b)
   {
     return a - (DebugVector3)b;
   }
+
   public static DebugVector3 operator -(Vector3 a, DebugVector3 b)
   {
     return (DebugVector3)a - b;
   }
-
 
   public static bool operator ==(DebugVector3 a, DebugVector3 b)
   {
@@ -966,11 +768,11 @@ public struct DebugVector3
   {
     return this.GetHashCode() == o.GetHashCode();
   }
+
   public override int GetHashCode()
   {
     return v3.GetHashCode();
   }
-
 
   public static bool operator !=(DebugVector3 a, DebugVector3 b)
   {

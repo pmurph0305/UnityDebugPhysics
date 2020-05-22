@@ -67,7 +67,6 @@ public class DebugVectorExamples : MonoBehaviour
 
   public float SmoothDampTime = 0.5f;
   public Vector3 SmoothDampVel = Vector3.one;
-  public DebugVector3 SmoothDampVelDebug = new DebugVector3(Vector3.one);
   // Update is called once per frame
   void Update()
   {
@@ -79,18 +78,22 @@ public class DebugVectorExamples : MonoBehaviour
     Vector3 t = Vector3.one;
     DebugVector3 result = DebugVector3.zero;
     float f = 0.0f;
+
     if (DoDebugAdd)
     {
       result = vector1 + vector2;
     }
+
     if (DoDebugMinus)
     {
       result = vector1 - vector2;
     }
+
     if (DoDebugMultiply)
     {
       result = vector1 * multDiv;
     }
+
     if (DoDebugDivide)
     {
       result = vector1 / multDiv;
@@ -99,69 +102,64 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoAngle)
     {
       f = DebugVector3.Angle(vector1, vector2);
-      // float r0 = DebugVector3.Angle(vector1, Vector3.right);
-      // float r2 = DebugVector3.Angle(Vector3.right, vector1);
-      // float r1 = DebugVector3.Angle(Vector3.one, Vector3.right);
-      // f = Vector3.Angle(vector1, vector2);
     }
+
     if (DoClampMagnitude)
     {
       result = DebugVector3.ClampMagnitude(vector1, MaxMagnitude);
-      // t = Vector3.ClampMagnitude(vector1, MaxMagnitude);
     }
+
     if (DoDebugCross)
     {
       result = DebugVector3.Cross(vector1, vector2);
-      // t = Vector3.Cross(vector1, vector2);
     }
+
     if (DoDebugDistance)
     {
       f = DebugVector3.Distance(vector1, vector2);
-      // f = DebugVector3.Distance(Vector3.right, Vector3.up);
-      // f = Vector3.Distance(vector1, vector2);
     }
+
     if (DoDebugDot)
     {
       f = DebugVector3.Dot(vector1, vector2);
-      // f = Vector3.Dot(vector1, vector2);
     }
+
     if (DoDebugLerp)
     {
       result = DebugVector3.Lerp(vector1, vector2, Lerp);
-      // t = Vector3.Lerp(vector1, vector2, Lerp);
     }
+
     if (DoDebugLerpUnclamped)
     {
       result = DebugVector3.LerpUnclamped(vector1, vector2, Lerp);
-      // t = Vector3.LerpUnclamped(vector1, vector2, Lerp);
     }
+
     if (DoDebugMax)
     {
       result = DebugVector3.Max(vector1, vector2);
-      // t = Vector3.Max(vector1, vector2);
     }
+
     if (DoDebugMin)
     {
       result = DebugVector3.Min(vector1, vector2);
-      // t = Vector3.Min(vector1, vector2);
     }
+
     if (DoDebugMoveTowards)
     {
       result = DebugVector3.MoveTowards(vector1, vector2, MoveTowardsDistance);
-      // t = Vector3.MoveTowards(vector1, vector2, MoveTowardsDistance);
     }
+
     if (DoDebugStaticNormalize)
     {
       result = DebugVector3.Normalize(vector1);
-      // result = vector1;
-      // // Vector3 t1 = DebugVector3.Normalize(this.transform.position);
-      // DebugVector3 t2 = DebugVector3.Normalize(this.transform.position + result);
     }
+
     if (DoDebugInstNormalize)
     {
       vector1.Normalize();
       DoDebugInstNormalize = false;
     }
+
     if (DoOrthoNormalize)
     {
       Debug.Log("b:" + vector1 + " : " + vector2);
@@ -179,9 +177,6 @@ public class DebugVectorExamples : MonoBehaviour
 
     if (DoDebugProject)
     {
-      // Vector3 r = DebugVector3.Project(vector1, vector2);
-      // DebugVector3 r2 = (DebugVector3)DebugVector3.Project(vector1, vector2);
-      // Vector3 a = DebugVector3.Project(vector1, Vector3.one);
       result = DebugVector3.Project(vector1, vector2);
     }
 
@@ -214,6 +209,7 @@ public class DebugVectorExamples : MonoBehaviour
     {
       result = DebugVector3.Slerp(vector1, vector2, Slerp);
     }
+
     if (DoDebugSlerpUnclamped)
     {
       result = DebugVector3.SlerpUnclamped(vector1, vector2, Slerp);
@@ -222,7 +218,6 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoDebugSmoothDamp)
     {
       result = DebugVector3.SmoothDamp(vector1, vector2, ref SmoothDampVel, SmoothDampTime);
-      result = DebugVector3.SmoothDamp(vector1, vector2, ref SmoothDampVelDebug, SmoothDampTime);
     }
   }
 }
