@@ -53,6 +53,11 @@ public class DebugVectorExamples : MonoBehaviour
   public float MaxRotateDelta = 5.0f;
   public float MaxMagnitudeDelta = 5.0f;
 
+  public bool DoDebugScale = false;
+
+  public bool DoDebugSignedAngle = false;
+  public Vector3 signedAngleAxis;
+
   // Update is called once per frame
   void Update()
   {
@@ -183,6 +188,14 @@ public class DebugVectorExamples : MonoBehaviour
     if (DoDebugRotateTowards)
     {
       result = DebugVector3.RotateTowards(vector1, vector2, MaxRotateDelta, MaxMagnitudeDelta);
+    }
+
+    if (DoDebugScale) {
+      result = DebugVector3.Scale(vector1, vector2);
+    }
+
+    if (DoDebugSignedAngle) {
+      f = DebugVector3.SignedAngle(vector1, vector2, signedAngleAxis);
     }
   }
 }

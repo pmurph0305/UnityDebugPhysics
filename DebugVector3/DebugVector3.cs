@@ -751,8 +751,24 @@ public struct DebugVector3
     Vector3 result = Vector3.Scale(a, b);
     DrawVector(origin, origin + a, DrawVectorColorA);
     DrawVector(origin, origin + b, DrawVectorColorB);
-    DrawVector(origin, origni + result, DrawResultColor);
-    return (DebugVector3)result
+    DrawVector(origin, origin + result, DrawResultColor);
+    return (DebugVector3)result;
+  }
+
+
+  /// </summary>
+  /// Returns the signed angle in degress between from and to. The smaller of the two possible angles is returned.
+  /// <summary>
+  /// <param name="from">The vector from which the angle is measured</param>
+  /// <param name="to">The vector to which the angle is measured</param>
+  /// <param name="axis">A vector around which the other vecotors are rotated</param>
+  /// <returns>Signed angle in degrees between from and to</returns>
+  public static float SignedAngle(Vector3 from, Vector3 to, Vector3 axis) {
+    float result = Vector3.SignedAngle(from, to, axis);
+    DrawVector(origin, origin + from, DrawVectorColorA);
+    DrawVector(origin, origin + to, DrawVectorColorB);
+    DrawVector(origin, origin + axis, DrawVectorColorC);
+    return result;
   }
 
   // Operators
