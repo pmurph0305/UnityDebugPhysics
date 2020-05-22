@@ -27,20 +27,70 @@ using UnityEditor;
 [System.Serializable]
 public struct DebugVector3
 {
+  /// <summary>
+  /// When Vector.Dot is used, should the projection of A on B be drawn?
+  /// </summary>
+  public static bool DrawDotAsProjectionAonB = true;
+  /// <summary>
+  /// Should the axis to rotate around for Vector3.Angle be drawn?
+  /// </summary>
   public static bool ShowAngleAxis = true;
+  /// <summary>
+  /// Should the sign be ignored when drawing angles for Vector3.SignedAngle
+  /// If true, the angle drawn will always go towards what you're aiming for.
+  /// </summary>
   public static bool IgnoreAngleSign = true;
+  /// <summary>
+  /// Should inputs for DebugVector3 Operators( +-/* ) be drawn?
+  /// </summary>
   public static bool ShowOperatorInputs = true;
+  /// <summary>
+  /// Should the result for DebugVector3 Operators ( +-/* ) be drawn?
+  /// </summary>
   public static bool ShowOperatorResult = true;
+  /// <summary>
+  /// Should the result of static methods be drawn?
+  /// </summary>
   public static bool ShowMethodResult = true;
+  /// <summary>
+  /// Should the inputs for static methods be drawn?
+  /// </summary>
   public static bool ShowMethodInputs = true;
+  /// <summary>
+  /// How long should each line be drawn for?
+  /// </summary>
   public static float DrawLineTime = 0.0001f;
+  /// <summary>
+  /// How long should the methods that actually change an input vector be drawn? (Ie used in Normalize())
+  /// </summary>
   public static float DrawPermanentChangeTime = 5.0f;
+  /// <summary>
+  /// Color to draw the first input vector for a method
+  /// </summary>
   public static Color DrawVectorColorA = Color.yellow;
+  /// <summary>
+  /// Color to draw the second input vector for a method
+  /// </summary>
   public static Color DrawVectorColorB = Color.blue;
-  public static Color DrawVectorColorC = Color.magenta;
+  /// <summary>
+  /// Color to draw the third input vector for a method
+  /// </summary>
+  public static Color DrawVectorColorC = Color.red;
+  /// <summary>
+  /// Color to draw the result of methods
+  /// </summary>
   public static Color DrawResultColor = Color.green;
+  /// <summary>
+  /// Should the lines drawn be obscured by objects?
+  /// </summary>
   public static bool DepthTest = true;
+  /// <summary>
+  /// Should the vectors be drawn with arrows point in it's direction
+  /// </summary>
   public static bool DrawVectorsWithArrows = true;
+  /// <summary>
+  /// The scale of arrows to draw when drawing vectors with arrows
+  /// </summary>
   public static float DrawVectorArrowScale = 0.1f;
 
   // static variables from normal Vector3
@@ -87,7 +137,7 @@ public struct DebugVector3
   public static DebugVector3 positiveInfinity = new DebugVector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
 
 
-  public static bool DrawDotAsProjectionAonB = true;
+
   public DebugVector3(float x, float y, float z)
   {
     v3 = new Vector3(x, y, z);
@@ -98,7 +148,10 @@ public struct DebugVector3
     v3 = vector;
   }
 
-  public static Vector3 origin;
+  /// <summary>
+  /// Origin of all vectors. Change this to change the location that the drawning occurs at.
+  /// </summary>
+  public static Vector3 origin = Vector3.zero;
 
   [SerializeField]
   private Vector3 v3;
@@ -153,10 +206,6 @@ public struct DebugVector3
       throw new System.Exception("Cannot access vector property at " + index);
     }
   }
-
-
-
-
 
   // Static functions
 
