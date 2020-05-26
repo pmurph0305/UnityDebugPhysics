@@ -264,10 +264,10 @@ public struct DebugVector3
   /// <param name="to">To Vector</param>
   /// <param name="angle">Angle to rotate</param>
   /// <param name="color">Color to draw lines with</param>
-  public static void DrawAngleBetween(Vector3 from, Vector3 to, float angle, Color color)
+  public static void DrawAngleBetween(Vector3 from, Vector3 to, Color color)
   {
-    if (IgnoreAngleSign && angle < 0) { angle *= -1; }
-    DebugDraw.DrawAngleBetween(origin, from, to, angle, color, DrawAngleArrow, DrawVectorArrowScale, DrawLineTime, DepthTest);
+    // if (IgnoreAngleSign && angle < 0) { angle *= -1; }
+    DebugDraw.DrawAngleBetween(origin, from, to, color, DrawAngleArrow, DrawVectorArrowScale, DrawLineTime, DepthTest);
   }
 
 
@@ -289,7 +289,7 @@ public struct DebugVector3
     {
       DrawVector(origin, origin + axis.normalized, DrawResultColor);
     }
-    DrawAngleBetween(from, to, angle, DrawResultColor);
+    DrawAngleBetween(from, to, DrawResultColor);
     return angle;
   }
 
@@ -634,7 +634,7 @@ public struct DebugVector3
     DrawVector(origin, origin + from, DrawVectorColorA);
     DrawVector(origin, origin + to, DrawVectorColorB);
     DrawVector(origin, origin + axis, DrawVectorColorC);
-    DrawAngleBetween(from, to, result, DrawResultColor);
+    DrawAngleBetween(from, to, DrawResultColor);
     return result;
   }
 

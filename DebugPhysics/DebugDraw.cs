@@ -47,7 +47,7 @@ public static class DebugDraw
   /// <param name="to">To Vector</param>
   /// <param name="angle">Angle to rotate</param>
   /// <param name="color">Color to draw lines with</param>
-  public static void DrawAngleBetween(Vector3 origin, Vector3 from, Vector3 to, float angle, Color color, bool drawAngleArrow, float scale, float duration, bool depthTest)
+  public static void DrawAngleBetween(Vector3 origin, Vector3 from, Vector3 to, Color color, bool drawAngleArrow, float scale, float duration, bool depthTest)
   {
     float r = 1.0f;
     // use half magnitude of shortest vector for now..
@@ -59,6 +59,7 @@ public static class DebugDraw
     {
       r = from.magnitude / 2;
     }
+    float angle = Vector3.Angle(from, to);
     Vector3 p0 = from.normalized * r;
     Vector3 p1 = p0;
     for (int i = 0; i < AngleSegments; i++)

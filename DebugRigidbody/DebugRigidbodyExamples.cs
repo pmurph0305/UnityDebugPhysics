@@ -9,6 +9,7 @@ public class DebugRigidbodyExamples : MonoBehaviour
   public ForceMode ForceMode;
   public Vector3 ForceVector;
   public bool AddForce;
+  public bool AddTorque;
   // Use this for initialization
   void Start()
   {
@@ -21,7 +22,10 @@ public class DebugRigidbodyExamples : MonoBehaviour
     if (AddForce)
     {
       rigidbody.DebugAddForce(ForceVector, ForceMode);
-
+    }
+    if (AddTorque)
+    {
+      rigidbody.DebugAddTorque(ForceVector, ForceMode);
     }
   }
 }
