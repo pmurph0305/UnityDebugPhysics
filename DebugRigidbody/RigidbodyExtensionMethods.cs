@@ -5,6 +5,13 @@ using UnityEngine;
 public static class RigidbodyExtensionMethods
 {
 
+  public static void DebugAddExplosionForce(this Rigidbody rigidbody, float explosionForce, Vector3 explosionPosition, float explosionRadius, float upwardsModifier = 0.0F, ForceMode mode = ForceMode.Force)
+  {
+    DebugRigidbody.DrawExplosionForce(rigidbody, explosionForce, explosionPosition, explosionRadius, upwardsModifier, mode);
+    rigidbody.AddExplosionForce(explosionForce, explosionPosition, explosionRadius, upwardsModifier, mode);
+
+  }
+
   /// <summary>
   /// Adds a force to the rigidbody
   /// </summary>
@@ -50,5 +57,10 @@ public static class RigidbodyExtensionMethods
   {
     DebugRigidbody.DrawTorque(rigidbody, rigidbody.worldCenterOfMass, new Vector3(x, y, z), mode);
     rigidbody.AddTorque(x, y, z, mode);
+  }
+
+  public static void DebugVelocity(this Rigidbody rigidbody)
+  {
+    DebugRigidbody.DrawVelocity(rigidbody);
   }
 }

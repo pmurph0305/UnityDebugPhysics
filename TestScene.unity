@@ -1611,7 +1611,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1018291230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1624,8 +1624,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ForceMode: 0
-  ForceVector: {x: 0, y: 0, z: 0}
+  ForceVector: {x: 0, y: 0, z: 1}
   AddForce: 0
+  AddTorque: 1
 --- !u!54 &1018291231
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2779,7 +2780,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1751987224
 MonoBehaviour:
   m_ObjectHideFlags: 0

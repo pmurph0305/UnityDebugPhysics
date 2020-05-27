@@ -10,6 +10,12 @@ public class DebugRigidbodyExamples : MonoBehaviour
   public Vector3 ForceVector;
   public bool AddForce;
   public bool AddTorque;
+
+  public bool AddExplosionForce;
+  public Vector3 ExplosionPositionOffset = -Vector3.one;
+  public float ExplosionForce = 10.0f;
+  public float ExplosionUpwardsModifier = 0.2f;
+  public float ExplosionRadius = 1.0f;
   // Use this for initialization
   void Start()
   {
@@ -17,8 +23,13 @@ public class DebugRigidbodyExamples : MonoBehaviour
   }
 
   // Update is called once per frame
-  void Update()
+  void FixedUpdate()
   {
+    rigidbody.DebugVelocity();
+    if (AddExplosionForce)
+    {
+      rigidbody.DebugAddExplosionForce(ExplosionForce, transform.position + ExplosionPositionOffset, ExplosionRadius, ExplosionUpwardsModifier, ForceMode);
+    }
     if (AddForce)
     {
       rigidbody.DebugAddForce(ForceVector, ForceMode);
