@@ -4,7 +4,14 @@ using UnityEngine;
 
 public static class RigidbodyExtensionMethods
 {
-
+  /// <summary>
+  /// Applies a force to a rigidbody that simulates explosion effects
+  /// </summary>
+  /// <param name="explosionForce">The force of the explosion (this may be modified by distance)</param>
+  /// <param name="explosionPosition">Center of the sphere within which the explosion has an effect</param>
+  /// <param name="explosionRadius">Radius of the sphere within which the explosion effects</param>
+  /// <param name="upwardsModifier">Adjustment to position of the explosion to make it seem like it lifts things</param>
+  /// <param name="mode">The type of force to apply</param>
   public static void DebugAddExplosionForce(this Rigidbody rigidbody, float explosionForce, Vector3 explosionPosition, float explosionRadius, float upwardsModifier = 0.0F, ForceMode mode = ForceMode.Force)
   {
     DebugRigidbody.DrawExplosionForce(rigidbody, explosionForce, explosionPosition, explosionRadius, upwardsModifier, mode);
