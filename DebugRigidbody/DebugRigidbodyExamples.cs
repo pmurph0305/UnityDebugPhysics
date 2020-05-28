@@ -18,6 +18,9 @@ public class DebugRigidbodyExamples : MonoBehaviour
   public float ExplosionUpwardsModifier = 0.2f;
   public float ExplosionRadius = 1.0f;
   public bool AddForceAtPostion;
+
+  public bool AddForceRelative;
+  public bool AddTorqueRelative;
   // Use this for initialization
   void Start()
   {
@@ -44,6 +47,14 @@ public class DebugRigidbodyExamples : MonoBehaviour
     if (AddForceAtPostion)
     {
       rigidbody.DebugAddForceAtPosition(ForceVector, transform.position + PositionOffset, ForceMode);
+    }
+    if (AddForceRelative)
+    {
+      rigidbody.DebugAddRelativeForce(ForceVector, ForceMode);
+    }
+    if (AddTorqueRelative)
+    {
+      rigidbody.DebugAddRelativeTorque(ForceVector, ForceMode);
     }
   }
 }

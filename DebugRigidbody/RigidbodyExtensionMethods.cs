@@ -56,6 +56,52 @@ public static class RigidbodyExtensionMethods
   }
 
   /// <summary>
+  /// Adds a force to the rigidbody relative to its local coordinate system
+  /// </summary>
+  /// <param name="force">Force vector in local coordinates</param>
+  /// <param name="mode">Type of force to apply</param>
+  public static void DebugAddRelativeForce(this Rigidbody rigidbody, Vector3 force, ForceMode mode = ForceMode.Force)
+  {
+    DebugRigidbody.DrawForce(rigidbody, rigidbody.worldCenterOfMass, rigidbody.transform.TransformDirection(force), mode);
+    rigidbody.AddRelativeForce(force, mode);
+  }
+  /// <summary>
+  /// Adds a force to the rigidbody relative to its local coordinate system
+  /// </summary>
+  /// <param name="x">Size of force along local x-axis</param>
+  /// <param name="y">Size of force along local y-axis</param>
+  /// <param name="z">Size of force along local z-axis</param>
+  /// <param name="mode">Type of force to apply</param>
+  public static void DebugAddRelativeForce(this Rigidbody rigidbody, float x, float y, float z, ForceMode mode = ForceMode.Force)
+  {
+    DebugRigidbody.DrawForce(rigidbody, rigidbody.worldCenterOfMass, rigidbody.transform.TransformDirection(new Vector3(x, y, z)), mode);
+    rigidbody.AddRelativeForce(x, y, z, mode);
+  }
+
+  /// <summary>
+  /// Addsa  torque to the rigidbody relative to its local coordinate system
+  /// </summary>
+  /// <param name="torque">Torque vector in local coordinates</param>
+  /// <param name="mode">Type of force to apply</param>
+  public static void DebugAddRelativeTorque(this Rigidbody rigidbody, Vector3 torque, ForceMode mode = ForceMode.Force)
+  {
+    DebugRigidbody.DrawTorque(rigidbody, rigidbody.worldCenterOfMass, rigidbody.transform.TransformDirection(torque), mode);
+    rigidbody.AddRelativeTorque(torque, mode);
+  }
+  /// <summary>
+  /// Addsa  torque to the rigidbody relative to its local coordinate system
+  /// </summary>
+  /// <param name="x">Size of torque along local x-axis</param>
+  /// <param name="y">Size of torque along local y-axis</param>
+  /// <param name="z">Size of torque along local z-axis</param>
+  /// <param name="mode">Type of force to apply</param>
+  public static void DebugAddRelativeTorque(this Rigidbody rigidbody, float x, float y, float z, ForceMode mode = ForceMode.Force)
+  {
+    DebugRigidbody.DrawTorque(rigidbody, rigidbody.worldCenterOfMass, rigidbody.transform.TransformDirection(new Vector3(x, y, z)), mode);
+    rigidbody.AddRelativeTorque(x, y, z, mode);
+  }
+
+  /// <summary>
   /// Adds a torque to the rigidbody
   /// </summary>
   /// <param name="torque">Torque vector in world coordinates</param>
