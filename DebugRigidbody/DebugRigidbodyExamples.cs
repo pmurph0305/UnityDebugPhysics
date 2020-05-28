@@ -24,6 +24,7 @@ public class DebugRigidbodyExamples : MonoBehaviour
 
   public bool ClosestPointOnBounds;
   public bool GetPointVelocity;
+  public bool GetRelativePointVelocity;
   // Use this for initialization
   void Start()
   {
@@ -65,7 +66,11 @@ public class DebugRigidbodyExamples : MonoBehaviour
     }
     if (GetPointVelocity)
     {
-      rigidbody.DebugGetPointVelocity(PositionOffset);
+      rigidbody.DebugGetPointVelocity(transform.TransformPoint(PositionOffset));
+    }
+    if (GetRelativePointVelocity)
+    {
+      rigidbody.DebugGetRelativePointVelocity(PositionOffset);
     }
   }
 }

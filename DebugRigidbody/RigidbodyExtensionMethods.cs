@@ -138,10 +138,27 @@ public static class RigidbodyExtensionMethods
     return point;
   }
 
+  /// <summary>
+  /// Gets the velocity of the rigidbody at a point in world space
+  /// </summary>
+  /// <param name="worldPoint">Point in word space coordinates</param>
+  /// <returns>Velocity of the rigidbody at point</returns>
   public static Vector3 DebugGetPointVelocity(this Rigidbody rigidbody, Vector3 worldPoint)
   {
     Vector3 velocity = rigidbody.GetPointVelocity(worldPoint);
-    DebugRigidbody.DrawForce(rigidbody, rigidbody.worldCenterOfMass, velocity, ForceMode.VelocityChange);
+    DebugRigidbody.DrawForce(rigidbody, worldPoint, velocity, ForceMode.VelocityChange);
+    return velocity;
+  }
+
+  /// <summary>
+  /// Gets the velocity relative to the rigidbodys local coordinates at a point.
+  /// </summary>
+  /// <param name="relativePoint">Point in local coordinates</param>
+  /// <returns>Velocity at a point in local coordinates</returns>
+  public static Vector3 DebugGetRelativePointVelocity(this Rigidbody rigidbody, Vector3 relativePoint)
+  {
+    Vector3 velocity = rigidbody.GetRelativePointVelocity(relativePoint);
+    DebugRigidbody.DrawForce(rigidbody, rigidbody.transform.TransformPoint(relativePoint), rigidbody.transform.TransformDirection(velocity), ForceMode.VelocityChange);
     return velocity;
   }
 
