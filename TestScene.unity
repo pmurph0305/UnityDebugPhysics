@@ -1606,12 +1606,12 @@ GameObject:
   - component: {fileID: 1018291231}
   - component: {fileID: 1018291230}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: DebugRigidbody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1018291230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1626,7 +1626,12 @@ MonoBehaviour:
   ForceMode: 0
   ForceVector: {x: 0, y: 0, z: 1}
   AddForce: 0
-  AddTorque: 1
+  AddTorque: 0
+  AddExplosionForce: 0
+  ExplosionPositionOffset: {x: -1, y: -1, z: -1}
+  ExplosionForce: 10
+  ExplosionUpwardsModifier: 0.2
+  ExplosionRadius: 1
 --- !u!54 &1018291231
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2780,7 +2785,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1751987224
 MonoBehaviour:
   m_ObjectHideFlags: 0

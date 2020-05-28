@@ -6,16 +6,18 @@ using UnityEngine;
 public class DebugRigidbodyExamples : MonoBehaviour
 {
   private Rigidbody rigidbody;
+
   public ForceMode ForceMode;
   public Vector3 ForceVector;
+  public Vector3 PositionOffset = -Vector3.one;
+  public float MinForceVectorLength = 0.0f;
   public bool AddForce;
   public bool AddTorque;
-
   public bool AddExplosionForce;
-  public Vector3 ExplosionPositionOffset = -Vector3.one;
   public float ExplosionForce = 10.0f;
   public float ExplosionUpwardsModifier = 0.2f;
   public float ExplosionRadius = 1.0f;
+  public bool AddForceAtPostion;
   // Use this for initialization
   void Start()
   {
@@ -25,10 +27,11 @@ public class DebugRigidbodyExamples : MonoBehaviour
   // Update is called once per frame
   void FixedUpdate()
   {
+    DebugRigidbody.MinForceVectorLength = MinForceVectorLength;
     rigidbody.DebugVelocity();
     if (AddExplosionForce)
     {
-      rigidbody.DebugAddExplosionForce(ExplosionForce, transform.position + ExplosionPositionOffset, ExplosionRadius, ExplosionUpwardsModifier, ForceMode);
+      rigidbody.DebugAddExplosionForce(ExplosionForce, transform.position + PositionOffset, ExplosionRadius, ExplosionUpwardsModifier, ForceMode);
     }
     if (AddForce)
     {
@@ -37,6 +40,10 @@ public class DebugRigidbodyExamples : MonoBehaviour
     if (AddTorque)
     {
       rigidbody.DebugAddTorque(ForceVector, ForceMode);
+    }
+    if (AddForceAtPostion)
+    {
+      rigidbody.DebugAddForceAtPosition(ForceVector, transform.position + PositionOffset, ForceMode);
     }
   }
 }

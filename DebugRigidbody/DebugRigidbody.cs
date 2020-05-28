@@ -5,6 +5,11 @@ using UnityEngine;
 public static class DebugRigidbody
 {
   /// <summary>
+  /// Use to set a minimum force vector length
+  /// </summary>
+  public static float MinForceVectorLength = 0.0f;
+  public static bool DrawTorqueFromPosition = true;
+  /// <summary>
   /// Draw the sphere of radius (or a point if radius is 0) at the explosion force's position?
   /// </summary>
   public static bool DrawExplosionForceSphere = true;
@@ -100,7 +105,8 @@ public static class DebugRigidbody
   {
     if (ScaleForceUsingMass && (mode == ForceMode.Force || mode == ForceMode.Impulse)) // these modes use it's math so it makes sense to scale with mass if specified
     {
-      DebugDraw.DrawVector(origin, origin + force.normalized * force.magnitude / rigidbody.mass, GetForceModeColor(mode), DrawVectorArrowScale, GetDrawTime(), DepthTest);
+      Vector3 f = force.magnitude / rigidbody.mass > MinForceVectorLength ? force.normalized * force.magnitude / rigidbody.mass : force.normalized * MinForceVectorLength;
+      DebugDraw.DrawVector(origin, origin + f, GetForceModeColor(mode), DrawVectorArrowScale, GetDrawTime(), DepthTest);
     }
     else
     {
@@ -172,6 +178,22 @@ public static class DebugRigidbody
     }
     Debug.DrawLine(pos, rigidbody.worldCenterOfMass, DrawExplosionColor, DrawLineTime, DepthTest);
     DrawForce(rigidbody, rigidbody.worldCenterOfMass, (rigidbody.worldCenterOfMass - pos).normalized * explosionForce, mode);
+  }
+
+  /// <summary>
+  /// Draws a force at position, drawing torque if enabled
+  /// </summary>
+  /// <param name="rigidbody"></param>
+  /// <param name="force"></param>
+  /// <param name="position"></param>
+  /// <param name="mode"></param>
+  public static void DrawForceAtPostion(Rigidbody rigidbody, Vector3 force, Vector3 position, ForceMode mode)
+  {
+    DrawForce(rigidbody, position, force, mode);
+    if (DrawTorqueFromPosition)
+    {
+      DrawTorque(rigidbody, rigidbody.worldCenterOfMass, Vector3.Cross(position - rigidbody.worldCenterOfMass, force), mode);
+    }
   }
 
 }

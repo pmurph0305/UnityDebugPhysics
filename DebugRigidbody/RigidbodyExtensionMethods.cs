@@ -37,9 +37,22 @@ public static class RigidbodyExtensionMethods
   /// <param name="y">Size of force along world y-axis</param>
   /// <param name="z">Size of force along world z-axis</param>
   /// <param name="mode">Type of force to apply</param>
-  public static void AddForce(this Rigidbody rigidbody, float x, float y, float z, ForceMode mode = ForceMode.Force)
+  public static void DebugAddForce(this Rigidbody rigidbody, float x, float y, float z, ForceMode mode = ForceMode.Force)
   {
     DebugRigidbody.DrawForce(rigidbody, rigidbody.worldCenterOfMass, new Vector3(x, y, z), mode);
+    rigidbody.AddForce(x, y, z, mode);
+  }
+
+  /// <summary>
+  /// Applies force at position.static As a result this will apply a torque and force on the object.
+  /// </summary>
+  /// <param name="force">Force vector in world coodrinates</param>
+  /// <param name="position">Position to apply force at in world coordinates</param>
+  /// <param name="mode">Type of force to apply</param>
+  public static void DebugAddForceAtPosition(this Rigidbody rigidbody, Vector3 force, Vector3 position, ForceMode mode = ForceMode.Force)
+  {
+    DebugRigidbody.DrawForceAtPostion(rigidbody, force, position, mode);
+    rigidbody.AddForceAtPosition(force, position, mode);
   }
 
   /// <summary>
@@ -66,8 +79,12 @@ public static class RigidbodyExtensionMethods
     rigidbody.AddTorque(x, y, z, mode);
   }
 
+  /// <summary>
+  /// Draws the velocity vector of the rigidbody
+  /// </summary>
   public static void DebugVelocity(this Rigidbody rigidbody)
   {
     DebugRigidbody.DrawVelocity(rigidbody);
   }
+
 }
