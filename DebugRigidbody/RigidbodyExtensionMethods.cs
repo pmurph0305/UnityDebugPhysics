@@ -138,6 +138,13 @@ public static class RigidbodyExtensionMethods
     return point;
   }
 
+  public static Vector3 DebugGetPointVelocity(this Rigidbody rigidbody, Vector3 worldPoint)
+  {
+    Vector3 velocity = rigidbody.GetPointVelocity(worldPoint);
+    DebugRigidbody.DrawForce(rigidbody, rigidbody.worldCenterOfMass, velocity, ForceMode.VelocityChange);
+    return velocity;
+  }
+
   /// <summary>
   /// Draws the velocity vector of the rigidbody
   /// </summary>
