@@ -126,6 +126,19 @@ public static class RigidbodyExtensionMethods
   }
 
   /// <summary>
+  /// Returbns the closest point on the bounding box of the attached colliders.
+  /// </summary>
+  /// <param name="position">Position in world coordiates</param>
+  /// <returns>Closest point on the bounding box of the rigidbody's attached colliders</returns>
+  public static Vector3 DebugClosestPointOnBounds(this Rigidbody rigidbody, Vector3 position)
+  {
+    Vector3 point = rigidbody.ClosestPointOnBounds(position);
+    DebugDraw.DrawPoint(position, DebugRigidbody.ForceModeForceColor, DebugRigidbody.DrawLineTime, DebugRigidbody.DepthTest);
+    DebugDraw.DrawPoint(point, DebugRigidbody.ForceModeAccelerationColor, DebugRigidbody.DrawLineTime, DebugRigidbody.DepthTest);
+    return point;
+  }
+
+  /// <summary>
   /// Draws the velocity vector of the rigidbody
   /// </summary>
   public static void DebugVelocity(this Rigidbody rigidbody)

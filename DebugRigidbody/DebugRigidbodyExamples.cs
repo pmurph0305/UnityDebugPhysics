@@ -21,6 +21,8 @@ public class DebugRigidbodyExamples : MonoBehaviour
 
   public bool AddForceRelative;
   public bool AddTorqueRelative;
+
+  public bool ClosestPointOnBounds;
   // Use this for initialization
   void Start()
   {
@@ -55,6 +57,10 @@ public class DebugRigidbodyExamples : MonoBehaviour
     if (AddTorqueRelative)
     {
       rigidbody.DebugAddRelativeTorque(ForceVector, ForceMode);
+    }
+    if (ClosestPointOnBounds)
+    {
+      rigidbody.DebugClosestPointOnBounds(PositionOffset);
     }
   }
 }
