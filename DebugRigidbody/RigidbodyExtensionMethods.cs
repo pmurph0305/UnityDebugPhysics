@@ -163,6 +163,54 @@ public static class RigidbodyExtensionMethods
   }
 
   /// <summary>
+  /// Tests if a rigidbody would collider with anything travelling in direction for distance.
+  /// </summary>
+  /// <param name="direction">Direction in which to sweep the rigidbody</param>
+  /// <param name="hitInfo">If true is returned, contains more information about where the hit occured</param>
+  /// <param name="maxDistance">The length of the sweep</param>
+  /// <param name="queryTriggerInteraction">Should this query hit triggers</param>
+  /// <returns>True if the sweep intersects with any collider, otherwise false</returns>
+  public static bool DebugSweepTest(this Rigidbody rigidbody, Vector3 direction, out RaycastHit hitInfo, float maxDistance = Mathf.Infinity, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
+  {
+    if (rigidbody.SweepTest(direction, out hitInfo, maxDistance, queryTriggerInteraction))
+    {
+      DebugRigidbody.DrawSweep(rigidbody, direction, maxDistance, hitInfo);
+      return true;
+    }
+    if (DebugRigidbody.DrawSweepDirection)
+    {
+      maxDistance = maxDistance > DebugRigidbody.MaxDrawSweepDistance ? DebugRigidbody.MaxDrawSweepDistance : maxDistance;
+      DebugDraw.DrawVector(rigidbody.worldCenterOfMass, rigidbody.worldCenterOfMass + direction * maxDistance, DebugRigidbody.SweepDirectioNoHitColor, DebugRigidbody.DrawVectorArrowScale, DebugRigidbody.DrawLineTime, DebugRigidbody.DepthTest);
+    }
+    return false;
+  }
+
+  /// <summary>
+  /// Tests what a rigidbody would hit if it travels through the scene. Returns multiple hits.
+  /// </summary>
+  /// <param name="direction">Direction in which to sweep the rigidbody</param>
+  /// <param name="maxDistance">The length of the sweep</param>
+  /// <param name="queryTriggerInteraction">Should this query hit triggers</param>
+  /// <returns>Array of RaycastHit data of the points the rigidbody would hit if it travelled in direction for distance</returns>
+  public static RaycastHit[] DebugSweepTestAll(this Rigidbody rigidbody, Vector3 direction, float maxDistance = Mathf.Infinity, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
+  {
+    RaycastHit[] hits = rigidbody.SweepTestAll(direction, maxDistance, queryTriggerInteraction);
+    if (hits.Length > 0)
+    {
+      foreach (RaycastHit hit in hits)
+      {
+        DebugRigidbody.DrawSweep(rigidbody, direction, maxDistance, hit);
+      }
+    }
+    else if (DebugRigidbody.DrawSweepDirection)
+    {
+      maxDistance = maxDistance > DebugRigidbody.MaxDrawSweepDistance ? DebugRigidbody.MaxDrawSweepDistance : maxDistance;
+      DebugDraw.DrawVector(rigidbody.worldCenterOfMass, rigidbody.worldCenterOfMass + direction * maxDistance, DebugRigidbody.SweepDirectioNoHitColor, DebugRigidbody.DrawVectorArrowScale, DebugRigidbody.DrawLineTime, DebugRigidbody.DepthTest);
+    }
+    return hits;
+  }
+
+  /// <summary>
   /// Draws the velocity vector of the rigidbody
   /// </summary>
   public static void DebugVelocity(this Rigidbody rigidbody)

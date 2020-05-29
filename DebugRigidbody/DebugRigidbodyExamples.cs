@@ -5,8 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class DebugRigidbodyExamples : MonoBehaviour
 {
-  private Rigidbody rigidbody;
-
+  private Rigidbody m_rigidbody;
   public ForceMode ForceMode;
   public Vector3 ForceVector;
   public Vector3 PositionOffset = -Vector3.one;
@@ -25,52 +24,73 @@ public class DebugRigidbodyExamples : MonoBehaviour
   public bool ClosestPointOnBounds;
   public bool GetPointVelocity;
   public bool GetRelativePointVelocity;
+
+  public bool Sweep;
+  public Vector3 SweepDirection = Vector3.forward;
+  public bool SweepAll;
   // Use this for initialization
   void Start()
   {
-    rigidbody = GetComponent<Rigidbody>();
+    m_rigidbody = GetComponent<Rigidbody>();
   }
 
   // Update is called once per frame
   void FixedUpdate()
   {
+    DebugRigidbody.MaxDrawSweepDistance = 10f;
     DebugRigidbody.MinForceVectorLength = MinForceVectorLength;
-    rigidbody.DebugVelocity();
+    m_rigidbody.DebugVelocity();
     if (AddExplosionForce)
     {
-      rigidbody.DebugAddExplosionForce(ExplosionForce, transform.position + PositionOffset, ExplosionRadius, ExplosionUpwardsModifier, ForceMode);
+      m_rigidbody.DebugAddExplosionForce(ExplosionForce, transform.position + PositionOffset, ExplosionRadius, ExplosionUpwardsModifier, ForceMode);
     }
     if (AddForce)
     {
-      rigidbody.DebugAddForce(ForceVector, ForceMode);
+      m_rigidbody.DebugAddForce(ForceVector, ForceMode);
     }
     if (AddTorque)
     {
-      rigidbody.DebugAddTorque(ForceVector, ForceMode);
+      m_rigidbody.DebugAddTorque(ForceVector, ForceMode);
     }
     if (AddForceAtPostion)
     {
-      rigidbody.DebugAddForceAtPosition(ForceVector, transform.position + PositionOffset, ForceMode);
+      m_rigidbody.DebugAddForceAtPosition(ForceVector, transform.position + PositionOffset, ForceMode);
     }
     if (AddForceRelative)
     {
-      rigidbody.DebugAddRelativeForce(ForceVector, ForceMode);
+      m_rigidbody.DebugAddRelativeForce(ForceVector, ForceMode);
     }
     if (AddTorqueRelative)
     {
-      rigidbody.DebugAddRelativeTorque(ForceVector, ForceMode);
+      m_rigidbody.DebugAddRelativeTorque(ForceVector, ForceMode);
     }
     if (ClosestPointOnBounds)
     {
-      rigidbody.DebugClosestPointOnBounds(PositionOffset);
+      m_rigidbody.DebugClosestPointOnBounds(PositionOffset);
     }
     if (GetPointVelocity)
     {
-      rigidbody.DebugGetPointVelocity(transform.TransformPoint(PositionOffset));
+      m_rigidbody.DebugGetPointVelocity(transform.TransformPoint(PositionOffset));
     }
     if (GetRelativePointVelocity)
     {
-      rigidbody.DebugGetRelativePointVelocity(PositionOffset);
+      m_rigidbody.DebugGetRelativePointVelocity(PositionOffset);
+    }
+    if (Sweep)
+    {
+      RaycastHit hit;
+      if (m_rigidbody.DebugSweepTest(SweepDirection, out hit))
+      {
+        // do something
+      }
+    }
+    if (SweepAll)
+    {
+      RaycastHit[] hits = m_rigidbody.DebugSweepTestAll(SweepDirection);
+      foreach (RaycastHit hit in hits)
+      {
+        // do something
+      }
     }
   }
 }

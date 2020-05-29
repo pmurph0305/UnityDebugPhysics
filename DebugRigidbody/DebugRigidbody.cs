@@ -5,22 +5,70 @@ using UnityEngine;
 public static class DebugRigidbody
 {
   /// <summary>
+  /// Should rigidbody sweeps draw the points that were hit?
+  /// </summary>
+  public static bool DrawSweepHitPoints = true;
+
+  /// <summary>
+  /// Should rigidbody sweeps draw the normals of the points that were hit?
+  /// </summary>
+  public static bool DrawSweepHitNormals = true;
+
+  /// <summary>
+  /// Should rigidbody sweeps draw the direction of the sweep?
+  /// </summary>
+  public static bool DrawSweepDirection = true;
+
+  /// <summary>
+  /// Color of the hit points drawn in rigidbody sweeps
+  /// </summary>
+  public static Color SweepHitPointColor = Color.red;
+
+  /// <summary>
+  /// Color of the hit point's normal in rigidbody sweeps
+  /// </summary>
+  public static Color SweepHitNormalColor = Color.magenta;
+
+  /// <summary>
+  /// Color of the sweep direction vector in rigidbody sweeps when it does hit something
+  /// </summary>
+  public static Color SweepDirectionColor = Color.green;
+
+  /// <summary>
+  /// Color of the sweep direction vector in rigidbody sweeps when it does not hit something
+  /// </summary>
+  public static Color SweepDirectioNoHitColor = Color.red;
+
+  /// <summary>
+  /// Maximum distance to draw the direction vector for rigidbody sweeps
+  /// </summary>
+  public static float MaxDrawSweepDistance = 1000f;
+
+  /// <summary>
   /// Use to set a minimum force vector length
   /// </summary>
   public static float MinForceVectorLength = 0.0f;
+
+  /// <summary>
+  /// Should torque also be drawn when drawings forces at positions?
+  /// </summary>
   public static bool DrawTorqueFromPosition = true;
+
   /// <summary>
   /// Draw the sphere of radius (or a point if radius is 0) at the explosion force's position?
   /// </summary>
   public static bool DrawExplosionForceSphere = true;
+
   /// <summary>
   /// Should lines drawn be obscured by objects in the scene?
   /// </summary>
   public static bool DepthTest = false;
+
   /// <summary>
   /// Scale of end arrows on vectors
   /// </summary>
   public static float DrawVectorArrowScale = 0.1f;
+
   /// <summary>
   /// Minimum scale to draw torque ring with
   /// </summary>
@@ -162,7 +210,6 @@ public static class DebugRigidbody
   /// <param name="mode">Forcemode of explosion force</param>
   public static void DrawExplosionForce(Rigidbody rigidbody, float explosionForce, Vector3 explosionPosition, float explosionRadius, float upwardsModifier, ForceMode mode)
   {
-    Color color = GetForceModeColor(mode);
     Vector3 pos = explosionPosition;
     pos.y -= upwardsModifier;
     if (DrawExplosionForceSphere)
@@ -183,10 +230,10 @@ public static class DebugRigidbody
   /// <summary>
   /// Draws a force at position, drawing torque if enabled
   /// </summary>
-  /// <param name="rigidbody"></param>
-  /// <param name="force"></param>
-  /// <param name="position"></param>
-  /// <param name="mode"></param>
+  /// <param name="rigidbody">Rigidbody force is being applied to</param>
+  /// <param name="force">Force vector</param>
+  /// <param name="position">Position at which the force is being applied</param>
+  /// <param name="mode">Type of force being applied</param>
   public static void DrawForceAtPostion(Rigidbody rigidbody, Vector3 force, Vector3 position, ForceMode mode)
   {
     DrawForce(rigidbody, position, force, mode);
@@ -196,4 +243,27 @@ public static class DebugRigidbody
     }
   }
 
+  /// <summary>
+  /// Draws a single rigidbody sweep using hitInfo
+  /// </summary>
+  /// <param name="rigidbody">Rigidbody sweep was performed with</param>
+  /// <param name="direction">Direction of the sweep</param>
+  /// <param name="maxDistance">Max distance of the sweep</param>
+  /// <param name="hitInfo">RaycastHit data from the result of the sweep</param>
+  public static void DrawSweep(Rigidbody rigidbody, Vector3 direction, float maxDistance, RaycastHit hitInfo)
+  {
+    if (DrawSweepDirection)
+    {
+      maxDistance = maxDistance > MaxDrawSweepDistance ? MaxDrawSweepDistance : maxDistance;
+      DebugDraw.DrawVector(rigidbody.worldCenterOfMass, rigidbody.worldCenterOfMass + direction * maxDistance, SweepDirectionColor, DrawVectorArrowScale, DrawLineTime, DepthTest);
+    }
+    if (DrawSweepHitPoints)
+    {
+      DebugDraw.DrawPoint(hitInfo.point, SweepHitPointColor, DrawLineTime, DepthTest);
+    }
+    if (DrawSweepHitNormals)
+    {
+      Debug.DrawLine(hitInfo.point, hitInfo.point + hitInfo.normal, SweepHitNormalColor, DrawLineTime, DepthTest);
+    }
+  }
 }

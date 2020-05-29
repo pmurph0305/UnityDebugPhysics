@@ -1625,13 +1625,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ForceMode: 0
   ForceVector: {x: 0, y: 0, z: 1}
+  PositionOffset: {x: -1, y: -1, z: -1}
+  MinForceVectorLength: 1
   AddForce: 0
   AddTorque: 0
   AddExplosionForce: 0
-  ExplosionPositionOffset: {x: -1, y: -1, z: -1}
   ExplosionForce: 10
   ExplosionUpwardsModifier: 0.2
   ExplosionRadius: 1
+  AddForceAtPostion: 0
+  AddForceRelative: 0
+  AddTorqueRelative: 0
+  ClosestPointOnBounds: 0
+  GetPointVelocity: 0
+  GetRelativePointVelocity: 0
 --- !u!54 &1018291231
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1704,14 +1711,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1018291229}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.22112292, y: 0, z: 0, w: 0.97524595}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 745906627}
   m_Father: {fileID: 0}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -25.55, y: 0, z: 0}
 --- !u!1 &1052558846
 GameObject:
   m_ObjectHideFlags: 0
